@@ -1,0 +1,17 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "lgsdn/playbook-index",
+  "version": "0.1.0",
+  "title": "LGSDN Playbook index",
+  "category": "theme",
+  "description": "Displays the Playbook introduction, contribution prompt, and case study grid.",
+  "usesContext": ["postId"],
+  "supports": {
+    "align": ["full"],
+    "html": false,
+    "inserter": false,
+    "multiple": false
+  },
+  "render": "file:./render.php"
+}

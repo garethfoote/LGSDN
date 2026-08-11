@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Body copy component</title>
+	<link rel="stylesheet" href="../../assets/css/prototype.css">
+</head>
+<body class="prototype-page">
+	<a class="skip-link" href="#main-content">Skip to main content</a>
+	<div class="prototype-toolbar"><strong>Body copy</strong><a href="../homepage.html">View complete homepage</a></div>
+	<main id="main-content" class="prototype-canvas prototype-canvas--padded" tabindex="-1">
+		<article class="article-copy">
+			<header>
+				<h1>Designing services people can use</h1>
+				<p class="article-lead">Readable, semantic body copy helps people understand an article and move through it using the tools that work for them.</p>
+				<p class="article-meta">Published <time datetime="2026-07-22">22 July 2026</time> by the LGSDN team</p>
+			</header>
+
+			<p>The Local Government Service Design Network shares practical work from councils. You can <a href="#example-heading">read an example of a clear section</a>, follow links without relying on colour alone, and zoom the page without losing content.</p>
+			<p>Use <strong>strong importance</strong> only when the meaning calls for it, and <em>emphasis</em> when the stress changes how a sentence is understood. The <abbr title="Local Government Service Design Network">LGSDN</abbr> abbreviation is expanded in the markup.</p>
+
+			<h2 id="example-heading">A clear section heading</h2>
+			<p>Headings describe the content that follows and form a logical outline. They should not be chosen for their visual size. Short paragraphs and meaningful link text make scanning easier.</p>
+
+			<h3>Lists</h3>
+			<p>Use an unordered list when sequence does not matter:</p>
+			<ul>
+				<li>write in plain language</li>
+				<li>put the most important information first</li>
+				<li>test with people who use assistive technology</li>
+			</ul>
+			<p>Use an ordered list when the order is meaningful:</p>
+			<ol>
+				<li>understand the user need</li>
+				<li>publish the smallest useful answer</li>
+				<li>measure and improve it</li>
+			</ol>
+
+			<h3>Quotation</h3>
+			<blockquote>
+				<p>Accessibility is part of the service, not a final check at the end.</p>
+				<cite>LGSDN accessibility principle</cite>
+			</blockquote>
+			<aside aria-labelledby="related-guidance-heading">
+				<h4 id="related-guidance-heading">Related guidance</h4>
+				<p>Use a short supporting panel for information that is related to the article but not part of its main flow.</p>
+			</aside>
+
+			<h3>Image and caption</h3>
+			<figure>
+				<img src="../../assets/images/home-feature-image.png" alt="Three people working around a table covered with notes and paper prototypes">
+				<figcaption>A workshop team reviewing paper prototypes together.</figcaption>
+			</figure>
+
+			<h3>Data table</h3>
+			<table>
+				<caption>Recommended article text sizes</caption>
+				<thead><tr><th scope="col">Viewport</th><th scope="col">Font size</th><th scope="col">Line height</th></tr></thead>
+				<tbody><tr><th scope="row">Compact</th><td>18px</td><td>27px</td></tr><tr><th scope="row">Medium and wide</th><td>20px</td><td>30px</td></tr></tbody>
+			</table>
+
+			<h3>Terms and supporting text</h3>
+			<dl>
+				<dt>Plain language</dt>
+				<dd>Writing that helps the intended audience understand the message the first time they read it.</dd>
+				<dt>Semantic HTML</dt>
+				<dd>Elements chosen for their meaning so browsers and assistive technologies can expose the correct structure.</dd>
+			</dl>
+			<p>Inline code such as <code>aria-label</code>, keyboard input such as <kbd>Tab</kbd>, and <mark>highlighted text</mark> remain legible against their backgrounds.</p>
+			<pre><code>&lt;main id="main-content"&gt;
+  &lt;h1&gt;A descriptive page title&lt;/h1&gt;
+&lt;/main&gt;</code></pre>
+
+			<hr>
+			<h4>A fourth-level heading</h4>
+			<p>This final example demonstrates the smallest supported article heading without breaking the heading hierarchy.</p>
+			<h5>A fifth-level heading</h5>
+			<p>Deep heading levels should be rare, but remain visually distinct when the content structure requires them.</p>
+			<h6>A sixth-level heading</h6>
+			<p>Do not skip heading levels to achieve a particular visual appearance.</p>
+		</article>
+	</main>
+</body>
+</html>

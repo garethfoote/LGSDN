@@ -1,0 +1,18 @@
+<!-- wp:template-part {"slug":"header","theme":"lgsdn","tagName":"header"} /-->
+<!-- wp:group {"tagName":"main","align":"wide","style":{"spacing":{"padding":{"top":"var:preset|spacing|70","bottom":"var:preset|spacing|70"}}},"layout":{"type":"constrained"}} -->
+<main id="main-content" class="wp-block-group alignwide" style="padding-top:var(--wp--preset--spacing--70);padding-bottom:var(--wp--preset--spacing--70)" tabindex="-1">
+	<!-- wp:post-title {"level":1} /-->
+	<!-- wp:post-content {"className":"lgsdn-article"} /-->
+	<!-- wp:query {"className":"lgsdn-person-grid","query":{"perPage":24,"pages":0,"offset":0,"postType":"lgsdn_person","order":"asc","orderBy":"menu_order","inherit":false},"displayLayout":{"type":"flex","columns":3}} -->
+	<div class="wp-block-query lgsdn-person-grid">
+		<!-- wp:post-template -->
+			<!-- wp:post-featured-image {"isLink":true} /-->
+			<!-- wp:post-title {"isLink":true,"fontSize":"large"} /-->
+			<!-- wp:post-excerpt {"moreText":"View profile"} /-->
+		<!-- /wp:post-template -->
+		<!-- wp:query-no-results --><p>No network profiles have been published yet.</p><!-- /wp:query-no-results -->
+	</div>
+	<!-- /wp:query -->
+</main>
+<!-- /wp:group -->
+<!-- wp:template-part {"slug":"footer","theme":"lgsdn","tagName":"footer"} /-->

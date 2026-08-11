@@ -1,0 +1,218 @@
+/*
+ * Shared site header.
+ *
+ * This file is loaded after both the base theme and homepage prototype styles
+ * so every public page uses one navigation layout and one responsive state.
+ */
+
+.site-frame {
+	width: 100%;
+	max-width: calc(var(--lgsdn-wide-width, 94.5rem) + (2 * var(--lgsdn-gutter, 2.5rem)));
+	margin-inline: auto;
+}
+
+.site-header {
+	display: flex;
+	height: 4rem;
+	align-items: center;
+	justify-content: space-between;
+	padding-inline: var(--lgsdn-gutter, clamp(1.25rem, calc(0.25rem + 2.5vw), 2.5rem));
+}
+
+.site-logo {
+	display: block;
+	width: 84px;
+	height: 25px;
+	flex: 0 0 auto;
+	text-decoration: none;
+}
+
+.site-logo img {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.site-nav {
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+}
+
+.site-nav a {
+	padding: 0.5rem 0.75rem;
+	color: var(--wp--preset--color--ink, #27272d);
+	font-size: var(--lgsdn-type-nav-size, 1.25rem);
+	font-weight: 400;
+	line-height: normal;
+	text-decoration: none;
+}
+
+.site-nav a:hover,
+.site-nav a[aria-current="page"] {
+	text-decoration: underline;
+	text-decoration-thickness: var(--lgsdn-underline-thickness, 0.1em);
+	text-underline-offset: 0.35em;
+}
+
+.site-nav .button {
+	display: inline-flex;
+	min-height: 2.3125rem;
+	align-items: center;
+	justify-content: center;
+	border: 2px solid var(--wp--preset--color--ink, #27272d);
+	border-radius: 999px;
+	padding: 0.4375rem 1rem;
+	background: transparent;
+	color: var(--wp--preset--color--ink, #27272d);
+	font-size: var(--lgsdn-type-nav-size, 1.25rem);
+	font-weight: 500;
+	text-decoration: none;
+}
+
+.site-nav .button:hover {
+	background: var(--wp--preset--color--ink, #27272d);
+	color: var(--wp--preset--color--white, #fff);
+}
+
+.menu-button {
+	display: none;
+	width: 2.75rem;
+	height: 2.75rem;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0.3rem;
+	border: 0;
+	background: transparent;
+	padding: 0;
+	color: var(--wp--preset--color--ink, #27272d);
+}
+
+.menu-button span {
+	display: block;
+	width: 1.5rem;
+	height: 2.5px;
+	border-radius: 2px;
+	background: currentColor;
+}
+
+.menu-close,
+.menu-backdrop {
+	display: none;
+}
+
+body.menu-open {
+	overflow: hidden;
+}
+
+body.admin-bar {
+	--lgsdn-admin-bar-height: 32px;
+}
+
+@media (max-width: 47.999rem) {
+	:root {
+		--lgsdn-type-nav-size: 1.875rem;
+	}
+
+	.site-nav {
+		position: fixed;
+		inset: var(--lgsdn-admin-bar-height, 0) 0 0 auto;
+		z-index: 1001;
+		display: flex;
+		width: min(85vw, 24rem);
+		flex-direction: column;
+		align-items: stretch;
+		gap: 0.5rem;
+		overflow-y: auto;
+		background: var(--wp--preset--color--canvas, #f8f8f1);
+		padding: 5rem 1.75rem 2rem;
+		transform: translateX(100%);
+		visibility: hidden;
+		transition: none;
+	}
+
+	.site-nav.is-open {
+		transform: translateX(0);
+		visibility: visible;
+		transition: transform 240ms ease;
+	}
+
+	.site-nav.is-closing {
+		transform: translateX(100%);
+		visibility: visible;
+		transition: transform 240ms ease;
+	}
+
+	.site-nav a {
+		width: fit-content;
+	}
+
+	.site-nav .button {
+		margin-top: 0.5rem;
+	}
+
+	.menu-close {
+		position: absolute;
+		top: 1rem;
+		right: 1.25rem;
+		display: grid;
+		width: 3rem;
+		height: 3rem;
+		place-items: center;
+		border: 0;
+		background: transparent;
+		padding: 0;
+		color: var(--wp--preset--color--ink, #27272d);
+		font-size: 2.5rem;
+		line-height: 1;
+	}
+
+	.menu-backdrop {
+		position: fixed;
+		inset: var(--lgsdn-admin-bar-height, 0) 0 0;
+		z-index: 1000;
+		display: block;
+		border: 0;
+		background: rgb(39 39 45 / 45%);
+		opacity: 0;
+		visibility: hidden;
+		transition: none;
+	}
+
+	.menu-backdrop.is-open {
+		opacity: 1;
+		visibility: visible;
+		transition: opacity 240ms ease;
+	}
+
+	.menu-backdrop.is-closing {
+		opacity: 0;
+		visibility: visible;
+		transition: opacity 240ms ease;
+	}
+
+	.menu-button {
+		display: flex;
+	}
+}
+
+@media screen and (max-width: 782px) {
+	body.admin-bar {
+		--lgsdn-admin-bar-height: 46px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.site-nav,
+	.menu-backdrop {
+		transition: none !important;
+	}
+}
+
+@media (forced-colors: active) {
+	.menu-button,
+	.menu-close {
+		border: 1px solid ButtonText;
+	}
+}

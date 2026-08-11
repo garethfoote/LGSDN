@@ -1,0 +1,183 @@
+{
+  "$schema": "https://schemas.wp.org/wp/7.0/theme.json",
+  "version": 3,
+  "settings": {
+    "appearanceTools": false,
+    "useRootPaddingAwareAlignments": true,
+    "layout": {
+      "contentSize": "68rem",
+      "wideSize": "94.5rem"
+    },
+    "color": {
+      "custom": false,
+      "customDuotone": false,
+      "customGradient": false,
+      "defaultDuotone": false,
+      "defaultGradients": false,
+      "defaultPalette": false,
+      "palette": [
+        { "slug": "canvas", "name": "Canvas", "color": "#f8f8f1" },
+        { "slug": "ink", "name": "Ink", "color": "#27272d" },
+        { "slug": "navy", "name": "Navy", "color": "#293f61" },
+        { "slug": "mist", "name": "Mist", "color": "#e6e6df" },
+        { "slug": "soft-grey", "name": "Soft grey", "color": "#d9d9d3" },
+        { "slug": "light-grey", "name": "Light grey", "color": "#bdbdbd" },
+        { "slug": "muted", "name": "Muted", "color": "#74747c" },
+        { "slug": "aqua", "name": "Aqua", "color": "#58d5d2" },
+        { "slug": "coral", "name": "Coral", "color": "#ff7657" },
+        { "slug": "yellow", "name": "Yellow", "color": "#e4d85b" },
+        { "slug": "practice-lilac", "name": "Practice lilac", "color": "#C6AFE3" },
+        { "slug": "practice-olive", "name": "Practice olive", "color": "#4B5A2B" },
+        { "slug": "practice-orange", "name": "Practice orange", "color": "#FD7D12" },
+        { "slug": "practice-blue", "name": "Practice blue", "color": "#4B66FF" },
+        { "slug": "practice-gold", "name": "Practice gold", "color": "#FAC558" },
+        { "slug": "white", "name": "White", "color": "#ffffff" }
+      ]
+    },
+    "spacing": {
+      "customSpacingSize": false,
+      "spacingSizes": [
+        { "slug": "10", "name": "3XS", "size": "0.25rem" },
+        { "slug": "20", "name": "2XS", "size": "0.5rem" },
+        { "slug": "30", "name": "XS", "size": "1rem" },
+        { "slug": "40", "name": "S", "size": "1.5rem" },
+        { "slug": "50", "name": "M", "size": "2rem" },
+        { "slug": "60", "name": "L", "size": "3rem" },
+        { "slug": "70", "name": "XL", "size": "4.5rem" },
+        { "slug": "80", "name": "2XL", "size": "6rem" }
+      ],
+      "units": ["px", "rem", "%", "vw"]
+    },
+    "typography": {
+      "customFontSize": false,
+      "defaultFontSizes": false,
+      "dropCap": false,
+      "fluid": true,
+      "fontFamilies": [
+        {
+          "slug": "body",
+          "name": "Atkinson Hyperlegible Next",
+          "fontFamily": "\"Atkinson Hyperlegible Next\", Arial, sans-serif",
+          "fontFace": [
+            {
+              "fontFamily": "Atkinson Hyperlegible Next",
+              "fontStyle": "normal",
+              "fontWeight": "400",
+              "src": ["file:./assets/fonts/AtkinsonHyperlegibleNext-Regular.woff2"]
+            },
+            {
+              "fontFamily": "Atkinson Hyperlegible Next",
+              "fontStyle": "normal",
+              "fontWeight": "500",
+              "src": ["file:./assets/fonts/AtkinsonHyperlegibleNext-Medium.woff2"]
+            }
+          ]
+        },
+        {
+          "slug": "heading",
+          "name": "Srbija Sans",
+          "fontFamily": "\"Srbija Sans\", \"Atkinson Hyperlegible Next\", Arial, sans-serif",
+          "fontFace": [
+            {
+              "fontFamily": "Srbija Sans",
+              "fontStyle": "normal",
+              "fontWeight": "400",
+              "src": ["file:./assets/fonts/SrbijaSans-Regular.woff2"]
+            }
+          ]
+        }
+      ],
+      "fontSizes": [
+        { "slug": "body-small", "name": "Body small", "size": "0.875rem", "fluid": false },
+        { "slug": "tag", "name": "Tag", "size": "0.875rem", "fluid": false },
+        { "slug": "small", "name": "Small text", "size": "0.9375rem", "fluid": false },
+        { "slug": "nav", "name": "Navigation", "size": "var(--lgsdn-type-nav-size)" },
+        { "slug": "medium", "name": "Interface body", "size": "1rem", "fluid": false },
+        { "slug": "feature", "name": "Feature body", "size": "1.125rem", "fluid": false },
+        { "slug": "contextual-body", "name": "Contextual body", "size": "var(--lgsdn-type-context-body-size)" },
+        { "slug": "card-title", "name": "Card title", "size": "1.25rem", "fluid": false },
+        { "slug": "body-x-large", "name": "Body extra large", "size": "1.5rem", "fluid": false },
+        { "slug": "article-body", "name": "Article body", "size": "var(--lgsdn-type-article-body-size)" },
+        { "slug": "large", "name": "Event title", "size": "1.375rem" },
+        { "slug": "article-lead", "name": "Article lead", "size": "var(--lgsdn-type-article-lead-size)" },
+        { "slug": "lead", "name": "Page lead", "size": "var(--lgsdn-type-lead-size)" },
+        { "slug": "x-large", "name": "Section title", "size": "1.75rem" },
+        { "slug": "page-title", "name": "Page title", "size": "2.25rem" },
+        { "slug": "display", "name": "Display", "size": "var(--lgsdn-type-display-size)" }
+      ]
+    },
+    "border": {
+      "color": false,
+      "radius": false,
+      "style": false,
+      "width": false
+    }
+  },
+  "styles": {
+    "color": {
+      "background": "var:preset|color|canvas",
+      "text": "var:preset|color|ink"
+    },
+    "spacing": {
+      "blockGap": "1.25rem",
+      "padding": {
+        "left": "clamp(1.25rem, 4vw, 3.25rem)",
+        "right": "clamp(1.25rem, 4vw, 3.25rem)"
+      }
+    },
+    "typography": {
+      "fontFamily": "var:preset|font-family|body",
+      "fontSize": "var:preset|font-size|article-body",
+      "fontWeight": "400",
+      "lineHeight": "1.5"
+    },
+    "elements": {
+      "button": {
+        "border": { "radius": "999px" },
+        "color": {
+          "background": "var:preset|color|ink",
+          "text": "var:preset|color|white"
+        },
+        "spacing": {
+          "padding": {
+            "top": "0.7rem",
+            "right": "1.25rem",
+            "bottom": "0.7rem",
+            "left": "1.25rem"
+          }
+        },
+        "typography": { "fontSize": "var:preset|font-size|small", "fontWeight": "400" }
+      },
+      "heading": {
+        "typography": {
+          "fontFamily": "var:preset|font-family|heading",
+          "fontWeight": "400",
+          "lineHeight": "1.12"
+        }
+      },
+      "link": { "color": { "text": "var:preset|color|ink" } }
+    },
+    "blocks": {
+      "core/heading": { "spacing": { "margin": { "bottom": "1rem" } } },
+      "core/navigation": { "typography": { "fontSize": "var:preset|font-size|nav" } },
+      "core/post-title": {
+        "typography": {
+          "fontFamily": "var:preset|font-family|heading",
+          "fontSize": "var:preset|font-size|display",
+          "fontWeight": "400",
+          "lineHeight": "1.08"
+        }
+      }
+    }
+  },
+  "customTemplates": [
+    { "name": "page-join", "title": "Join page", "postTypes": ["page"] },
+    { "name": "page-network", "title": "Network page", "postTypes": ["page"] },
+    { "name": "page-playbook", "title": "Playbook page", "postTypes": ["page"] },
+    { "name": "page-design-system", "title": "Design system specimen", "postTypes": ["page"] }
+  ],
+  "templateParts": [
+    { "area": "header", "name": "header", "title": "Header" },
+    { "area": "footer", "name": "footer", "title": "Footer" }
+  ]
+}

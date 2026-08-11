@@ -1,0 +1,57 @@
+services:
+  database:
+    image: mariadb:10.11
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: ${WORDPRESS_DB_NAME:-lgsdn}
+      MARIADB_USER: ${WORDPRESS_DB_USER:-lgsdn}
+      MARIADB_PASSWORD: ${WORDPRESS_DB_PASSWORD:-lgsdn-local-only}
+      MARIADB_ROOT_PASSWORD: ${WORDPRESS_DB_ROOT_PASSWORD:-lgsdn-root-local-only}
+    volumes:
+      - database_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  wordpress:
+    image: wordpress:7.0.2-php8.3-apache
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+    ports:
+      - "${WORDPRESS_PORT:-8080}:80"
+    environment:
+      WORDPRESS_DB_HOST: database:3306
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME:-lgsdn}
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER:-lgsdn}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD:-lgsdn-local-only}
+      WORDPRESS_DEBUG: "1"
+    volumes:
+      - wordpress_data:/var/www/html
+      - ./wp-content/plugins/lgsdn-core:/var/www/html/wp-content/plugins/lgsdn-core
+      - ./wp-content/themes/lgsdn:/var/www/html/wp-content/themes/lgsdn
+
+  cli:
+    image: wordpress:cli-php8.3
+    profiles: ["tools"]
+    entrypoint: ["wp"]
+    depends_on:
+      database:
+        condition: service_healthy
+    user: "33:33"
+    environment:
+      WORDPRESS_DB_HOST: database:3306
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME:-lgsdn}
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER:-lgsdn}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD:-lgsdn-local-only}
+    volumes:
+      - wordpress_data:/var/www/html
+      - ./wp-content/plugins/lgsdn-core:/var/www/html/wp-content/plugins/lgsdn-core
+      - ./wp-content/themes/lgsdn:/var/www/html/wp-content/themes/lgsdn
+
+volumes:
+  database_data:
+  wordpress_data:

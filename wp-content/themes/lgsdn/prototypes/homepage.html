@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>LGSDN homepage prototype</title>
+	<link rel="stylesheet" href="../assets/css/prototype.css">
+	<script src="../assets/js/navigation.js" defer></script>
+</head>
+<body>
+	<a class="skip-link" href="#main-content">Skip to main content</a>
+	<div class="site-frame">
+		<header class="site-header">
+			<a class="site-logo" href="homepage.html" aria-label="Local Government Service Design Network home">
+				<img src="../assets/images/logo.svg" alt="" width="84" height="25">
+			</a>
+			<nav class="site-nav" id="site-navigation" aria-label="Main navigation">
+				<button class="menu-close" type="button" aria-label="Close menu"><span aria-hidden="true">×</span></button>
+				<a href="#about">About</a>
+				<a href="#playbook">Playbook</a>
+				<a href="#events">Events</a>
+				<a href="#people">People</a>
+				<a class="button button--nav" href="#join">Join</a>
+			</nav>
+			<button class="menu-backdrop" type="button" aria-label="Close menu" tabindex="-1"></button>
+			<button class="menu-button" type="button" aria-label="Open menu" aria-controls="site-navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+		</header>
+
+		<main id="main-content" tabindex="-1">
+			<section class="home-hero" id="about">
+				<div class="home-hero__copy">
+					<h1 class="home-hero__title">Local Government Service Design Network</h1>
+					<p class="home-hero__intro">A peer network for people improving public services across UK councils. Real examples, real conditions, real practice.</p>
+				</div>
+				<div class="home-hero__graphic" aria-hidden="true">
+					<img src="../assets/images/home-contour.svg" alt="">
+				</div>
+			</section>
+
+			<section class="feature-grid" id="join" aria-label="Ways to take part">
+				<article class="feature-card">
+					<h2>Join the network</h2>
+					<p>This network is a safe and supportive space for people working in service design in local government. It’s here to help you grow your service design practice by.</p>
+					<a class="button button--nav lgsdn-button--arrow" href="#"><span class="lgsdn-button__label">Join the network</span></a>
+				</article>
+				<article class="feature-card">
+					<h2>Browse the playbook</h2>
+					<p>This network is a safe and supportive space for people working in service design in local government. It’s here to help you grow your service design practice by.</p>
+					<a class="button lgsdn-button--arrow" href="#"><span class="lgsdn-button__label">Browse the playbook</span></a>
+				</article>
+				<article class="feature-card">
+					<h2>Contribute an example</h2>
+					<p>We capture insights from our innovation processes to share learnable knowledge — through studies, analyses, data visualisations, and publications.</p>
+					<a class="button lgsdn-button--arrow" href="#"><span class="lgsdn-button__label">Contribute an example</span></a>
+				</article>
+			</section>
+
+			<article class="spotlight spotlight--practice-lilac" id="playbook">
+				<div class="spotlight__media">
+					<img class="spotlight__image" src="../assets/images/home-feature-image.png" alt="Three people working together around a table covered with notes and prototypes">
+					<div class="spotlight__tags" aria-label="Case study classifications"><span class="tag tag--practice">User Research</span><span class="tag" aria-label="Service: Adult Social Care"><img class="taxonomy-tag-icon" src="../assets/images/taxonomy-service.svg" alt="" width="16" height="16">Adult Social Care</span><span class="tag" aria-label="Challenge: Silos"><img class="taxonomy-tag-icon" src="../assets/images/taxonomy-challenge.svg" alt="" width="16" height="16">Silos</span></div>
+				</div>
+				<div class="spotlight__content">
+					<p class="spotlight__eyebrow">From the playbook</p>
+					<h2>Digital prototyping: Shaping a Platform with Parents</h2>
+					<p>A short description of this featured item goes here.</p>
+					<div class="button-list"><a class="button button--strong lgsdn-button--arrow" href="#"><span class="lgsdn-button__label">Read the case study</span></a><a class="button lgsdn-button--arrow" href="#"><span class="lgsdn-button__label">See the full playbook</span></a></div>
+				</div>
+			</article>
+
+			<section class="events" id="events">
+				<h2>Events</h2>
+				<div class="event-row">
+					<div class="event-row__left"><span class="event-row__title">Service design community meetup</span><span class="event-row__location">Manchester</span></div>
+					<div class="event-row__date-group"><time class="event-row__date" datetime="2026-09-18">18 Sep 2026</time></div>
+				</div>
+				<div class="event-row">
+					<div class="event-row__left"><span class="event-row__title">Playbook launch workshop</span><span class="event-row__location">Online</span></div>
+					<div class="event-row__date-group"><time class="event-row__date" datetime="2026-10-04">4 Oct 2026</time></div>
+				</div>
+				<div class="event-row event-row--past">
+					<div class="event-row__left"><span class="event-row__title">Spring practitioners gathering</span><span class="event-row__location">Manchester</span></div>
+					<div class="event-row__date-group"><time class="event-row__date" datetime="2026-03-12">12 Mar 2026</time><span class="tag tag--past">Past</span></div>
+				</div>
+			</section>
+		</main>
+	</div>
+	<footer class="site-footer"></footer>
+</body>
+</html>
