@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "title": "LGSDN Playbook index",
   "category": "theme",
-  "description": "Displays the Playbook introduction, contribution prompt, and case study grid.",
+  "description": "Displays the Playbook introduction, service-area browser, and case study grid.",
   "usesContext": ["postId"],
   "supports": {
     "align": ["full"],

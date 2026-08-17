@@ -9,8 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class LGSDN_Playbook_Validation {
 	private const REQUIRED_TAXONOMIES = array(
-		'lgsdn_practice' => 'Practice',
-		'lgsdn_service' => 'Service',
+		'lgsdn_service' => 'Service area',
 		'lgsdn_challenge' => 'Challenge',
 	);
 
@@ -64,20 +63,20 @@ final class LGSDN_Playbook_Validation {
 		$contributor_id = isset( $meta['lgsdn_contributor_id'] )
 			? absint( $meta['lgsdn_contributor_id'] )
 			: ( $post_id ? absint( get_post_meta( $post_id, 'lgsdn_contributor_id', true ) ) : 0 );
-		$primary_practice_id = isset( $meta['lgsdn_primary_practice_id'] )
-			? absint( $meta['lgsdn_primary_practice_id'] )
-			: ( $post_id ? absint( get_post_meta( $post_id, 'lgsdn_primary_practice_id', true ) ) : 0 );
+		$primary_service_id = isset( $meta['lgsdn_primary_service_id'] )
+			? absint( $meta['lgsdn_primary_service_id'] )
+			: ( $post_id ? absint( get_post_meta( $post_id, 'lgsdn_primary_service_id', true ) ) : 0 );
 
 		if ( ! $contributor_id || 'lgsdn_person' !== get_post_type( $contributor_id ) ) {
 			$errors[] = 'Case study author';
 		}
 
 		if (
-			! $primary_practice_id ||
-			empty( $term_ids['lgsdn_practice'] ) ||
-			! in_array( $primary_practice_id, $term_ids['lgsdn_practice'], true )
+			! $primary_service_id ||
+			empty( $term_ids['lgsdn_service'] ) ||
+			! in_array( $primary_service_id, $term_ids['lgsdn_service'], true )
 		) {
-			$errors[] = 'Primary practice (which must also be assigned under Practices)';
+			$errors[] = 'Primary service area (which must also be assigned under Service areas)';
 		}
 
 		if ( $errors ) {

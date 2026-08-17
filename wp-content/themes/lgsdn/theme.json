@@ -26,11 +26,12 @@
         { "slug": "aqua", "name": "Aqua", "color": "#58d5d2" },
         { "slug": "coral", "name": "Coral", "color": "#ff7657" },
         { "slug": "yellow", "name": "Yellow", "color": "#e4d85b" },
-        { "slug": "practice-lilac", "name": "Practice lilac", "color": "#C6AFE3" },
-        { "slug": "practice-olive", "name": "Practice olive", "color": "#4B5A2B" },
-        { "slug": "practice-orange", "name": "Practice orange", "color": "#FD7D12" },
-        { "slug": "practice-blue", "name": "Practice blue", "color": "#4B66FF" },
         { "slug": "practice-gold", "name": "Practice gold", "color": "#FAC558" },
+        { "slug": "practice-blue", "name": "Practice blue", "color": "#4B66FF" },
+        { "slug": "practice-purple", "name": "Practice purple", "color": "#C6AFE3" },
+        { "slug": "practice-olive", "name": "Practice olive", "color": "#4B5A2B" },
+        { "slug": "practice-orange", "name": "Practice orange", "color": "#FF9D4D" },
+        { "slug": "practice-pink", "name": "Practice pink", "color": "#FACDE1" },
         { "slug": "white", "name": "White", "color": "#ffffff" }
       ]
     },
@@ -101,7 +102,7 @@
         { "slug": "large", "name": "Event title", "size": "1.375rem" },
         { "slug": "article-lead", "name": "Article lead", "size": "var(--lgsdn-type-article-lead-size)" },
         { "slug": "lead", "name": "Page lead", "size": "var(--lgsdn-type-lead-size)" },
-        { "slug": "x-large", "name": "Section title", "size": "1.75rem" },
+        { "slug": "x-large", "name": "Section title", "size": "36px", "fluid": false },
         { "slug": "page-title", "name": "Page title", "size": "2.25rem" },
         { "slug": "display", "name": "Display", "size": "var(--lgsdn-type-display-size)" }
       ]

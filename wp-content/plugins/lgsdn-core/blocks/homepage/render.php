@@ -18,6 +18,8 @@ $page_url = static function ( int $selected_id, string $fallback_path ): string 
 };
 
 $feature_fallbacks = array( 'join', 'playbook', 'join' );
+$feature_cta_labels = array( 'Join', 'Browse', 'Contribute' );
+$feature_cta_suffixes = array( ' the network', ' the playbook', ' an example' );
 $features = array();
 for ( $index = 1; $index <= 3; $index++ ) {
 	$features[] = array(
@@ -31,96 +33,32 @@ $playbook_url = $page_url( 0, 'playbook' );
 $network_url = $page_url( 0, 'network' );
 $join_url = $page_url( 0, 'join' );
 $image_base = get_theme_file_uri( 'assets/images' );
-$taxonomy_icon_urls = array(
-	'lgsdn_service' => $image_base . '/taxonomy-service.svg',
-	'lgsdn_challenge' => $image_base . '/taxonomy-challenge.svg',
-);
+$service_terms = LGSDN_Service_Styles::homepage_terms();
 
-$featured = new WP_Query(
+$case_studies = new WP_Query(
 	array(
 		'post_type' => 'lgsdn_playbook',
 		'post_status' => 'publish',
-		'posts_per_page' => 1,
-		'meta_key' => 'lgsdn_featured_home',
-		'meta_value' => '1',
-		'orderby' => 'modified',
+		'posts_per_page' => 4,
+		'orderby' => 'date',
 		'order' => 'DESC',
 	)
 );
 
-if ( ! $featured->have_posts() ) {
-	$featured = new WP_Query(
-		array(
-			'post_type' => 'lgsdn_playbook',
-			'post_status' => 'publish',
-			'posts_per_page' => 1,
-		)
-	);
-}
 
-$spotlight_id = $featured->have_posts() ? (int) $featured->posts[0]->ID : 0;
-$spotlight_title = $spotlight_id ? get_the_title( $spotlight_id ) : 'Digital prototyping: Shaping a Platform with Parents';
-$spotlight_description = $spotlight_id && has_excerpt( $spotlight_id )
-	? get_the_excerpt( $spotlight_id )
-	: 'A short description of this featured item goes here.';
-$spotlight_url = $spotlight_id ? get_permalink( $spotlight_id ) : '#';
-$spotlight_image = $spotlight_id && has_post_thumbnail( $spotlight_id )
-	? get_the_post_thumbnail(
-		$spotlight_id,
-		'large',
-		array(
-			'class' => 'spotlight__image',
-		)
-	)
-	: sprintf(
-		'<img class="spotlight__image" src="%s" alt="%s">',
-		esc_url( $image_base . '/home-feature-image.png' ),
-		esc_attr( 'Three people working together around a table covered with notes and prototypes' )
-	);
-$spotlight_practices = $spotlight_id ? get_the_terms( $spotlight_id, 'lgsdn_practice' ) : array();
-$spotlight_practices = $spotlight_practices && ! is_wp_error( $spotlight_practices ) ? array_values( $spotlight_practices ) : array();
-$spotlight_primary_id = $spotlight_id ? absint( get_post_meta( $spotlight_id, 'lgsdn_primary_practice_id', true ) ) : 0;
-$spotlight_primary = null;
+$primary_service_for_item = static function ( int $item_id ): ?WP_Term {
+	$services = get_the_terms( $item_id, 'lgsdn_service' );
+	$services = $services && ! is_wp_error( $services ) ? array_values( $services ) : array();
+	$primary_service_id = absint( get_post_meta( $item_id, 'lgsdn_primary_service_id', true ) );
 
-foreach ( $spotlight_practices as $practice ) {
-	if ( $practice->term_id === $spotlight_primary_id ) {
-		$spotlight_primary = $practice;
-		break;
-	}
-}
-
-if ( ! $spotlight_primary && $spotlight_practices ) {
-	$spotlight_primary = $spotlight_practices[0];
-}
-
-$spotlight_style = $spotlight_primary
-	? LGSDN_Practice_Styles::for_term( $spotlight_primary )
-	: array(
-		'colour' => 'orange',
-	);
-$spotlight_secondary_labels = array();
-
-if ( $spotlight_id ) {
-	foreach ( array( 'lgsdn_service', 'lgsdn_purpose', 'lgsdn_challenge', 'lgsdn_council' ) as $taxonomy ) {
-		$terms = get_the_terms( $spotlight_id, $taxonomy );
-		if ( ! $terms || is_wp_error( $terms ) ) {
-			continue;
-		}
-
-		foreach ( $terms as $term ) {
-			if ( ! in_array( $term->name, array_column( $spotlight_secondary_labels, 'name' ), true ) ) {
-				$spotlight_secondary_labels[] = array(
-					'name' => $term->name,
-					'taxonomy' => $taxonomy,
-				);
-			}
-
-			if ( 2 === count( $spotlight_secondary_labels ) ) {
-				break 2;
-			}
+	foreach ( $services as $service ) {
+		if ( $service->term_id === $primary_service_id ) {
+			return $service;
 		}
 	}
-}
+
+	return $services[0] ?? null;
+};
 ?>
 <div <?php echo get_block_wrapper_attributes( array( 'class' => 'homepage-render alignfull' ) ); ?>>
 	<a class="skip-link" href="#main-content">Skip to main content</a>
@@ -153,42 +91,89 @@ if ( $spotlight_id ) {
 			</section>
 
 			<section class="feature-grid" id="join" aria-label="Ways to take part">
-				<?php foreach ( $features as $feature ) : ?>
+				<?php foreach ( $features as $index => $feature ) : ?>
 					<article class="feature-card">
 						<h2><?php echo esc_html( $feature['title'] ); ?></h2>
 						<p><?php echo nl2br( esc_html( $feature['body'] ) ); ?></p>
-						<a class="button lgsdn-button--arrow" href="<?php echo esc_url( $feature['url'] ); ?>"><span class="lgsdn-button__label"><?php echo esc_html( $feature['title'] ); ?></span></a>
+						<a class="button lgsdn-button--arrow" href="<?php echo esc_url( $feature['url'] ); ?>"><span class="lgsdn-button__label"><?php echo esc_html( $feature_cta_labels[ $index ] ); ?></span><span class="screen-reader-text"><?php echo esc_html( $feature_cta_suffixes[ $index ] ); ?></span></a>
 					</article>
 				<?php endforeach; ?>
 			</section>
 
-			<article class="spotlight spotlight--practice-<?php echo esc_attr( $spotlight_style['colour'] ); ?>" id="playbook">
-				<div class="spotlight__media">
-					<?php echo wp_kses_post( $spotlight_image ); ?>
-					<?php if ( $spotlight_primary || $spotlight_secondary_labels ) : ?>
-						<div class="spotlight__tags" aria-label="Case study classifications">
-							<?php if ( $spotlight_primary ) : ?>
-								<span class="tag tag--practice"><?php echo esc_html( $spotlight_primary->name ); ?></span>
-							<?php endif; ?>
-							<?php foreach ( $spotlight_secondary_labels as $label ) : ?>
-								<?php $taxonomy_object = get_taxonomy( $label['taxonomy'] ); ?>
-								<span class="tag" aria-label="<?php echo esc_attr( ( $taxonomy_object ? $taxonomy_object->labels->singular_name : 'Classification' ) . ': ' . $label['name'] ); ?>">
-									<?php if ( isset( $taxonomy_icon_urls[ $label['taxonomy'] ] ) ) : ?>
-										<img class="taxonomy-tag-icon" src="<?php echo esc_url( $taxonomy_icon_urls[ $label['taxonomy'] ] ); ?>" alt="" width="16" height="16">
-									<?php endif; ?>
-									<?php echo esc_html( $label['name'] ); ?>
-								</span>
-							<?php endforeach; ?>
-						</div>
-					<?php endif; ?>
+			<section class="homepage-playbook" id="playbook" aria-labelledby="homepage-playbook-title">
+				<div class="homepage-playbook__intro">
+					<h2 id="homepage-playbook-title">From the playbook</h2>
+					<p>Find out how service design works with these services in local government.</p>
 				</div>
-				<div class="spotlight__content">
-					<p class="spotlight__eyebrow">From the playbook</p>
-					<h2><?php echo esc_html( $spotlight_title ); ?></h2>
-					<p><?php echo esc_html( $spotlight_description ); ?></p>
-					<div class="button-list"><a class="button button--strong lgsdn-button--arrow" href="<?php echo esc_url( $spotlight_url ); ?>"><span class="lgsdn-button__label">Read the case study</span></a><a class="button lgsdn-button--arrow" href="<?php echo esc_url( $playbook_url ); ?>"><span class="lgsdn-button__label">See the full playbook</span></a></div>
+				<div class="homepage-service-row" aria-label="Explore by service area">
+					<article class="homepage-service-intro" data-service-intro>
+						<h4 id="homepage-service-areas-title">Explore by service…</h4>
+						<p>Find out how service design works with these services within local government.</p>
+					</article>
+					<p id="homepage-service-areas-hint" class="screen-reader-text">Use Tab to move through the cards. When this area is focused, use the left and right arrow keys to scroll horizontally.</p>
+					<div class="homepage-service-scroller" data-service-scroller tabindex="0" role="region" aria-labelledby="homepage-service-areas-title" aria-describedby="homepage-service-areas-hint">
+						<?php foreach ( $service_terms as $service_term ) : ?>
+							<?php
+							$service_style = LGSDN_Service_Styles::for_term( $service_term );
+							$service_url = get_term_link( $service_term );
+							if ( is_wp_error( $service_url ) ) {
+								$service_url = $playbook_url;
+							}
+							?>
+							<a class="homepage-service-card homepage-service-card--<?php echo esc_attr( $service_style['colour'] ); ?>" style="--lgsdn-service-card-fg:<?php echo esc_attr( $service_style['foreground'] ); ?>" href="<?php echo esc_url( $service_url ); ?>">
+								<span class="homepage-service-card__label">Service</span>
+								<img class="homepage-service-card__icon homepage-service-card__icon--<?php echo esc_attr( $service_style['icon'] ); ?>" src="<?php echo esc_url( LGSDN_Service_Styles::icon_url( $service_style['icon'] ) ); ?>" alt="">
+								<h3><?php echo esc_html( $service_term->name ); ?></h3>
+							</a>
+						<?php endforeach; ?>
+					</div>
 				</div>
-			</article>
+				<div class="homepage-case-study-row">
+					<article class="homepage-service-intro homepage-case-study-intro" data-case-study-intro>
+						<h4 id="homepage-case-studies-title">Read a case study</h4>
+						<p>Find out how service design works with these services within local government.</p>
+						<a class="button button--strong lgsdn-button--arrow" href="<?php echo esc_url( $playbook_url ); ?>"><span class="lgsdn-button__label">See all</span></a>
+					</article>
+					<p id="homepage-case-studies-hint" class="screen-reader-text">Use Tab to move through the cards. When this area is focused, use the left and right arrow keys to scroll horizontally.</p>
+					<div class="homepage-case-study-scroller" data-case-study-scroller tabindex="0" role="region" aria-labelledby="homepage-case-studies-title" aria-describedby="homepage-case-studies-hint">
+						<?php if ( $case_studies->have_posts() ) : ?>
+							<?php while ( $case_studies->have_posts() ) : $case_studies->the_post(); ?>
+								<?php
+								$item_id = get_the_ID();
+								$primary_service = $primary_service_for_item( $item_id );
+								$councils = get_the_terms( $item_id, 'lgsdn_council' );
+								$council_label = $councils && ! is_wp_error( $councils ) ? implode( ', ', wp_list_pluck( $councils, 'name' ) ) : '';
+								$service_style = $primary_service
+									? LGSDN_Service_Styles::for_term( $primary_service )
+									: array(
+										'background' => '#FF9D4D',
+										'foreground' => '#27272D',
+									);
+								?>
+								<a class="homepage-case-study-card" href="<?php the_permalink(); ?>">
+									<div class="homepage-case-study-card__media">
+										<?php if ( has_post_thumbnail() ) : ?>
+											<?php the_post_thumbnail( 'large', array( 'class' => 'homepage-case-study-card__image', 'loading' => 'lazy' ) ); ?>
+											<?php else : ?>
+											<img class="homepage-case-study-card__image" src="<?php echo esc_url( $image_base . '/home-feature-image.png' ); ?>" alt="" loading="lazy">
+										<?php endif; ?>
+										<?php if ( $council_label ) : ?>
+											<span class="homepage-case-study-card__council"><?php echo esc_html( $council_label ); ?></span>
+										<?php endif; ?>
+									</div>
+									<div class="homepage-case-study-card__body">
+										<?php if ( $primary_service ) : ?>
+											<span class="homepage-case-study-card__tag" style="--case-study-tag-bg:<?php echo esc_attr( $service_style['background'] ); ?>;--case-study-tag-fg:<?php echo esc_attr( $service_style['foreground'] ); ?>;"><?php echo esc_html( $primary_service->name ); ?></span>
+										<?php endif; ?>
+										<h4><?php the_title(); ?></h4>
+									</div>
+								</a>
+							<?php endwhile; ?>
+						<?php endif; ?>
+					</div>
+					<?php wp_reset_postdata(); ?>
+				</div>
+			</section>
 
 			<div id="events">
 				<?php echo do_blocks( '<!-- wp:lgsdn/events-list /-->' ); ?>

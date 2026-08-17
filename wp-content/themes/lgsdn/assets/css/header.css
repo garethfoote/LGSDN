@@ -21,8 +21,8 @@
 
 .site-logo {
 	display: block;
-	width: 84px;
-	height: 25px;
+	width: 92px;
+	height: 27px;
 	flex: 0 0 auto;
 	text-decoration: none;
 }
@@ -60,7 +60,7 @@
 	min-height: 2.3125rem;
 	align-items: center;
 	justify-content: center;
-	border: 2px solid var(--wp--preset--color--ink, #27272d);
+	border: 1px solid var(--wp--preset--color--ink, #27272d);
 	border-radius: 999px;
 	padding: 0.4375rem 1rem;
 	background: transparent;

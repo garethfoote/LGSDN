@@ -20,6 +20,7 @@ define( 'LGSDN_CORE_DIR', plugin_dir_path( __FILE__ ) );
 require_once LGSDN_CORE_DIR . 'src/class-content-types.php';
 require_once LGSDN_CORE_DIR . 'src/class-taxonomies.php';
 require_once LGSDN_CORE_DIR . 'src/class-practice-styles.php';
+require_once LGSDN_CORE_DIR . 'src/class-service-styles.php';
 require_once LGSDN_CORE_DIR . 'src/class-fields.php';
 require_once LGSDN_CORE_DIR . 'src/class-playbook-validation.php';
 require_once LGSDN_CORE_DIR . 'src/class-homepage-fields.php';
@@ -33,6 +34,7 @@ add_action( 'init', 'lgsdn_register_dynamic_blocks', 8 );
 
 LGSDN_Fields::hooks();
 LGSDN_Practice_Styles::hooks();
+LGSDN_Service_Styles::hooks();
 LGSDN_Playbook_Validation::hooks();
 LGSDN_Homepage_Fields::hooks();
 LGSDN_Editor::hooks();

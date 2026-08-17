@@ -7,19 +7,15 @@ $post_id = isset( $block->context['postId'] ) ? absint( $block->context['postId'
 $page_title = $post_id ? get_the_title( $post_id ) : 'Playbook';
 $page_title = 'Playbook' === $page_title ? 'LGSDN Playbook' : $page_title;
 $image_base = get_theme_file_uri( 'assets/images' );
-$taxonomy_icon_urls = array(
-	'lgsdn_service' => $image_base . '/taxonomy-service.svg',
-	'lgsdn_challenge' => $image_base . '/taxonomy-challenge.svg',
-);
 
 $filter_taxonomies = array(
+	'lgsdn_service' => 'Service area',
 	'lgsdn_practice' => 'Practice',
-	'lgsdn_service' => 'Service',
 	'lgsdn_challenge' => 'Challenge',
 );
 $filter_sentence_labels = array(
+	'lgsdn_service' => 'service areas',
 	'lgsdn_practice' => 'practices',
-	'lgsdn_service' => 'services',
 	'lgsdn_challenge' => 'challenges',
 );
 $active_filters = array();
@@ -56,7 +52,7 @@ if ( ! isset( $sort_options[ $sort ] ) ) {
 $query_args = array(
 	'post_type' => 'lgsdn_playbook',
 	'post_status' => 'publish',
-	'posts_per_page' => 12,
+	'posts_per_page' => -1,
 	'orderby' => 'title' === $sort ? 'title' : 'date',
 	'order' => 'oldest' === $sort ? 'ASC' : ( 'title' === $sort ? 'ASC' : 'DESC' ),
 );
@@ -103,31 +99,19 @@ if ( $active_filter_labels ) {
 	$filter_status .= ' No filters applied.';
 }
 
-$render_contour = static function ( string $colour ): void {
-	$path = LGSDN_Practice_Styles::contour_path( $colour );
-	if ( ! $path ) {
-		return;
+$service_terms = LGSDN_Service_Styles::homepage_terms();
+$primary_service_for_item = static function ( int $item_id ): ?WP_Term {
+	$services = get_the_terms( $item_id, 'lgsdn_service' );
+	$services = $services && ! is_wp_error( $services ) ? array_values( $services ) : array();
+	$primary_service_id = absint( get_post_meta( $item_id, 'lgsdn_primary_service_id', true ) );
+
+	foreach ( $services as $service ) {
+		if ( $service->term_id === $primary_service_id ) {
+			return $service;
+		}
 	}
 
-	$svg = file_get_contents( $path );
-	if ( false === $svg ) {
-		return;
-	}
-
-	$svg = preg_replace(
-		'/#(?:58d5d2|ff7657|e4d85b)/i',
-		'var(--lgsdn-practice-accent)',
-		$svg
-	);
-	$svg = preg_replace(
-		'/<svg\s/',
-		'<svg class="lgsdn-playbook-card__motif" aria-hidden="true" focusable="false" ',
-		$svg,
-		1
-	);
-
-	// The source is a trusted theme asset and contains no user-authored markup.
-	echo $svg; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	return $services[0] ?? null;
 };
 ?>
 <div <?php echo get_block_wrapper_attributes( array( 'class' => 'lgsdn-playbook-index alignfull' ) ); ?>>
@@ -141,25 +125,40 @@ $render_contour = static function ( string $colour ): void {
 		</figure>
 	</section>
 
-	<section class="lgsdn-playbook-contribute">
-		<div class="lgsdn-playbook-shell lgsdn-playbook-contribute__inner">
-			<div>
-				<h2>Contribute an example</h2>
-				<p>Share a real example of service design practice, including what happened, what you learned, and the organisational conditions around the work.</p>
-			</div>
-			<a class="lgsdn-playbook-button lgsdn-button--arrow" href="<?php echo esc_url( home_url( '/join/' ) ); ?>"><span class="lgsdn-button__label">Contribute an example</span></a>
-		</div>
-	</section>
-
 	<section class="lgsdn-playbook-listing lgsdn-playbook-shell" aria-labelledby="case-studies-title">
-		<header class="lgsdn-playbook-listing__header">
-			<div class="lgsdn-playbook-listing__title">
-				<h2 id="case-studies-title">Filter the case studies</h2>
-				<span aria-hidden="true">or</span>
-				<a href="<?php echo esc_url( get_post_type_archive_link( 'lgsdn_playbook' ) ?: '#case-studies-title' ); ?>">Explore areas of practice</a>
-			</div>
-			<p>We capture insights from our innovation processes to share learnable knowledge — through studies, analyses, data visualisations, and publications.</p>
-		</header>
+		<section class="lgsdn-playbook-services" aria-labelledby="service-areas-title">
+			<header class="lgsdn-playbook-section-header">
+				<h2 id="service-areas-title">Explore by service area</h2>
+				<p>Find out how service design works with these services in local government.</p>
+			</header>
+			<?php if ( $service_terms ) : ?>
+				<div class="lgsdn-playbook-service-row" aria-label="Explore by service area">
+					<p id="service-areas-hint" class="screen-reader-text">Use Tab to move through the cards. When this area is focused, use the left and right arrow keys to scroll horizontally.</p>
+					<div class="lgsdn-playbook-service-scroller" data-service-scroller tabindex="0" role="region" aria-labelledby="service-areas-title" aria-describedby="service-areas-hint">
+						<?php foreach ( $service_terms as $service_term ) : ?>
+							<?php
+							$service_style = LGSDN_Service_Styles::for_term( $service_term );
+							$service_url = get_term_link( $service_term );
+							if ( is_wp_error( $service_url ) ) {
+								$service_url = get_permalink( $post_id );
+							}
+							?>
+							<a class="lgsdn-playbook-service-card lgsdn-playbook-service-card--<?php echo esc_attr( $service_style['colour'] ); ?>" style="--lgsdn-service-card-fg:<?php echo esc_attr( $service_style['foreground'] ); ?>" href="<?php echo esc_url( $service_url ); ?>">
+								<span class="lgsdn-playbook-service-card__label">Service</span>
+								<img class="lgsdn-playbook-service-card__icon lgsdn-playbook-service-card__icon--<?php echo esc_attr( $service_style['icon'] ); ?>" src="<?php echo esc_url( LGSDN_Service_Styles::icon_url( $service_style['icon'] ) ); ?>" alt="">
+								<h3><?php echo esc_html( $service_term->name ); ?></h3>
+							</a>
+						<?php endforeach; ?>
+					</div>
+				</div>
+			<?php endif; ?>
+		</section>
+
+		<section class="lgsdn-playbook-case-studies" id="case-study-panel" role="tabpanel" data-playbook-panel="case-studies" aria-labelledby="case-studies-title">
+			<header class="lgsdn-playbook-section-header">
+				<h2 id="case-studies-title" tabindex="-1" data-playbook-heading="case-studies">Read the case studies</h2>
+				<p>Explore real examples of service design practice in local government.</p>
+			</header>
 
 		<div class="lgsdn-playbook-browse">
 			<form class="lgsdn-playbook-filters" method="get" action="<?php echo esc_url( get_permalink( $post_id ) ); ?>" data-playbook-filter-form aria-describedby="playbook-filter-hint">
@@ -245,12 +244,12 @@ $render_contour = static function ( string $colour ): void {
 
 			<div class="lgsdn-playbook-active-filters" aria-labelledby="active-filters-label" data-active-filters <?php echo $active_filters ? '' : 'hidden'; ?>>
 				<span id="active-filters-label" class="screen-reader-text">Active filters</span>
-				<div class="lgsdn-playbook-active-filters__sentence">
-					<span class="lgsdn-playbook-filter-scaffolding">Show case studies with </span>
+				<div class="lgsdn-playbook-active-filters__sentence lgsdn-type-filter-sentence">
+					<span class="lgsdn-playbook-filter-scaffolding">Showing </span>
 					<?php $active_group_index = 0; ?>
 					<?php foreach ( $active_filters as $taxonomy => $slugs ) : ?>
 						<?php if ( $active_group_index > 0 ) : ?>
-							<span class="lgsdn-playbook-filter-group-connector">And </span>
+							<span class="lgsdn-playbook-filter-group-connector">and </span>
 						<?php endif; ?>
 						<span class="lgsdn-playbook-filter-group-label"><?php echo esc_html( $filter_sentence_labels[ $taxonomy ] ); ?></span><span class="lgsdn-playbook-filter-scaffolding"> matching </span>
 						<?php foreach ( $slugs as $term_index => $slug ) : ?>
@@ -260,6 +259,7 @@ $render_contour = static function ( string $colour ): void {
 							$remaining_args = array( 'sort' => $sort );
 							$is_last_term = $term_index === count( $slugs ) - 1;
 							$has_comma = $term_index < count( $slugs ) - 2;
+							$has_following_group = $active_group_index < count( $active_filters ) - 1;
 
 							foreach ( $active_filters as $remaining_taxonomy => $remaining_slugs ) {
 								$remaining_values = $remaining_taxonomy === $taxonomy
@@ -273,15 +273,19 @@ $render_contour = static function ( string $colour ): void {
 
 							$remove_url = add_query_arg( $remaining_args, get_permalink( $post_id ) );
 							?>
-							<?php if ( $term instanceof WP_Term ) : ?>
-								<?php if ( $is_last_term && $term_index > 0 ) : ?>
+			<?php if ( $term instanceof WP_Term ) : ?>
+				<?php $filter_value_classes = array( 'lgsdn-playbook-filter-value' ); ?>
+				<?php if ( 'lgsdn_service' === $taxonomy ) : ?>
+					<?php $filter_value_classes[] = 'has-service-' . LGSDN_Service_Styles::for_term( $term )['colour']; ?>
+				<?php endif; ?>
+				<?php if ( $is_last_term && $term_index > 0 ) : ?>
 									<span class="lgsdn-playbook-filter-last-value"> <span class="lgsdn-playbook-filter-value-connector">or</span>
 								<?php endif; ?>
 								<span class="lgsdn-playbook-filter-value-unit">
-									<a class="lgsdn-playbook-filter-value" href="<?php echo esc_url( $remove_url ); ?>" data-remove-filter="<?php echo esc_attr( $query_key ); ?>" data-remove-value="<?php echo esc_attr( $slug ); ?>">
+						<a class="<?php echo esc_attr( implode( ' ', $filter_value_classes ) ); ?>" href="<?php echo esc_url( $remove_url ); ?>" data-remove-filter="<?php echo esc_attr( $query_key ); ?>" data-remove-value="<?php echo esc_attr( $slug ); ?>">
 										<span class="lgsdn-playbook-filter-value__label"><?php echo esc_html( $term->name ); ?></span><span class="lgsdn-playbook-filter-value__remove" aria-hidden="true">×</span>
 										<span class="screen-reader-text"><?php echo esc_html( 'Remove ' . strtolower( $filter_taxonomies[ $taxonomy ] ) . ' filter: ' . $term->name ); ?></span>
-									</a><?php if ( $has_comma ) : ?><span class="lgsdn-playbook-filter-punctuation" aria-hidden="true">,</span><?php elseif ( $is_last_term ) : ?><span class="lgsdn-playbook-filter-period" aria-hidden="true">.</span><?php endif; ?>
+									</a><?php if ( $has_comma || ( $is_last_term && $has_following_group ) ) : ?><span class="lgsdn-playbook-filter-punctuation" aria-hidden="true">,</span><?php elseif ( $is_last_term ) : ?><span class="lgsdn-playbook-filter-period" aria-hidden="true">.</span><?php endif; ?>
 								</span>
 								<?php if ( $is_last_term && $term_index > 0 ) : ?>
 									</span>
@@ -291,67 +295,58 @@ $render_contour = static function ( string $colour ): void {
 						<?php ++$active_group_index; ?>
 					<?php endforeach; ?>
 				</div>
-				<a class="lgsdn-playbook-clear-filters" href="<?php echo esc_url( add_query_arg( array( 'sort' => $sort ), get_permalink( $post_id ) ) ); ?>" data-clear-filters>Clear all filters</a>
+				<a class="lgsdn-playbook-clear-filters" href="<?php echo esc_url( add_query_arg( array( 'sort' => $sort ), get_permalink( $post_id ) ) ); ?>" data-clear-filters hidden>Clear all filters</a>
 			</div>
 
 			<p class="screen-reader-text" aria-live="polite" aria-atomic="true" data-filter-status><?php echo esc_html( $filter_status ); ?></p>
 		</div>
 
 		<div class="lgsdn-playbook-results" data-playbook-results aria-busy="false">
-			<p class="lgsdn-playbook-results__count"><?php echo esc_html( $result_count_label ); ?></p>
+			<p class="lgsdn-playbook-results__count" hidden><?php echo esc_html( $result_count_label ); ?></p>
 			<?php if ( $items->have_posts() ) : ?>
 				<div id="case-study-results" class="lgsdn-playbook-grid">
 				<?php
 				while ( $items->have_posts() ) :
 					$items->the_post();
 					$item_id = get_the_ID();
-					$practices = get_the_terms( $item_id, 'lgsdn_practice' );
-					$practices = $practices && ! is_wp_error( $practices ) ? array_values( $practices ) : array();
-					$primary_id = absint( get_post_meta( $item_id, 'lgsdn_primary_practice_id', true ) );
-					$primary = null;
-
-					foreach ( $practices as $practice ) {
-						if ( $practice->term_id === $primary_id ) {
-							$primary = $practice;
-							break;
-						}
-					}
-
-					if ( ! $primary && $practices ) {
-						$primary = $practices[0];
-					}
-
-					$style = $primary
-						? LGSDN_Practice_Styles::for_term( $primary )
+					$primary_service = $primary_service_for_item( $item_id );
+					$councils = get_the_terms( $item_id, 'lgsdn_council' );
+					$council_label = $councils && ! is_wp_error( $councils ) ? implode( ', ', wp_list_pluck( $councils, 'name' ) ) : '';
+					$service_style = $primary_service
+						? LGSDN_Service_Styles::for_term( $primary_service )
 						: array(
-							'colour' => 'orange',
+							'background' => '#E4E7EE',
+							'foreground' => '#27272D',
 						);
-					$secondary_labels = array();
-					foreach ( array( 'lgsdn_service', 'lgsdn_purpose', 'lgsdn_challenge', 'lgsdn_council' ) as $taxonomy ) {
+					$case_study_tags = array();
+					if ( $primary_service ) {
+						$case_study_tags[] = array(
+							'name' => $primary_service->name,
+							'taxonomy' => 'lgsdn_service',
+							'primary' => true,
+						);
+					}
+					foreach ( array( 'lgsdn_service', 'lgsdn_practice', 'lgsdn_purpose', 'lgsdn_challenge' ) as $taxonomy ) {
 						$terms = get_the_terms( $item_id, $taxonomy );
 						if ( ! $terms || is_wp_error( $terms ) ) {
 							continue;
 						}
 
 						foreach ( $terms as $term ) {
-							if ( ! in_array( $term->name, array_column( $secondary_labels, 'name' ), true ) ) {
-								$secondary_labels[] = array(
+							if ( $primary_service && 'lgsdn_service' === $taxonomy && $term->term_id === $primary_service->term_id ) {
+								continue;
+							}
+							if ( ! in_array( $term->name, array_column( $case_study_tags, 'name' ), true ) ) {
+								$case_study_tags[] = array(
 									'name' => $term->name,
 									'taxonomy' => $taxonomy,
+									'primary' => false,
 								);
-							}
-
-							if ( 2 === count( $secondary_labels ) ) {
-								break 2;
 							}
 						}
 					}
-					$contributor_id = absint( get_post_meta( $item_id, 'lgsdn_contributor_id', true ) );
-					$contributor_name = $contributor_id && 'lgsdn_person' === get_post_type( $contributor_id )
-						? get_the_title( $contributor_id )
-						: 'LGSDN';
 					?>
-					<article class="lgsdn-playbook-card has-practice-<?php echo esc_attr( $style['colour'] ); ?>">
+					<article class="lgsdn-playbook-card">
 						<a class="lgsdn-playbook-card__link" href="<?php the_permalink(); ?>">
 							<div class="lgsdn-playbook-card__media">
 								<?php if ( has_post_thumbnail() ) : ?>
@@ -364,32 +359,26 @@ $render_contour = static function ( string $colour ): void {
 										)
 									);
 									?>
-								<?php else : ?>
-									<?php $render_contour( $style['colour'] ); ?>
-								<?php endif; ?>
-								<div class="lgsdn-playbook-card__media-meta">
-									<span class="lgsdn-playbook-card__media-label lgsdn-playbook-card__media-label--author"><?php echo esc_html( $contributor_name ); ?></span>
-									<?php if ( $primary ) : ?>
-										<span class="lgsdn-playbook-card__media-label lgsdn-playbook-card__media-label--practice"><?php echo esc_html( $primary->name ); ?></span>
-									<?php endif; ?>
-								</div>
-							</div>
+										<?php else : ?>
+											<img class="lgsdn-playbook-card__image" src="<?php echo esc_url( $image_base . '/home-feature-image.png' ); ?>" alt="" loading="lazy">
+										<?php endif; ?>
+										<?php if ( $council_label ) : ?>
+											<span class="lgsdn-playbook-card__council"><?php echo esc_html( $council_label ); ?></span>
+										<?php endif; ?>
+									</div>
 							<div class="lgsdn-playbook-card__body">
-								<h3><?php the_title(); ?></h3>
-								<?php if ( $secondary_labels ) : ?>
-									<div class="lgsdn-playbook-card__tags" aria-label="Other case study classifications">
-										<?php foreach ( $secondary_labels as $label ) : ?>
-											<?php $taxonomy_object = get_taxonomy( $label['taxonomy'] ); ?>
-											<span class="lgsdn-playbook-tag lgsdn-playbook-tag--secondary" aria-label="<?php echo esc_attr( ( $taxonomy_object ? $taxonomy_object->labels->singular_name : 'Classification' ) . ': ' . $label['name'] ); ?>">
-												<?php if ( isset( $taxonomy_icon_urls[ $label['taxonomy'] ] ) ) : ?>
-													<img class="lgsdn-playbook-tag__icon" src="<?php echo esc_url( $taxonomy_icon_urls[ $label['taxonomy'] ] ); ?>" alt="" width="16" height="16">
-												<?php endif; ?>
-												<?php echo esc_html( $label['name'] ); ?>
-											</span>
+								<?php if ( $case_study_tags ) : ?>
+									<div class="lgsdn-playbook-card__tags" aria-label="Case study classifications">
+										<?php foreach ( $case_study_tags as $label ) : ?>
+											<span class="lgsdn-playbook-tag <?php echo $label['primary'] ? 'lgsdn-playbook-tag--service' : 'lgsdn-playbook-tag--secondary'; ?>" <?php echo $label['primary'] ? 'style="--lgsdn-service-tag-bg:' . esc_attr( $service_style['background'] ) . ';--lgsdn-service-tag-fg:' . esc_attr( $service_style['foreground'] ) . ';"' : ''; ?>><?php echo esc_html( $label['name'] ); ?></span>
 										<?php endforeach; ?>
 									</div>
 								<?php endif; ?>
-								<time datetime="<?php echo esc_attr( get_the_date( DATE_W3C ) ); ?>"><?php echo esc_html( get_the_date( 'j F Y' ) ); ?></time>
+								<h4><?php the_title(); ?></h4>
+								<?php $excerpt = wp_trim_words( wp_strip_all_tags( get_the_excerpt() ), 32 ); ?>
+								<?php if ( $excerpt ) : ?>
+									<p><?php echo esc_html( $excerpt ); ?></p>
+								<?php endif; ?>
 							</div>
 						</a>
 					</article>
@@ -399,6 +388,7 @@ $render_contour = static function ( string $colour ): void {
 				<p class="lgsdn-playbook-empty">No case studies match those filters. Remove one or more filters to broaden the results.</p>
 			<?php endif; ?>
 		</div>
+		</section>
 	</section>
 </div>
 <?php

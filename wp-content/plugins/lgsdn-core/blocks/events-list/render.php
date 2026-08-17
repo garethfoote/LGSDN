@@ -35,7 +35,7 @@ if ( empty( $events ) ) {
 }
 ?>
 <section <?php echo get_block_wrapper_attributes( array( 'class' => 'lgsdn-events events' ) ); ?>>
-	<h2>Events</h2>
+	<h2>Join us at an event</h2>
 	<ul class="lgsdn-events__list">
 		<?php foreach ( $events as $event ) : ?>
 			<?php

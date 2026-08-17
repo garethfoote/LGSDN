@@ -18,7 +18,7 @@ final class LGSDN_Homepage_Fields {
 		'lgsdn_home_feature_2_title' => 'Browse the playbook',
 		'lgsdn_home_feature_2_body' => 'This network is a safe and supportive space for people working in service design in local government. It’s here to help you grow your service design practice by.',
 		'lgsdn_home_feature_3_title' => 'Contribute an example',
-		'lgsdn_home_feature_3_body' => 'We capture insights from our innovation processes to share learnable knowledge — through studies, analyses, data visualisations, and publications.',
+		'lgsdn_home_feature_3_body' => '',
 	);
 
 	public static function hooks(): void {

@@ -62,6 +62,8 @@
 			var titleKey = 'lgsdn_home_feature_' + index + '_title';
 			var bodyKey = 'lgsdn_home_feature_' + index + '_body';
 			var title = value( titleKey );
+			var ctaLabels = [ 'Join', 'Browse', 'Contribute' ];
+			var ctaSuffixes = [ ' the network', ' the playbook', ' an example' ];
 
 			return el(
 				'article',
@@ -72,7 +74,7 @@
 				editableText( 'p', '', value( bodyKey ), function ( nextValue ) {
 					updateMeta( bodyKey, nextValue );
 				}, 'Feature description' ),
-				el( 'a', { className: 'button lgsdn-button--arrow', href: '#', onClick: stopLink }, el( 'span', { className: 'lgsdn-button__label' }, title ) )
+				el( 'a', { className: 'button lgsdn-button--arrow', href: '#', onClick: stopLink }, el( 'span', { className: 'lgsdn-button__label' }, ctaLabels[ index - 1 ] ), el( 'span', { className: 'screen-reader-text' }, ctaSuffixes[ index - 1 ] ) )
 			);
 		} );
 
@@ -157,7 +159,7 @@
 						el( 'section', { className: 'feature-grid', id: 'join', 'aria-label': 'Ways to take part' }, features ),
 						el(
 							'article',
-							{ className: 'spotlight spotlight--practice-lilac', id: 'playbook' },
+							{ className: 'spotlight spotlight--practice-purple', id: 'playbook' },
 							el(
 								'div',
 								{ className: 'spotlight__media' },

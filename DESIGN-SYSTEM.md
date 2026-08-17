@@ -15,6 +15,10 @@ The browser is the source of truth for the LGSDN visual system. The WordPress ed
 | Static homepage and isolated component examples | `wp-content/themes/lgsdn/prototypes/` |
 | Shared prototype component styles | `wp-content/themes/lgsdn/assets/css/prototype.css` |
 
+## Colour palette
+
+The six controlled Service area colours mirror the `Brand Colors` collection in the Figma `Sketching` file. The admin selects the Base-mode token by name; it never stores a one-off hexadecimal value. The Contrast-mode values are recorded beside the Base values in `LGSDN_Service_Styles` for components that need the alternate Figma mode.
+
 ## Breakpoints
 
 CityLAB Berlin uses several overlapping thresholds around 480, 768, 1024, 1280, and 1440px. LGSDN deliberately starts with fewer layout modes:
@@ -26,19 +30,20 @@ CityLAB Berlin uses several overlapping thresholds around 480, 768, 1024, 1280, 
 
 Use a breakpoint only when the content needs it, rather than targeting particular devices.
 
-## Practice colours
+## Service area colours
 
-Playbook cards take their visual identity from their Primary practice. Administrators assign one of five controlled tokens to each Practice term; arbitrary colours are not accepted.
+Service-area cards take their visual identity from their primary Service area. Administrators assign one of six controlled tokens to each Service area term; arbitrary colours are not accepted.
 
-| Token | Background | Text |
-|---|---|---|
-| Practice lilac | `#C6AFE3` | Ink |
-| Practice olive | `#4B5A2B` | White |
-| Practice orange | `#FD7D12` | Ink |
-| Practice blue | `#4B66FF` | White |
-| Practice gold | `#FAC558` | Ink |
+| Token | Base | Contrast | Card text |
+|---|---|---|---|
+| Service area gold | `#FAC558` | `#AB9300` | Ink |
+| Service area blue | `#4B66FF` | `#4B5AFF` | White |
+| Service area purple | `#C6AFE3` | `#9F8AC0` | Ink |
+| Service area olive | `#4B5A2B` | `#4B5A37` | White |
+| Service area orange | `#FF9D4D` | `#EA7200` | Ink |
+| Service area pink | `#FACDE1` | `#B3889B` | Ink |
 
-The palette values live in `theme.json`. Practice term metadata stores only the stable colour token name rather than a hexadecimal value or asset URL. Each token maps by convention to `assets/images/practice-contour-{token}.svg`; missing files trigger an administrator notice and fall back to the orange contour on the front end.
+The palette values are owned by `LGSDN_Service_Styles`. Service-area term metadata stores only the stable colour token name rather than a hexadecimal value or asset URL. The legacy `lilac` token is read as `purple` so existing content keeps its appearance. Practice terms no longer expose this palette in their admin screen; their existing token metadata remains available to preserve legacy practice contour fallbacks.
 
 Playbook taxonomy tags have two roles:
 
@@ -61,7 +66,7 @@ The scale follows the semantic roles visible in Figma. Change the `settings.typo
 |---|---|---|
 | Display | Srbija Sans | 40px / 110% |
 | Page title | Srbija Sans | 36px / 115% |
-| Section title | Srbija Sans | 28px / 120% |
+| Section title / H2 | Srbija Sans | 36px / 120% |
 | Page lead | Atkinson Hyperlegible Next | 24px compact, 28px medium, 32px wide / 150% |
 | Article lead | Atkinson Hyperlegible Next | 24px compact, 28px medium and wide / 150% |
 | Event title | Atkinson Hyperlegible Next | 22px / 125% |

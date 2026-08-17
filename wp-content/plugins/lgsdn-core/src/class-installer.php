@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class LGSDN_Installer {
-	private const SCHEMA_VERSION = '4';
+	private const SCHEMA_VERSION = '6';
 	private const OPTION_NAME = 'lgsdn_content_schema_version';
 
 	private const TERMS = array(
@@ -78,6 +78,8 @@ final class LGSDN_Installer {
 		LGSDN_Taxonomies::register();
 		self::seed_terms();
 		self::seed_practice_styles();
+		self::seed_service_styles();
+		self::migrate_primary_services();
 		self::seed_homepage_links();
 		self::seed_homepage_preview();
 		update_option( self::OPTION_NAME, self::SCHEMA_VERSION, false );
@@ -95,6 +97,8 @@ final class LGSDN_Installer {
 
 		self::seed_terms();
 		self::seed_practice_styles();
+		self::seed_service_styles();
+		self::migrate_primary_services();
 		self::seed_homepage_links();
 		self::seed_homepage_preview();
 		update_option( self::OPTION_NAME, self::SCHEMA_VERSION, false );
@@ -111,7 +115,7 @@ final class LGSDN_Installer {
 	}
 
 	private static function seed_practice_styles(): void {
-		$colours = array_keys( LGSDN_Practice_Styles::colours() );
+		$colours = array_keys( LGSDN_Service_Styles::colours() );
 		$practices = get_terms(
 			array(
 				'taxonomy' => 'lgsdn_practice',
@@ -132,6 +136,78 @@ final class LGSDN_Installer {
 					LGSDN_Practice_Styles::COLOUR_META,
 					$colours[ $index % count( $colours ) ]
 				);
+			}
+		}
+	}
+
+	private static function seed_service_styles(): void {
+		$services = get_terms(
+			array(
+				'taxonomy' => 'lgsdn_service',
+				'hide_empty' => false,
+				'orderby' => 'name',
+				'order' => 'ASC',
+			)
+		);
+
+		if ( is_wp_error( $services ) ) {
+			return;
+		}
+
+		foreach ( $services as $service ) {
+			$defaults = LGSDN_Service_Styles::defaults_for_term( $service );
+			foreach ( $defaults as $key => $value ) {
+				if ( ! metadata_exists( 'term', $service->term_id, $key ) ) {
+					update_term_meta( $service->term_id, $key, $value );
+				}
+			}
+
+			// Democracy and participation existed before it had a dedicated
+			// homepage card style, so move only its old untouched defaults forward.
+			if ( 'democracy and participation' === strtolower( $service->name ) ) {
+				$legacy_defaults = array(
+					LGSDN_Service_Styles::COLOUR_META => 'orange',
+					LGSDN_Service_Styles::ICON_META => 'service',
+					LGSDN_Service_Styles::ORDER_META => 0,
+					LGSDN_Service_Styles::FEATURED_META => false,
+				);
+
+				foreach ( $legacy_defaults as $key => $legacy_value ) {
+					$current_value = get_term_meta( $service->term_id, $key, true );
+					$is_legacy = match ( $key ) {
+						LGSDN_Service_Styles::COLOUR_META => sanitize_key( (string) $current_value ) === $legacy_value,
+						LGSDN_Service_Styles::ICON_META => sanitize_key( (string) $current_value ) === $legacy_value,
+						LGSDN_Service_Styles::ORDER_META => absint( $current_value ) === $legacy_value,
+						LGSDN_Service_Styles::FEATURED_META => in_array( $current_value, array( '', '0', 0, false ), true ),
+						default => false,
+					};
+
+					if ( $is_legacy ) {
+						update_term_meta( $service->term_id, $key, $defaults[ $key ] );
+					}
+				}
+			}
+		}
+	}
+
+	private static function migrate_primary_services(): void {
+		$items = get_posts(
+			array(
+				'post_type' => 'lgsdn_playbook',
+				'post_status' => array( 'publish', 'draft', 'pending', 'private', 'future' ),
+				'posts_per_page' => -1,
+				'fields' => 'ids',
+			)
+		);
+
+		foreach ( $items as $item_id ) {
+			if ( get_post_meta( $item_id, 'lgsdn_primary_service_id', true ) ) {
+				continue;
+			}
+
+			$services = wp_get_object_terms( $item_id, 'lgsdn_service', array( 'fields' => 'ids' ) );
+			if ( ! is_wp_error( $services ) && ! empty( $services ) ) {
+				update_post_meta( $item_id, 'lgsdn_primary_service_id', absint( $services[0] ) );
 			}
 		}
 	}

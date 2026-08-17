@@ -10,6 +10,41 @@
 
 	document.documentElement.classList.add("lgsdn-filters-enhanced");
 
+	const tabs = Array.from(document.querySelectorAll("[data-playbook-tab]"));
+	const panels = Array.from(document.querySelectorAll("[data-playbook-panel]"));
+	const headings = Array.from(document.querySelectorAll("[data-playbook-heading]"));
+	const practicePanelHeading = document.querySelector(".lgsdn-practice-panel__heading");
+	const selectPanel = (name, updateHash = true) => {
+		tabs.forEach((tab) => {
+			tab.hidden = tab.dataset.playbookTab === name;
+		});
+		headings.forEach((heading) => {
+			heading.hidden = heading.dataset.playbookHeading !== name;
+		});
+		panels.forEach((panel) => {
+			panel.hidden = panel.dataset.playbookPanel !== name;
+		});
+		if (practicePanelHeading) {
+			practicePanelHeading.hidden = true;
+		}
+		if (updateHash) {
+			window.history.replaceState({}, "", `#${name === "practices" ? "practice-panel" : "case-study-panel"}`);
+		}
+
+		if (updateHash) {
+			document.querySelector(`[data-playbook-heading="${name}"]`)?.focus();
+		}
+	};
+
+	tabs.forEach((tab) => {
+		tab.addEventListener("click", (event) => {
+			selectPanel(tab.dataset.playbookTab);
+		});
+	});
+
+	const initialPanel = window.location.hash === "#practice-panel" ? "practices" : "case-studies";
+	selectPanel(initialPanel, false);
+
 	const facets = Array.from(form.querySelectorAll("[data-filter-facet]"));
 	let requestController;
 

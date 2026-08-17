@@ -16,7 +16,8 @@ final class LGSDN_Fields {
 		),
 		'lgsdn_playbook' => array(
 			'lgsdn_contributor_id' => array( 'Case study author', 'person-select' ),
-			'lgsdn_primary_practice_id' => array( 'Primary practice', 'practice-select' ),
+			'lgsdn_primary_service_id' => array( 'Primary service area', 'service-select' ),
+			'lgsdn_primary_practice_id' => array( 'Primary practice (optional)', 'practice-select' ),
 			'lgsdn_reviewed_on' => array( 'Last reviewed', 'date' ),
 			'lgsdn_resource_url' => array( 'Resource link', 'url' ),
 			'lgsdn_featured_home' => array( 'Feature on the homepage', 'checkbox' ),
@@ -42,7 +43,7 @@ final class LGSDN_Fields {
 		foreach ( self::FIELD_GROUPS as $post_type => $fields ) {
 			foreach ( $fields as $key => $field ) {
 				$is_boolean = 'checkbox' === $field[1];
-				$is_integer = in_array( $field[1], array( 'person-select', 'practice-select' ), true );
+				$is_integer = in_array( $field[1], array( 'person-select', 'service-select', 'practice-select' ), true );
 				register_post_meta(
 					$post_type,
 					$key,
@@ -148,7 +149,28 @@ final class LGSDN_Fields {
 				}
 			}
 			echo '</select>';
-			echo '<p class="description">This must also be assigned in Practices. Its colour controls the card colour and fallback contour.</p>';
+			echo '<p class="description">Optional. The primary service area is required and controls the service-area card colour.</p>';
+			return;
+		}
+
+		if ( 'service-select' === $type ) {
+			$services = get_terms(
+				array(
+					'taxonomy' => 'lgsdn_service',
+					'hide_empty' => false,
+					'orderby' => 'name',
+					'order' => 'ASC',
+				)
+			);
+			echo '<select id="' . esc_attr( $key ) . '" name="' . esc_attr( $key ) . '">';
+			echo '<option value="">Select a primary service area</option>';
+			if ( ! is_wp_error( $services ) ) {
+				foreach ( $services as $service ) {
+					echo '<option value="' . esc_attr( (string) $service->term_id ) . '" ' . selected( absint( $value ), $service->term_id, false ) . '>' . esc_html( $service->name ) . '</option>';
+				}
+			}
+			echo '</select>';
+			echo '<p class="description">This must also be assigned in Service areas. It controls the primary grouping for the item.</p>';
 			return;
 		}
 
@@ -175,7 +197,7 @@ final class LGSDN_Fields {
 			}
 
 			$value = isset( $_POST[ $key ] ) ? wp_unslash( $_POST[ $key ] ) : '';
-			if ( in_array( $field[1], array( 'person-select', 'practice-select' ), true ) ) {
+			if ( in_array( $field[1], array( 'person-select', 'service-select', 'practice-select' ), true ) ) {
 				$value = absint( $value );
 			} else {
 				$value = 'url' === $field[1] ? esc_url_raw( $value ) : sanitize_text_field( $value );

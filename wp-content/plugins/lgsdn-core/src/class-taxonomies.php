@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class LGSDN_Taxonomies {
 	public const CONTROLLED = array(
-		'lgsdn_service' => array( 'Service', 'Services' ),
+		'lgsdn_service' => array( 'Service area', 'Service areas' ),
 		'lgsdn_practice' => array( 'Practice', 'Practices' ),
 		'lgsdn_purpose' => array( 'Purpose', 'Purposes' ),
 		'lgsdn_challenge' => array( 'Challenge', 'Challenges' ),
@@ -61,7 +61,9 @@ final class LGSDN_Taxonomies {
 				'hierarchical' => false,
 				'show_in_rest' => true,
 				'show_admin_column' => true,
-				'rewrite' => array( 'slug' => strtolower( $plural ) ),
+				// Keep the existing public URL structure while presenting the
+				// taxonomy as service areas in editorial UI.
+				'rewrite' => array( 'slug' => 'lgsdn_service' === $taxonomy ? 'services' : strtolower( $plural ) ),
 				'capabilities' => array(
 					'manage_terms' => $management_capability,
 					'edit_terms' => $management_capability,
@@ -72,4 +74,3 @@ final class LGSDN_Taxonomies {
 		);
 	}
 }
-

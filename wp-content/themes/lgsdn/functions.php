@@ -52,6 +52,16 @@ add_action(
 			array( 'strategy' => 'defer', 'in_footer' => true )
 		);
 
+		if ( is_front_page() || is_page( 'playbook' ) ) {
+			wp_enqueue_script(
+				'lgsdn-service-area-cards',
+				get_theme_file_uri( 'assets/js/service-area-cards.js' ),
+				array(),
+				$asset_version( 'assets/js/service-area-cards.js' ),
+				array( 'strategy' => 'defer', 'in_footer' => true )
+			);
+		}
+
 		if ( is_page( 'playbook' ) ) {
 			wp_enqueue_script(
 				'lgsdn-playbook-filters',
