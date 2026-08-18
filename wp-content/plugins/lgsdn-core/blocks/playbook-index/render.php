@@ -24,17 +24,11 @@ foreach ( $filter_taxonomies as $taxonomy => $label ) {
 	$query_key = str_replace( 'lgsdn_', '', $taxonomy );
 	$submitted_values = isset( $_GET[ $query_key ] ) ? wp_unslash( $_GET[ $query_key ] ) : array(); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	$submitted_values = is_array( $submitted_values ) ? $submitted_values : array( $submitted_values );
-	$valid_values = array();
+	$submitted_value = $submitted_values[0] ?? '';
+	$value           = sanitize_title( $submitted_value );
 
-	foreach ( $submitted_values as $submitted_value ) {
-		$value = sanitize_title( $submitted_value );
-		if ( $value && term_exists( $value, $taxonomy ) ) {
-			$valid_values[] = $value;
-		}
-	}
-
-	if ( $valid_values ) {
-		$active_filters[ $taxonomy ] = array_values( array_unique( $valid_values ) );
+	if ( $value && term_exists( $value, $taxonomy ) ) {
+		$active_filters[ $taxonomy ] = array( $value );
 	}
 }
 
@@ -162,7 +156,7 @@ $primary_service_for_item = static function ( int $item_id ): ?WP_Term {
 
 		<div class="lgsdn-playbook-browse">
 			<form class="lgsdn-playbook-filters" method="get" action="<?php echo esc_url( get_permalink( $post_id ) ); ?>" data-playbook-filter-form aria-describedby="playbook-filter-hint">
-				<p id="playbook-filter-hint" class="screen-reader-text">Select any that apply. Selections within a category match any selected value. Selections across categories must all match.</p>
+				<p id="playbook-filter-hint" class="screen-reader-text">Choose one option from each filter. Selections across categories must all match.</p>
 
 				<?php foreach ( $filter_taxonomies as $taxonomy => $label ) : ?>
 					<?php
@@ -175,48 +169,21 @@ $primary_service_for_item = static function ( int $item_id ): ?WP_Term {
 							'order' => 'ASC',
 						)
 					);
-					$selected_values = $active_filters[ $taxonomy ] ?? array();
-					$selected_count = count( $selected_values );
-					$facet_id = 'lgsdn-filter-' . $query_key;
+					$selected_value = $active_filters[ $taxonomy ][0] ?? '';
+					$facet_id       = 'lgsdn-filter-' . $query_key;
 					?>
-					<details class="lgsdn-playbook-facet" data-filter-facet="<?php echo esc_attr( $query_key ); ?>">
-						<summary>
-							<span><?php echo esc_html( $label ); ?></span>
-							<span class="lgsdn-playbook-facet__count screen-reader-text" data-facet-count>
-								<?php if ( $selected_count ) : ?>
-									<?php echo esc_html( sprintf( _n( '%d selected', '%d selected', $selected_count, 'lgsdn' ), $selected_count ) ); ?>
-								<?php endif; ?>
-							</span>
-						</summary>
-						<div class="lgsdn-playbook-facet__panel">
-							<div class="lgsdn-playbook-facet__search" data-facet-search hidden>
-								<label for="<?php echo esc_attr( $facet_id . '-search' ); ?>">Search <?php echo esc_html( strtolower( $label ) ); ?> options</label>
-								<input id="<?php echo esc_attr( $facet_id . '-search' ); ?>" type="search" autocomplete="off" data-facet-search-input>
-							</div>
-							<fieldset>
-								<legend class="screen-reader-text"><?php echo esc_html( 'Filter case studies by ' . strtolower( $label ) ); ?></legend>
-								<p class="lgsdn-playbook-facet__hint">Select all that apply</p>
-								<div class="lgsdn-playbook-facet__options" data-facet-options>
+					<div class="lgsdn-playbook-facet<?php echo $selected_value ? ' has-selection' : ''; ?>" data-filter-facet="<?php echo esc_attr( $query_key ); ?>">
+						<label class="screen-reader-text" for="<?php echo esc_attr( $facet_id ); ?>"><?php echo esc_html( 'Filter case studies by ' . strtolower( $label ) ); ?></label>
+						<select id="<?php echo esc_attr( $facet_id ); ?>" name="<?php echo esc_attr( $query_key ); ?>" aria-label="<?php echo esc_attr( $label ); ?>" data-filter-select>
+							<option value=""><?php echo esc_html( $label ); ?></option>
 							<?php if ( ! is_wp_error( $terms ) ) : ?>
 								<?php foreach ( $terms as $term ) : ?>
-											<?php $option_id = $facet_id . '-' . $term->term_id; ?>
-											<label class="lgsdn-playbook-checkbox" data-filter-option="<?php echo esc_attr( strtolower( $term->name ) ); ?>">
-												<input
-													id="<?php echo esc_attr( $option_id ); ?>"
-													type="checkbox"
-													name="<?php echo esc_attr( $query_key ); ?>[]"
-													value="<?php echo esc_attr( $term->slug ); ?>"
-													<?php checked( in_array( $term->slug, $selected_values, true ) ); ?>
-												>
-												<span><?php echo esc_html( $term->name ); ?></span>
-											</label>
+									<option value="<?php echo esc_attr( $term->slug ); ?>" <?php selected( $term->slug, $selected_value ); ?>><?php echo esc_html( $term->name ); ?></option>
 								<?php endforeach; ?>
 							<?php endif; ?>
-								</div>
-								<p class="screen-reader-text" aria-live="polite" aria-atomic="true" data-facet-search-status></p>
-							</fieldset>
-						</div>
-					</details>
+						</select>
+						<button class="lgsdn-playbook-facet__clear" type="button" data-clear-facet <?php echo $selected_value ? '' : 'hidden'; ?> aria-label="<?php echo esc_attr( 'Remove ' . strtolower( $label ) . ' filter' ); ?>">×</button>
+					</div>
 				<?php endforeach; ?>
 
 				<button class="lgsdn-playbook-filter-button" type="submit">Apply filters</button>
@@ -252,50 +219,24 @@ $primary_service_for_item = static function ( int $item_id ): ?WP_Term {
 							<span class="lgsdn-playbook-filter-group-connector">and </span>
 						<?php endif; ?>
 						<span class="lgsdn-playbook-filter-group-label"><?php echo esc_html( $filter_sentence_labels[ $taxonomy ] ); ?></span><span class="lgsdn-playbook-filter-scaffolding"> matching </span>
-						<?php foreach ( $slugs as $term_index => $slug ) : ?>
-							<?php
-							$query_key = str_replace( 'lgsdn_', '', $taxonomy );
-							$term = get_term_by( 'slug', $slug, $taxonomy );
-							$remaining_args = array( 'sort' => $sort );
-							$is_last_term = $term_index === count( $slugs ) - 1;
-							$has_comma = $term_index < count( $slugs ) - 2;
-							$has_following_group = $active_group_index < count( $active_filters ) - 1;
-
-							foreach ( $active_filters as $remaining_taxonomy => $remaining_slugs ) {
-								$remaining_values = $remaining_taxonomy === $taxonomy
-									? array_values( array_diff( $remaining_slugs, array( $slug ) ) )
-									: $remaining_slugs;
-
-								if ( $remaining_values ) {
-									$remaining_args[ str_replace( 'lgsdn_', '', $remaining_taxonomy ) ] = $remaining_values;
-								}
-							}
-
-							$remove_url = add_query_arg( $remaining_args, get_permalink( $post_id ) );
-							?>
+						<?php foreach ( $slugs as $slug ) : ?>
+			<?php
+			$term = get_term_by( 'slug', $slug, $taxonomy );
+			?>
 			<?php if ( $term instanceof WP_Term ) : ?>
 				<?php $filter_value_classes = array( 'lgsdn-playbook-filter-value' ); ?>
 				<?php if ( 'lgsdn_service' === $taxonomy ) : ?>
 					<?php $filter_value_classes[] = 'has-service-' . LGSDN_Service_Styles::for_term( $term )['colour']; ?>
 				<?php endif; ?>
-				<?php if ( $is_last_term && $term_index > 0 ) : ?>
-									<span class="lgsdn-playbook-filter-last-value"> <span class="lgsdn-playbook-filter-value-connector">or</span>
-								<?php endif; ?>
-								<span class="lgsdn-playbook-filter-value-unit">
-						<a class="<?php echo esc_attr( implode( ' ', $filter_value_classes ) ); ?>" href="<?php echo esc_url( $remove_url ); ?>" data-remove-filter="<?php echo esc_attr( $query_key ); ?>" data-remove-value="<?php echo esc_attr( $slug ); ?>">
-										<span class="lgsdn-playbook-filter-value__label"><?php echo esc_html( $term->name ); ?></span><span class="lgsdn-playbook-filter-value__remove" aria-hidden="true">×</span>
-										<span class="screen-reader-text"><?php echo esc_html( 'Remove ' . strtolower( $filter_taxonomies[ $taxonomy ] ) . ' filter: ' . $term->name ); ?></span>
-									</a><?php if ( $has_comma || ( $is_last_term && $has_following_group ) ) : ?><span class="lgsdn-playbook-filter-punctuation" aria-hidden="true">,</span><?php elseif ( $is_last_term ) : ?><span class="lgsdn-playbook-filter-period" aria-hidden="true">.</span><?php endif; ?>
-								</span>
-								<?php if ( $is_last_term && $term_index > 0 ) : ?>
-									</span>
-								<?php endif; ?>
-							<?php endif; ?>
+				<span class="lgsdn-playbook-filter-value-unit">
+					<span class="<?php echo esc_attr( implode( ' ', $filter_value_classes ) ); ?>"><span class="lgsdn-playbook-filter-value__label"><?php echo esc_html( $term->name ); ?></span></span><?php if ( $active_group_index < count( $active_filters ) - 1 ) : ?><span class="lgsdn-playbook-filter-punctuation" aria-hidden="true">,</span><?php else : ?><span class="lgsdn-playbook-filter-period" aria-hidden="true">.</span><?php endif; ?>
+				</span>
+			<?php endif; ?>
 						<?php endforeach; ?>
 						<?php ++$active_group_index; ?>
 					<?php endforeach; ?>
 				</div>
-				<a class="lgsdn-playbook-clear-filters" href="<?php echo esc_url( add_query_arg( array( 'sort' => $sort ), get_permalink( $post_id ) ) ); ?>" data-clear-filters hidden>Clear all filters</a>
+				<a class="lgsdn-playbook-clear-filters" href="<?php echo esc_url( add_query_arg( array( 'sort' => $sort ), get_permalink( $post_id ) ) ); ?>" data-clear-filters hidden><span aria-hidden="true">×</span> Reset all filters</a>
 			</div>
 
 			<p class="screen-reader-text" aria-live="polite" aria-atomic="true" data-filter-status><?php echo esc_html( $filter_status ); ?></p>

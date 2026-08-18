@@ -48,19 +48,28 @@
 	const facets = Array.from(form.querySelectorAll("[data-filter-facet]"));
 	let requestController;
 
-	const updateFacetCounts = () => {
+	const updateFacetStates = () => {
 		facets.forEach((facet) => {
-			const count = facet.querySelectorAll('input[type="checkbox"]:checked').length;
-			const output = facet.querySelector("[data-facet-count]");
+			const select = facet.querySelector("[data-filter-select]");
+			const clearButton = facet.querySelector("[data-clear-facet]");
 
-			if (output) {
-				output.textContent = count ? `${count} selected` : "";
+			if (!select || !clearButton) {
+				return;
 			}
+
+			const hasSelection = Boolean(select.value);
+			facet.classList.toggle("has-selection", hasSelection);
+			clearButton.hidden = !hasSelection;
 		});
 	};
 
 	const formUrl = () => {
-		const parameters = new URLSearchParams(new FormData(form));
+		const parameters = new URLSearchParams();
+		new FormData(form).forEach((value, key) => {
+			if (value) {
+				parameters.append(key, value);
+			}
+		});
 		return `${form.action}?${parameters.toString()}`;
 	};
 
@@ -119,70 +128,11 @@
 		}
 	};
 
-	facets.forEach((facet) => {
-		const search = facet.querySelector("[data-facet-search]");
-		const input = facet.querySelector("[data-facet-search-input]");
-		const optionContainer = facet.querySelector("[data-facet-options]");
-		const searchStatus = facet.querySelector("[data-facet-search-status]");
-		const facetName = facet.dataset.filterFacet || "filter";
-
-		if (search && input && optionContainer && searchStatus) {
-			search.hidden = false;
-			input.addEventListener("input", () => {
-				const query = input.value.trim().toLocaleLowerCase();
-				const options = Array.from(optionContainer.querySelectorAll("[data-filter-option]"));
-				let visibleCount = 0;
-
-				options.forEach((option) => {
-					const matches = !query || option.dataset.filterOption.includes(query);
-					option.hidden = !matches;
-					if (matches) {
-						visibleCount += 1;
-					}
-				});
-
-				searchStatus.textContent = `${visibleCount} ${facetName} ${
-					visibleCount === 1 ? "option" : "options"
-				} shown.`;
-			});
-		}
-
-		facet.addEventListener("toggle", () => {
-			if (!facet.open) {
-				return;
-			}
-
-			facets.forEach((otherFacet) => {
-				if (otherFacet !== facet) {
-					otherFacet.open = false;
-				}
-			});
-		});
-	});
-
-	document.addEventListener("click", (event) => {
-		facets.forEach((facet) => {
-			if (facet.open && !facet.contains(event.target)) {
-				facet.open = false;
-			}
-		});
-	});
-
-	document.addEventListener("keydown", (event) => {
-		if (event.key !== "Escape") {
-			return;
-		}
-
-		const openFacet = facets.find((facet) => facet.open);
-		if (openFacet) {
-			openFacet.open = false;
-			openFacet.querySelector("summary")?.focus();
-		}
-	});
-
 	form.addEventListener("change", (event) => {
-		if (event.target.matches('input[type="checkbox"], select[name="sort"]')) {
-			updateFacetCounts();
+		if (event.target.matches("select")) {
+			if (event.target.matches("[data-filter-select]")) {
+				updateFacetStates();
+			}
 			updateResults();
 		}
 	});
@@ -193,34 +143,36 @@
 	});
 
 	document.querySelector(".lgsdn-playbook-browse")?.addEventListener("click", (event) => {
-		const removeLink = event.target.closest("[data-remove-filter]");
+		const clearFacetButton = event.target.closest("[data-clear-facet]");
 		const clearLink = event.target.closest("[data-clear-filters]");
 
-		if (removeLink) {
+		if (clearFacetButton) {
 			event.preventDefault();
-			const checkbox = Array.from(form.querySelectorAll('input[type="checkbox"]')).find(
-				(input) =>
-					input.name === `${removeLink.dataset.removeFilter}[]` &&
-					input.value === removeLink.dataset.removeValue
-			);
+			event.stopPropagation();
+			const facet = clearFacetButton.closest("[data-filter-facet]");
+			const select = facet?.querySelector("[data-filter-select]");
 
-			if (checkbox) {
-				checkbox.checked = false;
-				updateFacetCounts();
+			if (select) {
+				select.value = "";
+				updateFacetStates();
 				updateResults();
 			}
+			return;
 		}
 
 		if (clearLink) {
 			event.preventDefault();
-			form.querySelectorAll('input[type="checkbox"]:checked').forEach((checkbox) => {
-				checkbox.checked = false;
+			facets.forEach((facet) => {
+				const select = facet.querySelector("select");
+				if (select) {
+					select.value = "";
+				}
 			});
-			updateFacetCounts();
+			updateFacetStates();
 			updateResults();
 		}
 	});
 
 	window.addEventListener("popstate", () => window.location.reload());
-	updateFacetCounts();
+	updateFacetStates();
 })();

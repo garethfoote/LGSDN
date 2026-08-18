@@ -31,17 +31,17 @@ add_action(
 
 		if ( is_front_page() ) {
 			wp_enqueue_style(
-				'lgsdn-homepage-prototype',
-				get_theme_file_uri( 'assets/css/prototype.css' ),
+				'lgsdn-homepage',
+				get_theme_file_uri( 'assets/css/homepage.css' ),
 				array( 'lgsdn' ),
-				$asset_version( 'assets/css/prototype.css' )
+				$asset_version( 'assets/css/homepage.css' )
 			);
 		}
 
 		wp_enqueue_style(
 			'lgsdn-header',
 			get_theme_file_uri( 'assets/css/header.css' ),
-			array( is_front_page() ? 'lgsdn-homepage-prototype' : 'lgsdn' ),
+			array( is_front_page() ? 'lgsdn-homepage' : 'lgsdn' ),
 			$asset_version( 'assets/css/header.css' )
 		);
 		wp_enqueue_script(

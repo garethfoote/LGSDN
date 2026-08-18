@@ -43,10 +43,16 @@
 			cards.forEach( ( card, index ) => {
 				const cardRect = card.getBoundingClientRect();
 				const visibleWidth = Math.max( 0, Math.min( cardRect.right, viewportRight ) - Math.max( cardRect.left, viewportLeft ) );
-				const isVisible = cardRect.width > 0 && visibleWidth / cardRect.width >= 0.5;
+				const visibilityRatio = cardRect.width > 0 ? visibleWidth / cardRect.width : 0;
+				const isFullyVisible = visibilityRatio >= 0.999;
+				const isPartiallyVisible = visibleWidth > 0 && ! isFullyVisible;
+				const isClippedOnLeft = isPartiallyVisible && cardRect.left < viewportLeft;
+				const isClippedOnRight = isPartiallyVisible && cardRect.right > viewportRight;
 
-				dots[ index ].classList.toggle( 'is-active', isVisible );
-				dots[ index ].setAttribute( 'aria-pressed', isVisible ? 'true' : 'false' );
+				dots[ index ].classList.toggle( 'is-active', isFullyVisible );
+				dots[ index ].classList.toggle( 'is-partial-left', isClippedOnLeft );
+				dots[ index ].classList.toggle( 'is-partial-right', isClippedOnRight );
+				dots[ index ].setAttribute( 'aria-pressed', isFullyVisible ? 'true' : 'false' );
 			} );
 		};
 
@@ -68,10 +74,12 @@
 				intro.classList.remove( 'is-entering' );
 				intro.classList.add( 'is-hidden' );
 			} else if ( introWasHidden ) {
-				intro.classList.remove( 'is-hidden' );
+				intro.classList.remove( 'is-hidden', 'is-entering' );
+				// Force a layout pass so the entrance animation can restart each time.
+				void intro.offsetWidth;
 				intro.classList.add( 'is-entering' );
 			} else {
-				intro.classList.remove( 'is-hidden' );
+				intro.classList.remove( 'is-hidden', 'is-entering' );
 			}
 
 			introWasHidden = isHidden;
@@ -83,75 +91,6 @@
 			row.style.width = `${ Math.max( 0, layoutViewportWidth - rowLeft ) }px`;
 			updateIntroVisibility();
 			updateScrollIndicators();
-		};
-
-		let pointerStartX = 0;
-		let pointerStartScrollLeft = 0;
-		let activePointerId = null;
-		let isDragging = false;
-		let suppressClick = false;
-
-		const handlePointerDown = ( event ) => {
-			if ( event.pointerType === 'mouse' && event.button !== 0 ) {
-				return;
-			}
-
-			pointerStartX = event.clientX;
-			pointerStartScrollLeft = scroller.scrollLeft;
-			activePointerId = event.pointerId;
-			isDragging = false;
-		};
-
-		const handlePointerMove = ( event ) => {
-			if ( activePointerId !== event.pointerId ) {
-				return;
-			}
-
-			const distance = event.clientX - pointerStartX;
-
-			if ( ! isDragging && Math.abs( distance ) < 6 ) {
-				return;
-			}
-
-			isDragging = true;
-			scroller.setPointerCapture( event.pointerId );
-			scroller.classList.add( 'is-dragging' );
-			scroller.scrollLeft = pointerStartScrollLeft - distance;
-			event.preventDefault();
-		};
-
-		const finishPointerDrag = ( event ) => {
-			if ( activePointerId !== event.pointerId ) {
-				return;
-			}
-
-			if ( isDragging && scroller.hasPointerCapture( event.pointerId ) ) {
-				scroller.releasePointerCapture( event.pointerId );
-			}
-
-			if ( isDragging ) {
-				suppressClick = true;
-			}
-
-			scroller.classList.remove( 'is-dragging' );
-			isDragging = false;
-			activePointerId = null;
-
-			if ( suppressClick ) {
-				window.setTimeout( () => {
-					suppressClick = false;
-				}, 0 );
-			}
-		};
-
-		const preventDraggedClick = ( event ) => {
-			if ( ! suppressClick ) {
-				return;
-			}
-
-			event.preventDefault();
-			event.stopPropagation();
-			suppressClick = false;
 		};
 
 		const forwardIntroWheel = ( event ) => {
@@ -176,12 +115,6 @@
 		if ( intro ) {
 			intro.addEventListener( 'wheel', forwardIntroWheel, { passive: false } );
 		}
-		scroller.addEventListener( 'pointerdown', handlePointerDown );
-		scroller.addEventListener( 'pointermove', handlePointerMove, { passive: false } );
-		scroller.addEventListener( 'pointerup', finishPointerDrag );
-		scroller.addEventListener( 'pointercancel', finishPointerDrag );
-		scroller.addEventListener( 'click', preventDraggedClick, true );
-		scroller.addEventListener( 'dragstart', ( event ) => event.preventDefault() );
 		window.addEventListener( 'resize', updateLayout );
 		updateLayout();
 	} );

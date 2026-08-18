@@ -41,7 +41,7 @@
 	--lgsdn-underline-thickness: 0.1em;
 	--lgsdn-gutter: clamp(1.25rem, calc(0.25rem + 2.5vw), 2.5rem);
 	--lgsdn-column-gap: clamp(2.5rem, calc(1.75rem + 2.5vw), 3.75rem);
-	--lgsdn-section-space: clamp(2.5rem, calc(1.4rem + 4.5vw), 5rem);
+	--lgsdn-section-space: clamp(5.5rem, calc(1.4rem + 4.5vw), 6.5rem);
 	--lgsdn-wide-width: 94.5rem;
 	--lgsdn-type-button-size: 0.9375rem;
 	--lgsdn-type-context-body-size: 1.125rem;
@@ -377,13 +377,6 @@ a {
 }
 
 .feature-grid {
-	/* display: grid;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
-	gap: 1.25rem;
-	border-bottom: 1px solid var(--dark-grey);
-	padding: 3rem;
- */
-
 	display: grid;
 	grid-template-columns: repeat(3, minmax(0, 1fr));
 	column-gap: var(--lgsdn-column-gap);
@@ -483,7 +476,7 @@ display: grid;
 
 .homepage-service-row {
 	position: relative;
-	margin-top: 2.75rem;
+	margin-top: 3.75rem;
 	width: 100%;
 	min-height: 28.5rem;
 	overflow: visible;
@@ -540,22 +533,9 @@ display: grid;
 	overscroll-behavior-inline: contain;
 	scroll-behavior: smooth;
 	scroll-padding-inline: var(--lgsdn-gutter);
-	touch-action: pan-y;
-	cursor: grab;
-	user-select: none;
+	touch-action: auto;
 	scrollbar-width: thin;
 	scrollbar-color: var(--dark-grey) var(--divider);
-}
-
-.homepage-service-scroller:active,
-.homepage-case-study-scroller:active {
-	cursor: grabbing;
-}
-
-.homepage-service-scroller.is-dragging,
-.homepage-case-study-scroller.is-dragging {
-	scroll-behavior: auto;
-	cursor: grabbing;
 }
 
 .homepage-service-scroller::-webkit-scrollbar,
@@ -593,14 +573,14 @@ display: grid;
 .homepage-service-row .lgsdn-horizontal-scroll-indicators,
 .homepage-case-study-row .lgsdn-horizontal-scroll-indicators {
 	--lgsdn-scroll-dot-active: var(--dark-grey);
-	--lgsdn-scroll-dot-inactive: var(--divider);
+	--lgsdn-scroll-dot-inactive: transparent;
 }
 
 .homepage-service-card {
 	position: relative;
 	display: flex;
 	min-width: 0;
-	flex: 0 0 19.25rem;
+	flex: 0 0 18rem;
 	flex-direction: column;
 	min-height: 28rem;
 	border-radius: 0.875rem;
@@ -689,7 +669,7 @@ display: grid;
 
 .homepage-case-study-row {
 	position: relative;
-	margin-top: 2.5rem;
+	margin-top: 4.5rem;
 	width: 100%;
 	min-height: 28.5rem;
 	overflow: visible;
@@ -942,7 +922,7 @@ display: grid;
 	padding-bottom: 1.25rem;
 	color: var(--text);
 	font-family: var(--heading-font);
-	font-size: 1.75rem;
+	font-size: var(--wp--preset--font-size--x-large, 36px);
 	font-weight: 400;
 	line-height: 1.2;
 }
@@ -1378,13 +1358,18 @@ display: grid;
 
 	.feature-grid {
 		grid-template-columns: 1fr;
-		gap: 1.5rem;
+		gap: 2.5rem;
 		padding-block: calc(var(--lgsdn-section-space) / 2) var(--lgsdn-section-space);
 		padding-inline: var(--lgsdn-gutter);
 	}
 
 	.homepage-playbook {
 		padding-block: var(--lgsdn-section-space);
+	}
+
+	.homepage-playbook__intro h2,
+	.events h2 {
+		font-size: 2rem;
 	}
 
 	.homepage-service-row {
@@ -1405,7 +1390,7 @@ display: grid;
 	}
 
 	.homepage-service-card {
-		flex-basis: min(78vw, 19.25rem);
+		flex-basis: min(72vw, 18rem);
 		min-height: 25rem;
 	}
 

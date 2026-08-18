@@ -2,6 +2,20 @@
 	const desktopQuery = window.matchMedia( '(min-width: 48rem)' );
 	const reducedMotionQuery = window.matchMedia( '(prefers-reduced-motion: reduce)' );
 
+	const updateScrollState = () => {
+		const isScrolled = window.scrollY > 0;
+
+		document.querySelectorAll( '.site-header' ).forEach( ( header ) => {
+			header.classList.toggle( 'is-scrolled', isScrolled );
+
+			const stickyContainer = header.closest( 'header.wp-block-template-part' ) || header.closest( '.site-frame' );
+			stickyContainer?.classList.toggle( 'is-sticky', isScrolled );
+		} );
+	};
+
+	updateScrollState();
+	window.addEventListener( 'scroll', updateScrollState, { passive: true } );
+
 	document.querySelectorAll( '.menu-button[aria-controls]' ).forEach( ( openButton ) => {
 		const navigation = document.getElementById( openButton.getAttribute( 'aria-controls' ) );
 		const header = openButton.closest( '.site-header' );

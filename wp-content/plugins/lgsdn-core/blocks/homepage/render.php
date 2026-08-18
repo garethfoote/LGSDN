@@ -82,7 +82,7 @@ $primary_service_for_item = static function ( int $item_id ): ?WP_Term {
 		<main id="main-content" tabindex="-1">
 			<section class="home-hero" id="about">
 				<div class="home-hero__copy">
-					<h1 class="home-hero__title">Local Government Service Design Network</h1>
+					<h1 class="home-hero__title">Local Government<br>Service Design Network</h1>
 					<p class="home-hero__intro"><?php echo esc_html( LGSDN_Homepage_Fields::value( $post_id, 'lgsdn_home_lead' ) ); ?></p>
 				</div>
 				<div class="home-hero__graphic" aria-hidden="true">

@@ -29,6 +29,15 @@ services:
       WORDPRESS_DB_USER: ${WORDPRESS_DB_USER:-lgsdn}
       WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD:-lgsdn-local-only}
       WORDPRESS_DEBUG: "1"
+      # Keep local links usable from another device on the same network.
+      # WordPress otherwise canonicalises every request to the installer URL
+      # stored in the database (usually http://localhost:8080).
+      WORDPRESS_CONFIG_EXTRA: |
+        if ( isset( $$_SERVER['HTTP_HOST'] ) ) {
+          $$lgsdn_scheme = ( isset( $$_SERVER['HTTPS'] ) && 'on' === $$_SERVER['HTTPS'] ) ? 'https' : 'http';
+          define( 'WP_HOME', $$lgsdn_scheme . '://' . $$_SERVER['HTTP_HOST'] );
+          define( 'WP_SITEURL', $$lgsdn_scheme . '://' . $$_SERVER['HTTP_HOST'] );
+        }
     volumes:
       - wordpress_data:/var/www/html
       - ./wp-content/plugins/lgsdn-core:/var/www/html/wp-content/plugins/lgsdn-core

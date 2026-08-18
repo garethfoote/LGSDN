@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class LGSDN_Installer {
-	private const SCHEMA_VERSION = '6';
+	private const SCHEMA_VERSION = '7';
 	private const OPTION_NAME = 'lgsdn_content_schema_version';
 
 	private const TERMS = array(
@@ -235,6 +235,11 @@ final class LGSDN_Installer {
 	private static function seed_homepage_preview(): void {
 		$homepage_id = absint( get_option( 'page_on_front' ) );
 		if ( ! $homepage_id ) {
+			return;
+		}
+
+		$current_content = (string) get_post_field( 'post_content', $homepage_id );
+		if ( '' !== trim( $current_content ) ) {
 			return;
 		}
 

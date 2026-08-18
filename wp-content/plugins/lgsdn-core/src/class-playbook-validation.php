@@ -14,7 +14,7 @@ final class LGSDN_Playbook_Validation {
 	);
 
 	public static function hooks(): void {
-		add_filter( 'rest_pre_insert_lgsdn_playbook', array( __CLASS__, 'validate_rest_publish' ), 10, 3 );
+		add_filter( 'rest_pre_insert_lgsdn_playbook', array( __CLASS__, 'validate_rest_publish' ), 10, 2 );
 	}
 
 	/**
@@ -23,15 +23,14 @@ final class LGSDN_Playbook_Validation {
 	 */
 	public static function validate_rest_publish(
 		stdClass $prepared_post,
-		WP_REST_Request $request,
-		bool $creating
+		WP_REST_Request $request
 	): stdClass|WP_Error {
 		$status = (string) ( $request->get_param( 'status' ) ?? $prepared_post->post_status ?? '' );
 		if ( 'publish' !== $status ) {
 			return $prepared_post;
 		}
 
-		$post_id = $creating ? 0 : absint( $prepared_post->ID ?? 0 );
+		$post_id = absint( $prepared_post->ID ?? 0 );
 		$errors = array();
 		$term_ids = array();
 
@@ -86,7 +85,10 @@ final class LGSDN_Playbook_Validation {
 					'Complete these Playbook fields before publishing: %s.',
 					implode( ', ', $errors )
 				),
-				array( 'status' => 400 )
+				array(
+					'status' => 400,
+					'missing_fields' => $errors,
+				)
 			);
 		}
 

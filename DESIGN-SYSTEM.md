@@ -13,7 +13,7 @@ The browser is the source of truth for the LGSDN visual system. The WordPress ed
 | Design-system specimen markup | `wp-content/themes/lgsdn/templates/page-design-system.html` |
 | Placeholder contours | `wp-content/themes/lgsdn/assets/images/practice-contour-*.svg` |
 | Static homepage and isolated component examples | `wp-content/themes/lgsdn/prototypes/` |
-| Shared prototype component styles | `wp-content/themes/lgsdn/assets/css/prototype.css` |
+| Homepage and isolated component styles | `wp-content/themes/lgsdn/assets/css/homepage.css` |
 
 ## Colour palette
 

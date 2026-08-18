@@ -145,7 +145,7 @@
 							el(
 								'div',
 								{ className: 'home-hero__copy' },
-								el( 'h1', { className: 'home-hero__title' }, 'Local Government Service Design Network' ),
+								el( 'h1', { className: 'home-hero__title' }, 'Local Government', el( 'br' ), 'Service Design Network' ),
 								editableText( 'p', 'home-hero__intro', value( 'lgsdn_home_lead' ), function ( nextValue ) {
 									updateMeta( 'lgsdn_home_lead', nextValue );
 								}, 'Homepage introduction' )
@@ -157,61 +157,6 @@
 							)
 						),
 						el( 'section', { className: 'feature-grid', id: 'join', 'aria-label': 'Ways to take part' }, features ),
-						el(
-							'article',
-							{ className: 'spotlight spotlight--practice-purple', id: 'playbook' },
-							el(
-								'div',
-								{ className: 'spotlight__media' },
-								el( 'img', {
-									className: 'spotlight__image',
-									src: imageBase + '/home-feature-image.png',
-									alt: 'Three people working together around a table covered with notes and prototypes',
-								} ),
-								el(
-									'div',
-									{ className: 'spotlight__tags', 'aria-label': 'Case study classifications' },
-									el( 'span', { className: 'tag tag--practice' }, 'User Research' ),
-									el(
-										'span',
-										{ className: 'tag', 'aria-label': 'Service: Adult Social Care' },
-										el( 'img', {
-											className: 'taxonomy-tag-icon',
-											src: imageBase + '/taxonomy-service.svg',
-											alt: '',
-											width: 16,
-											height: 16,
-										} ),
-										'Adult Social Care'
-									),
-									el(
-										'span',
-										{ className: 'tag', 'aria-label': 'Challenge: Silos' },
-										el( 'img', {
-											className: 'taxonomy-tag-icon',
-											src: imageBase + '/taxonomy-challenge.svg',
-											alt: '',
-											width: 16,
-											height: 16,
-										} ),
-										'Silos'
-									)
-								)
-							),
-							el(
-								'div',
-								{ className: 'spotlight__content' },
-								el( 'p', { className: 'spotlight__eyebrow' }, 'From the playbook' ),
-								el( 'h2', null, 'Digital prototyping: Shaping a Platform with Parents' ),
-								el( 'p', null, 'A short description of this featured item goes here.' ),
-								el(
-									'div',
-									{ className: 'button-list' },
-									el( 'a', { className: 'button button--strong lgsdn-button--arrow', href: '#', onClick: stopLink }, el( 'span', { className: 'lgsdn-button__label' }, 'Read the case study' ) ),
-									el( 'a', { className: 'button lgsdn-button--arrow', href: '#', onClick: stopLink }, el( 'span', { className: 'lgsdn-button__label' }, 'See the full playbook' ) )
-								)
-							)
-						),
 						el(
 							'div',
 							{ id: 'events' },

@@ -31,6 +31,7 @@ add_action( 'init', array( 'LGSDN_Content_Types', 'register' ), 5 );
 add_action( 'init', array( 'LGSDN_Taxonomies', 'register' ), 6 );
 add_action( 'init', array( 'LGSDN_Fields', 'register_meta' ), 7 );
 add_action( 'init', 'lgsdn_register_dynamic_blocks', 8 );
+add_action( 'enqueue_block_editor_assets', 'lgsdn_enqueue_editor_assets' );
 
 LGSDN_Fields::hooks();
 LGSDN_Practice_Styles::hooks();
@@ -44,14 +45,35 @@ register_activation_hook( __FILE__, array( 'LGSDN_Installer', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'LGSDN_Installer', 'deactivate' ) );
 
 /**
+ * Load editor-only safeguards for Playbook items.
+ */
+function lgsdn_enqueue_editor_assets(): void {
+	$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+
+	if ( ! $screen || 'lgsdn_playbook' !== $screen->post_type ) {
+		return;
+	}
+
+	$path = LGSDN_CORE_DIR . 'assets/js/playbook-validation.js';
+
+	wp_enqueue_script(
+		'lgsdn-playbook-validation',
+		plugins_url( 'assets/js/playbook-validation.js', LGSDN_CORE_FILE ),
+		array( 'wp-api-fetch', 'wp-data' ),
+		file_exists( $path ) ? (string) filemtime( $path ) : LGSDN_CORE_VERSION,
+		true
+	);
+}
+
+/**
  * Register server-rendered blocks used by the theme templates.
  */
 function lgsdn_register_dynamic_blocks(): void {
-	$homepage_preview_path = get_theme_file_path( 'assets/css/prototype.css' );
+	$homepage_preview_path = get_theme_file_path( 'assets/css/homepage.css' );
 	$homepage_editor_path = LGSDN_CORE_DIR . 'blocks/homepage/index.js';
 	wp_register_style(
 		'lgsdn-homepage-editor',
-		get_theme_file_uri( 'assets/css/prototype.css' ),
+		get_theme_file_uri( 'assets/css/homepage.css' ),
 		array(),
 		file_exists( $homepage_preview_path ) ? (string) filemtime( $homepage_preview_path ) : LGSDN_CORE_VERSION
 	);
