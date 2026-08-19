@@ -11,7 +11,7 @@
 	margin-inline: auto;
 }
 
-.site-frame.is-sticky,
+.site-header.is-sticky,
 .wp-block-template-part.is-sticky {
 	position: sticky;
 	top: var(--lgsdn-admin-bar-height, 0px);

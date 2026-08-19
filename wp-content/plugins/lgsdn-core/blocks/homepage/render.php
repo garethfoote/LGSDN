@@ -86,7 +86,9 @@ $primary_service_for_item = static function ( int $item_id ): ?WP_Term {
 					<p class="home-hero__intro"><?php echo esc_html( LGSDN_Homepage_Fields::value( $post_id, 'lgsdn_home_lead' ) ); ?></p>
 				</div>
 				<div class="home-hero__graphic" aria-hidden="true">
-					<img src="<?php echo esc_url( $image_base . '/home-contour.svg' ); ?>" alt="">
+					<div class="home-hero__graphic-disc">
+						<img src="<?php echo esc_url( $image_base . '/hero-graphic-mark.svg' ); ?>" alt="">
+					</div>
 				</div>
 			</section>
 

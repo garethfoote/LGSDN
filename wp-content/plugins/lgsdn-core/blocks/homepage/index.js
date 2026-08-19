@@ -153,7 +153,11 @@
 							el(
 								'div',
 								{ className: 'home-hero__graphic', 'aria-hidden': true },
-								el( 'img', { src: imageBase + '/home-contour.svg', alt: '' } )
+								el(
+									'div',
+									{ className: 'home-hero__graphic-disc' },
+									el( 'img', { src: imageBase + '/hero-graphic-mark.svg', alt: '' } )
+								)
 							)
 						),
 						el( 'section', { className: 'feature-grid', id: 'join', 'aria-label': 'Ways to take part' }, features ),

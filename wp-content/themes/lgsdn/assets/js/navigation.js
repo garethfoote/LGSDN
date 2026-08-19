@@ -8,7 +8,7 @@
 		document.querySelectorAll( '.site-header' ).forEach( ( header ) => {
 			header.classList.toggle( 'is-scrolled', isScrolled );
 
-			const stickyContainer = header.closest( 'header.wp-block-template-part' ) || header.closest( '.site-frame' );
+			const stickyContainer = header.closest( 'header.wp-block-template-part' ) || header;
 			stickyContainer?.classList.toggle( 'is-sticky', isScrolled );
 		} );
 	};

@@ -62,6 +62,16 @@ add_action(
 			);
 		}
 
+		if ( is_front_page() ) {
+			wp_enqueue_script(
+				'lgsdn-hero-graphic',
+				get_theme_file_uri( 'assets/js/hero-graphic.js' ),
+				array(),
+				$asset_version( 'assets/js/hero-graphic.js' ),
+				array( 'strategy' => 'defer', 'in_footer' => true )
+			);
+		}
+
 		if ( is_page( 'playbook' ) ) {
 			wp_enqueue_script(
 				'lgsdn-playbook-filters',
