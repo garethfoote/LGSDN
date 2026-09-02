@@ -3,6 +3,7 @@
  * Events list block.
  */
 
+$show_heading = ! isset( $attributes['showHeading'] ) || (bool) $attributes['showHeading'];
 $now = current_time( 'Y-m-d\\TH:i' );
 $upcoming = get_posts(
 	array(
@@ -35,7 +36,7 @@ if ( empty( $events ) ) {
 }
 ?>
 <section <?php echo get_block_wrapper_attributes( array( 'class' => 'lgsdn-events events' ) ); ?>>
-	<h2>Join us at an event</h2>
+	<?php if ( $show_heading ) : ?><h2>Join us at an event</h2><?php endif; ?>
 	<ul class="lgsdn-events__list">
 		<?php foreach ( $events as $event ) : ?>
 			<?php

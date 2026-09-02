@@ -1,0 +1,14 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "lgsdn/playbook-article",
+  "version": "0.1.0",
+  "title": "LGSDN Playbook article",
+  "category": "theme",
+  "description": "Renders the structured article layout for a Playbook item.",
+  "supports": {
+    "html": false,
+    "inserter": false
+  },
+  "render": "file:./render.php"
+}

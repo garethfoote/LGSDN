@@ -140,7 +140,7 @@ $primary_service_for_item = static function ( int $item_id ): ?WP_Term {
 							<a class="lgsdn-playbook-service-card lgsdn-playbook-service-card--<?php echo esc_attr( $service_style['colour'] ); ?>" style="--lgsdn-service-card-fg:<?php echo esc_attr( $service_style['foreground'] ); ?>" href="<?php echo esc_url( $service_url ); ?>">
 								<span class="lgsdn-playbook-service-card__label">Service</span>
 								<img class="lgsdn-playbook-service-card__icon lgsdn-playbook-service-card__icon--<?php echo esc_attr( $service_style['icon'] ); ?>" src="<?php echo esc_url( LGSDN_Service_Styles::icon_url( $service_style['icon'] ) ); ?>" alt="">
-								<h3><?php echo esc_html( $service_term->name ); ?></h3>
+								<h3 class="lgsdn-playbook-service-card__title"><?php echo esc_html( $service_term->name ); ?></h3>
 							</a>
 						<?php endforeach; ?>
 					</div>

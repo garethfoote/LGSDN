@@ -109,8 +109,9 @@ $primary_service_for_item = static function ( int $item_id ): ?WP_Term {
 				</div>
 				<div class="homepage-service-row" aria-label="Explore by service area">
 					<article class="homepage-service-intro" data-service-intro>
-						<h4 id="homepage-service-areas-title">Explore by service…</h4>
+						<h4 id="homepage-service-areas-title">Explore by service</h4>
 						<p>Find out how service design works with these services within local government.</p>
+						<a class="button button--strong lgsdn-button--arrow" href="<?php echo esc_url( $playbook_url ); ?>"><span class="lgsdn-button__label">All service areas</span></a>
 					</article>
 					<p id="homepage-service-areas-hint" class="screen-reader-text">Use Tab to move through the cards. When this area is focused, use the left and right arrow keys to scroll horizontally.</p>
 					<div class="homepage-service-scroller" data-service-scroller tabindex="0" role="region" aria-labelledby="homepage-service-areas-title" aria-describedby="homepage-service-areas-hint">
@@ -125,7 +126,7 @@ $primary_service_for_item = static function ( int $item_id ): ?WP_Term {
 							<a class="homepage-service-card homepage-service-card--<?php echo esc_attr( $service_style['colour'] ); ?>" style="--lgsdn-service-card-fg:<?php echo esc_attr( $service_style['foreground'] ); ?>" href="<?php echo esc_url( $service_url ); ?>">
 								<span class="homepage-service-card__label">Service</span>
 								<img class="homepage-service-card__icon homepage-service-card__icon--<?php echo esc_attr( $service_style['icon'] ); ?>" src="<?php echo esc_url( LGSDN_Service_Styles::icon_url( $service_style['icon'] ) ); ?>" alt="">
-								<h3><?php echo esc_html( $service_term->name ); ?></h3>
+								<h3 class="lgsdn-playbook-service-card__title"><?php echo esc_html( $service_term->name ); ?></h3>
 							</a>
 						<?php endforeach; ?>
 					</div>
@@ -134,7 +135,7 @@ $primary_service_for_item = static function ( int $item_id ): ?WP_Term {
 					<article class="homepage-service-intro homepage-case-study-intro" data-case-study-intro>
 						<h4 id="homepage-case-studies-title">Read a case study</h4>
 						<p>Find out how service design works with these services within local government.</p>
-						<a class="button button--strong lgsdn-button--arrow" href="<?php echo esc_url( $playbook_url ); ?>"><span class="lgsdn-button__label">See all</span></a>
+						<a class="button button--strong lgsdn-button--arrow" href="<?php echo esc_url( $playbook_url ); ?>"><span class="lgsdn-button__label">All case studies</span></a>
 					</article>
 					<p id="homepage-case-studies-hint" class="screen-reader-text">Use Tab to move through the cards. When this area is focused, use the left and right arrow keys to scroll horizontally.</p>
 					<div class="homepage-case-study-scroller" data-case-study-scroller tabindex="0" role="region" aria-labelledby="homepage-case-studies-title" aria-describedby="homepage-case-studies-hint">

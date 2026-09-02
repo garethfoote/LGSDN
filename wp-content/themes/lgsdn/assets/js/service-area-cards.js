@@ -9,6 +9,38 @@
 		const intro = row ? row.querySelector( '[data-service-intro], [data-case-study-intro]' ) : null;
 		const cards = Array.from( scroller.children );
 		const scrollIndicators = document.createElement( 'div' );
+		const previousButton = document.createElement( 'button' );
+		const nextButton = document.createElement( 'button' );
+
+		previousButton.className = 'lgsdn-horizontal-scroll-arrow lgsdn-horizontal-scroll-arrow--previous';
+		previousButton.type = 'button';
+		previousButton.setAttribute( 'aria-label', 'Show previous cards' );
+		previousButton.innerHTML = '<span aria-hidden="true">←</span>';
+		nextButton.className = 'lgsdn-horizontal-scroll-arrow lgsdn-horizontal-scroll-arrow--next';
+		nextButton.type = 'button';
+		nextButton.setAttribute( 'aria-label', 'Show next cards' );
+		nextButton.innerHTML = '<span aria-hidden="true">→</span>';
+		scrollIndicators.append( previousButton );
+
+		const getScrollStep = () => {
+			if ( ! cards[ 0 ] ) {
+				return scroller.clientWidth;
+			}
+
+			const nextCardOffset = cards[ 1 ] ? cards[ 1 ].offsetLeft : cards[ 0 ].offsetLeft + cards[ 0 ].offsetWidth;
+			return Math.max( 1, nextCardOffset - cards[ 0 ].offsetLeft );
+		};
+
+		const scrollCards = ( direction ) => {
+			scroller.scrollBy( {
+				left: direction * getScrollStep(),
+				behavior: reducedMotionQuery.matches ? 'auto' : 'smooth',
+			} );
+		};
+
+		previousButton.addEventListener( 'click', () => scrollCards( -1 ) );
+		nextButton.addEventListener( 'click', () => scrollCards( 1 ) );
+
 		const dots = cards.map( ( card, index ) => {
 			const dot = document.createElement( 'button' );
 			const title = card.querySelector( 'h3, h4' );
@@ -27,6 +59,7 @@
 			scrollIndicators.appendChild( dot );
 			return dot;
 		} );
+		scrollIndicators.append( nextButton );
 
 		scrollIndicators.className = 'lgsdn-horizontal-scroll-indicators';
 		scrollIndicators.setAttribute( 'role', 'group' );
@@ -39,6 +72,10 @@
 			const scrollerRect = scroller.getBoundingClientRect();
 			const viewportLeft = scrollerRect.left;
 			const viewportRight = viewportLeft + scroller.clientWidth;
+			const maxScrollLeft = Math.max( 0, scroller.scrollWidth - scroller.clientWidth );
+
+			previousButton.disabled = scroller.scrollLeft <= 1;
+			nextButton.disabled = scroller.scrollLeft >= maxScrollLeft - 1;
 
 			cards.forEach( ( card, index ) => {
 				const cardRect = card.getBoundingClientRect();

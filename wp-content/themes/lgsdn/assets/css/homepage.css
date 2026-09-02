@@ -425,8 +425,12 @@ display: grid;
 	margin-block: 0 20px;
 	width: 100%;
 	color: var(--off-black);
-	font-size: var(--lgsdn-type-context-body-size);
 	line-height: 1.5;
+}
+
+.homepage-playbook__intro p,
+.feature-card p {
+	font-size: max(var(--wp--preset--font-size--large), 1.375rem);
 }
 
 .feature-card .button {
@@ -440,7 +444,7 @@ display: grid;
 .homepage-playbook {
 	position: relative;
 	overflow-x: clip;
-	padding-block: var(--lgsdn-section-space);
+	padding-block: calc(var(--lgsdn-section-space) - 1rem) calc(var(--lgsdn-section-space) + 1rem);
 }
 
 .homepage-playbook::before {
@@ -468,7 +472,6 @@ display: grid;
 .homepage-playbook__intro p {
 	margin-top: 0.75rem;
 	color: var(--text);
-	font-size: 1.25rem;
 	line-height: 1.5;
 }
 
@@ -488,7 +491,7 @@ display: grid;
 
 .homepage-service-row {
 	position: relative;
-	margin-top: 3.75rem;
+	margin-top: 5.75rem;
 	width: 100%;
 	min-height: 28.5rem;
 	overflow: visible;
@@ -503,7 +506,7 @@ display: grid;
 	width: 19.25rem;
 	flex-direction: column;
 	min-height: 28rem;
-	border-radius: 0.875rem;
+	border-radius: 0.5rem;
 	padding: 1rem 1.5rem 1.5rem;
 	transform: translateX(0);
 	transition: opacity 180ms ease, transform 220ms ease;
@@ -539,6 +542,7 @@ display: grid;
 	min-width: 0;
 	gap: 0.75rem;
 	padding-left: calc(var(--lgsdn-gutter) + 19.25rem + 0.75rem);
+	padding-right: 0.75rem;
 	padding-block: 0.25rem;
 	overflow-x: auto;
 	overflow-y: clip;
@@ -584,7 +588,7 @@ display: grid;
 
 .homepage-service-row .lgsdn-horizontal-scroll-indicators,
 .homepage-case-study-row .lgsdn-horizontal-scroll-indicators {
-	--lgsdn-scroll-dot-active: var(--dark-grey);
+	--lgsdn-scroll-dot-active: var(--lgsdn-spotlight);
 	--lgsdn-scroll-dot-inactive: transparent;
 }
 
@@ -595,7 +599,7 @@ display: grid;
 	flex: 0 0 18rem;
 	flex-direction: column;
 	min-height: 28rem;
-	border-radius: 0.875rem;
+	border-radius: 0.5rem;
 	padding: 1rem 1.5rem 1.5rem;
 }
 
@@ -606,13 +610,6 @@ display: grid;
 
 .homepage-service-intro h4 {
 	margin: 0;
-	font-family: var(--heading-font);
-	font-size: 1.35rem;
-	font-weight: 400;
-	line-height: 1.2;
-}
-
-.homepage-service-card h3 {
 	font-family: var(--heading-font);
 	font-size: 1.35rem;
 	font-weight: 400;
@@ -674,14 +671,14 @@ display: grid;
 	transform: translateY(var(--homepage-service-icon-offset-y)) scale(1.04);
 }
 
-.homepage-service-card h3 {
+.homepage-service-card__title {
 	max-width: 17ch;
 	margin-top: auto;
 }
 
 .homepage-case-study-row {
 	position: relative;
-	margin-top: 4.5rem;
+	margin-top: 6.5rem;
 	width: 100%;
 	min-height: 28.5rem;
 	overflow: visible;
@@ -695,7 +692,7 @@ display: grid;
 	line-height: 1.2;
 }
 
-.homepage-case-study-intro .button {
+.homepage-service-intro .button {
 	margin-top: auto;
 	align-self: flex-start;
 }
@@ -707,7 +704,7 @@ display: grid;
 	flex-direction: column;
 	min-height: 28rem;
 	overflow: hidden;
-	border-radius: 0.875rem;
+	border-radius: 0.5rem;
 	background: #e4e7ee;
 	color: var(--off-black);
 	text-decoration: none;
@@ -1262,6 +1259,10 @@ display: grid;
 	:root {
 		--lgsdn-type-display-size: 3.5rem;
 	}
+
+	.home-hero__title {
+		font-size: 5rem;
+	}
 }
 
 @media (max-width: 47.999rem) {
@@ -1345,7 +1346,7 @@ display: grid;
 	.home-hero {
 		flex-direction: column;
 		gap: var(--lgsdn-column-gap);
-		padding-block: calc(var(--lgsdn-section-space) / 2) var(--lgsdn-section-space);
+		padding-block: calc(var(--lgsdn-section-space) / 2);
 		padding-inline: var(--lgsdn-gutter);
 	}
 
@@ -1380,7 +1381,7 @@ display: grid;
 	}
 
 	.homepage-playbook {
-		padding-block: var(--lgsdn-section-space);
+		padding-block: calc(var(--lgsdn-section-space) - 1rem) calc(var(--lgsdn-section-space) + 1rem);
 	}
 
 	.homepage-playbook__intro h2,
@@ -1389,7 +1390,7 @@ display: grid;
 	}
 
 	.homepage-service-row {
-		margin-top: 2rem;
+		margin-top: 4rem;
 		min-height: 25.5rem;
 	}
 
@@ -1402,7 +1403,7 @@ display: grid;
 
 	.homepage-service-scroller,
 	.homepage-case-study-scroller {
-		padding-left: calc(var(--lgsdn-gutter) + 50vw + 0.75rem);
+		padding-left: calc(var(--lgsdn-gutter) + min(50vw, 19.25rem) + 0.75rem);
 	}
 
 	.homepage-service-card {

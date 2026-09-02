@@ -97,4 +97,5 @@ function lgsdn_register_dynamic_blocks(): void {
 	register_block_type( LGSDN_CORE_DIR . 'blocks/events-list' );
 	register_block_type( LGSDN_CORE_DIR . 'blocks/homepage' );
 	register_block_type( LGSDN_CORE_DIR . 'blocks/playbook-index' );
+	register_block_type( LGSDN_CORE_DIR . 'blocks/playbook-article' );
 }

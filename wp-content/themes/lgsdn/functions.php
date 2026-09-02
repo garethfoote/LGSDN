@@ -8,6 +8,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 add_action(
+	'wp_head',
+	static function (): void {
+		$favicon_uri = trailingslashit( get_theme_file_uri( 'assets/favicons' ) );
+		?>
+		<link rel="icon" href="<?php echo esc_url( $favicon_uri . 'favicon.ico' ); ?>" sizes="any">
+		<link rel="icon" href="<?php echo esc_url( $favicon_uri . 'favicon.svg' ); ?>" type="image/svg+xml">
+		<link rel="apple-touch-icon" href="<?php echo esc_url( $favicon_uri . 'apple-touch-icon.png' ); ?>">
+		<link rel="manifest" href="<?php echo esc_url( $favicon_uri . 'site.webmanifest' ); ?>">
+		<meta name="theme-color" content="#FFFFFF">
+		<?php
+	}
+);
+
+add_action(
 	'wp_enqueue_scripts',
 	static function (): void {
 		$theme = wp_get_theme();
