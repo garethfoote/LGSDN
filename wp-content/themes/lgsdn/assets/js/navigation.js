@@ -69,8 +69,9 @@
 
 		navigation.querySelectorAll( 'a[href]' ).forEach( ( link ) => {
 			const target = new URL( link.href, window.location.href );
-			const samePage = target.pathname === window.location.pathname;
-			const isCurrent = target.hash ? samePage && target.hash === window.location.hash : samePage;
+			const current = new URL( window.location.href );
+			const samePage = target.origin === current.origin && target.pathname === current.pathname && target.search === current.search;
+			const isCurrent = target.hash ? samePage && target.hash === current.hash : samePage;
 			if ( isCurrent ) {
 				link.setAttribute( 'aria-current', 'page' );
 			} else {

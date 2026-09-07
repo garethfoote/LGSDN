@@ -16,7 +16,8 @@
 	position: sticky;
 	top: var(--lgsdn-admin-bar-height, 0px);
 	z-index: 1000;
-	background: var(--wp--preset--color--canvas, #f8f8f1);
+	background: var(--canvas, var(--wp--preset--color--canvas, #f8f8f1));
+	box-shadow: 0 2px 6px rgb(39 39 45 / 12%);
 }
 
 .site-header {
@@ -28,7 +29,17 @@
 }
 
 .site-header.is-scrolled {
-	background: var(--wp--preset--color--canvas, #f8f8f1);
+	background: var(--canvas, var(--wp--preset--color--canvas, #f8f8f1));
+	box-shadow: none;
+}
+
+.site-header.is-sticky.is-scrolled {
+	width: 100vw;
+	margin-inline: calc(50% - 50vw);
+	padding-inline: max(
+		var(--lgsdn-gutter, 2.5rem),
+		calc((100vw - var(--lgsdn-wide-width, 94.5rem)) / 2)
+	);
 	box-shadow: 0 2px 6px rgb(39 39 45 / 12%);
 }
 

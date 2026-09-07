@@ -235,11 +235,11 @@ Text Domain: lgsdn
 	}
 
 	.lgsdn-article h2 {
-		font-size: var(--wp--preset--font-size--x-large);
+		font-size: var(--wp--preset--font-size--body-x-large);
 	}
 
 	.lgsdn-article h3 {
-		font-size: var(--wp--preset--font-size--large);
+		font-size: var(--wp--preset--font-size--feature);
 	}
 
 	.lgsdn-article h4 {
@@ -433,8 +433,16 @@ Text Domain: lgsdn
 	.lgsdn-playbook-article__hero {
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) minmax(0, 19.375rem);
+		grid-template-areas:
+			"title card"
+			"featured featured";
 		column-gap: clamp(4rem, 8vw, 9rem);
+		row-gap: clamp(4rem, 6vw, 5rem);
 		align-items: start;
+	}
+
+	.lgsdn-playbook-article__hero.no-featured-image {
+		row-gap: 0;
 	}
 
 	.lgsdn-playbook-article__body {
@@ -445,15 +453,28 @@ Text Domain: lgsdn
 	}
 
 	.lgsdn-playbook-article__service-card {
-		display: flex;
+		grid-area: card;
+		display: grid;
 		width: min(19.375rem, 100%);
+		grid-template-rows: auto minmax(0, 1fr) auto;
 		aspect-ratio: 31 / 37;
-		flex-direction: column;
 		border-radius: 0.875rem;
 		background: var(--lgsdn-service-card-bg, var(--wp--preset--color--practice-orange));
 		padding: 1rem 1.5rem 1.5rem;
 		color: var(--lgsdn-service-card-fg, var(--wp--preset--color--ink));
 		text-decoration: none;
+	}
+
+	.lgsdn-playbook-article__service-eyebrow {
+		display: block;
+		font-family: var(--wp--preset--font-family--body);
+		font-size: var(--wp--preset--font-size--body-small);
+		font-weight: 400;
+		line-height: 1.2;
+	}
+
+	.lgsdn-playbook-article__service-name {
+		display: block;
 	}
 
 	.lgsdn-playbook-article__service-card:hover .lgsdn-playbook-service-card__title,
@@ -476,13 +497,15 @@ Text Domain: lgsdn
 
 	.lgsdn-playbook-article__service-icon {
 		display: block;
+		align-self: center;
 		width: min(100%, 9rem);
 		height: 9.75rem;
-		margin: auto;
+		margin: 0 auto;
 		object-fit: contain;
 	}
 
 	.lgsdn-playbook-article__title {
+		grid-area: title;
 		align-self: center;
 	}
 
@@ -532,11 +555,11 @@ Text Domain: lgsdn
 	}
 
 	.lgsdn-playbook-article__featured-image {
-		grid-column: 1;
-		width: 100vw;
+		grid-area: featured;
+		width: calc(100% + (2 * var(--lgsdn-gutter)));
 		margin: 0;
-		margin-left: calc(50% - 50vw);
-		max-width: none;
+		margin-left: calc(-1 * var(--lgsdn-gutter));
+		max-width: calc(var(--lgsdn-wide-width) + (2 * var(--lgsdn-gutter)));
 	}
 
 	.lgsdn-playbook-article__featured-image img {
@@ -889,10 +912,10 @@ Text Domain: lgsdn
 
 	.lgsdn-interface-subtitle {
 		margin: 0 0 var(--wp--preset--spacing--30);
-		font-family: var(--wp--preset--font-family--body);
-		font-size: var(--wp--preset--font-size--medium);
-		font-weight: 500;
-		line-height: 1.5;
+		font-family: var(--wp--preset--font-family--heading);
+		font-size: var(--lgsdn-heading-h3-size);
+		font-weight: 400;
+		line-height: 1.12;
 	}
 
 	.lgsdn-design-nav {
@@ -2153,6 +2176,19 @@ Text Domain: lgsdn
 		font-size: var(--wp--preset--font-size--body-small);
 		font-weight: 400;
 		line-height: 1.45;
+		text-decoration: none;
+	}
+
+	.lgsdn-playbook-tag:hover,
+	.lgsdn-playbook-tag:focus-visible {
+		text-decoration: underline;
+		text-decoration-thickness: var(--lgsdn-underline-thickness);
+		text-underline-offset: 0.15em;
+	}
+
+	.lgsdn-playbook-tag__arrow {
+		font-size: 0.9em;
+		line-height: 1;
 	}
 
 	.lgsdn-playbook-tag--secondary {
@@ -2266,7 +2302,7 @@ textarea {
 
 .lgsdn-playbook-article__featured-image {
 	margin: 0;
-	margin-left: calc(50% - 50vw);
+	margin-left: calc(-1 * var(--lgsdn-gutter));
 }
 
 .lgsdn-playbook-article__back-link:hover,
@@ -2292,6 +2328,72 @@ textarea {
 .lgsdn-playbook-card__tags .lgsdn-playbook-tag {
 	border-radius: 0.5rem;
 	font-weight: 500;
+}
+
+/*
+ * Keep semantic headings in core WordPress blocks readable at every viewport.
+ * Named component roles and more specific component selectors intentionally
+ * remain free to choose their own visual treatment.
+ */
+:root {
+	--lgsdn-heading-h1-size: 2.5rem;
+	--lgsdn-heading-h2-size: 2.25rem;
+	--lgsdn-heading-h3-size: 1.75rem;
+	--lgsdn-heading-h4-size: 1.375rem;
+	--lgsdn-heading-h5-size: 1.375rem;
+	--lgsdn-heading-h6-size: 1.375rem;
+}
+
+:where(.wp-block-heading:is(h1, h2, h3, h4, h5, h6), .wp-block :where(h1, h2, h3, h4, h5, h6)) {
+	font-family: var(--wp--preset--font-family--heading);
+	font-weight: 400;
+	line-height: 1.12;
+}
+
+:where(.wp-block-heading:is(h1), .wp-block :where(h1)) {
+	font-size: var(--lgsdn-heading-h1-size);
+}
+
+:where(.wp-block-heading:is(h2), .wp-block :where(h2)) {
+	font-size: var(--lgsdn-heading-h2-size);
+}
+
+:where(.wp-block-heading:is(h3), .wp-block :where(h3)) {
+	font-size: var(--lgsdn-heading-h3-size);
+}
+
+:where(.wp-block-heading:is(h4), .wp-block :where(h4)) {
+	font-size: var(--lgsdn-heading-h4-size);
+}
+
+:where(.wp-block-heading:is(h5), .wp-block :where(h5)) {
+	font-size: var(--lgsdn-heading-h5-size);
+}
+
+:where(.wp-block-heading:is(h6), .wp-block :where(h6)) {
+	font-size: var(--lgsdn-heading-h6-size);
+}
+
+@media (min-width: 48rem) {
+	:root {
+		--lgsdn-heading-h1-size: 2.75rem;
+		--lgsdn-heading-h2-size: 2.375rem;
+		--lgsdn-heading-h3-size: 2rem;
+		--lgsdn-heading-h4-size: 1.5rem;
+		--lgsdn-heading-h5-size: 1.5rem;
+		--lgsdn-heading-h6-size: 1.5rem;
+	}
+}
+
+@media (min-width: 64rem) {
+	:root {
+		--lgsdn-heading-h1-size: 3.5rem;
+		--lgsdn-heading-h2-size: 2.5rem;
+		--lgsdn-heading-h3-size: 2rem;
+		--lgsdn-heading-h4-size: 1.5rem;
+		--lgsdn-heading-h5-size: 1.5rem;
+		--lgsdn-heading-h6-size: 1.5rem;
+	}
 }
 
 .lgsdn-playbook-card__tags .lgsdn-playbook-tag--secondary {
@@ -2372,28 +2474,37 @@ textarea {
 	}
 
 	.lgsdn-playbook-article__title {
+		grid-area: auto;
 		align-self: start;
-		order: 1;
-		margin-bottom: 3.75rem;
+		margin-bottom: var(--wp--preset--spacing--60);
+	}
+
+	.lgsdn-playbook-article__hero.no-featured-image .lgsdn-playbook-article__title {
+		margin-bottom: var(--wp--preset--spacing--40);
 	}
 
 	.lgsdn-playbook-article__service-card {
-		order: 2;
-		margin-bottom: 1.25rem;
+		grid-area: auto;
+		width: min(calc(100% - 6rem), 42rem);
+		max-height: 28rem;
+		aspect-ratio: auto;
+		height: clamp(22rem, 60vw, 28rem);
+		align-self: center;
+		justify-self: center;
+		margin-bottom: 0;
 	}
 
 	.lgsdn-playbook-article__taxonomy {
-		order: 3;
-		margin-bottom: 3.75rem;
+		margin-top: var(--wp--preset--spacing--60);
+		margin-bottom: var(--wp--preset--spacing--60);
 	}
 
 	.lgsdn-playbook-article__featured-image {
-		order: 4;
-		margin-bottom: 3.75rem;
+		grid-area: auto;
+		margin-bottom: var(--wp--preset--spacing--60);
 	}
 
 	.lgsdn-playbook-article__copy {
-		order: 5;
 	}
 
 	.lgsdn-playbook-article__taxonomy-group + .lgsdn-playbook-article__taxonomy-group {
@@ -2411,6 +2522,14 @@ textarea {
 
 	.lgsdn-playbook-hero__media {
 		width: 100%;
+	}
+
+	.lgsdn-playbook-case-studies .lgsdn-playbook-card__body {
+		padding: var(--wp--preset--spacing--30);
+	}
+
+	.lgsdn-playbook-article__service-card {
+		height: clamp(18rem, 50vw, 28rem);
 	}
 
 	.lgsdn-playbook-contribute__inner {
@@ -2529,16 +2648,29 @@ textarea {
 	}
 }
 
+@media (max-width: 34.375rem) {
+	.lgsdn-playbook-article__service-card {
+		width: 100%;
+	}
+}
+
 @media (min-width: 48rem) and (max-width: 63.999rem) {
 	.lgsdn-playbook-article-layout {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 		grid-template-areas:
 			"title title"
-			"card taxonomy"
 			"featured featured"
+			"card taxonomy"
 			"copy copy";
 		column-gap: clamp(3rem, 6vw, 4.5rem);
 		row-gap: 4.5rem;
+	}
+
+	.lgsdn-playbook-article-layout.no-featured-image {
+		grid-template-areas:
+			"title title"
+			"card taxonomy"
+			"copy copy";
 	}
 
 	.lgsdn-playbook-article__hero,
@@ -2552,6 +2684,7 @@ textarea {
 
 	.lgsdn-playbook-article__service-card {
 		grid-area: card;
+		justify-self: center;
 	}
 
 	.lgsdn-playbook-article__taxonomy {

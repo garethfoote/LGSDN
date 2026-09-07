@@ -4,3 +4,5 @@
 - Prefer shared BEM classes and design tokens for common presentation. Use scoped modifiers only for intentional variants.
 - Service cards must keep the label `Service` and the shared title typography consistent across the homepage, Playbook listing, and article detail views at wide, intermediate, and small breakpoints.
 - Use sentence case for interface copy, including button labels and headings, unless a proper noun requires capitalization.
+- Challenge arbitrary breakpoint additions and prefer the existing responsive scale or a content-driven breakpoint. For production layout changes, keep the DOM order semantically aligned with the intended reading order and use CSS grid areas for breakpoint-specific placement before relying on CSS `order`.
+- Reuse existing semantic reset variables, theme tokens, and shared spacing values wherever possible before introducing new raw values.
