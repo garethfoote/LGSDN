@@ -34,6 +34,83 @@ final class LGSDN_Fields {
 	public static function hooks(): void {
 		add_action( 'add_meta_boxes', array( __CLASS__, 'add_meta_boxes' ) );
 		add_action( 'save_post', array( __CLASS__, 'save' ) );
+		add_filter( 'manage_lgsdn_event_posts_columns', array( __CLASS__, 'event_columns' ) );
+		add_action( 'manage_lgsdn_event_posts_custom_column', array( __CLASS__, 'render_event_column' ), 10, 2 );
+		add_filter( 'manage_edit-lgsdn_event_sortable_columns', array( __CLASS__, 'sortable_event_columns' ) );
+		add_action( 'pre_get_posts', array( __CLASS__, 'order_events_admin_list' ) );
+	}
+
+	/**
+	 * Add the event start date alongside WordPress's publication date.
+	 */
+	public static function event_columns( array $columns ): array {
+		$event_columns = array();
+
+		foreach ( $columns as $key => $label ) {
+			if ( 'date' === $key ) {
+				$event_columns['lgsdn_start_at'] = 'Starts';
+			}
+
+			$event_columns[ $key ] = $label;
+		}
+
+		if ( ! isset( $event_columns['lgsdn_start_at'] ) ) {
+			$event_columns['lgsdn_start_at'] = 'Starts';
+		}
+
+		return $event_columns;
+	}
+
+	/**
+	 * Display an event's start date in the site timezone.
+	 */
+	public static function render_event_column( string $column, int $post_id ): void {
+		if ( 'lgsdn_start_at' !== $column ) {
+			return;
+		}
+
+		$raw = get_post_meta( $post_id, 'lgsdn_start_at', true );
+		if ( ! is_string( $raw ) || ! preg_match( '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2})?$/D', $raw ) ) {
+			echo '&mdash;';
+			return;
+		}
+
+		$normalized = 16 === strlen( $raw ) ? $raw . ':00' : $raw;
+		$timezone = wp_timezone();
+		$starts = DateTimeImmutable::createFromFormat( '!Y-m-d\TH:i:s', $normalized, $timezone );
+
+		if ( ! $starts || $starts->format( 'Y-m-d\TH:i:s' ) !== $normalized ) {
+			echo '&mdash;';
+			return;
+		}
+
+		$format = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
+		echo esc_html( wp_date( $format, $starts->getTimestamp(), $timezone ) );
+	}
+
+	/**
+	 * Make the event start date available as an admin-list sort option.
+	 */
+	public static function sortable_event_columns( array $columns ): array {
+		$columns['lgsdn_start_at'] = 'lgsdn_start_at';
+		return $columns;
+	}
+
+	/**
+	 * Sort the Events admin list by its local ISO start-date metadata.
+	 */
+	public static function order_events_admin_list( WP_Query $query ): void {
+		if (
+			! is_admin() ||
+			! $query->is_main_query() ||
+			'lgsdn_event' !== $query->get( 'post_type' ) ||
+			'lgsdn_start_at' !== $query->get( 'orderby' )
+		) {
+			return;
+		}
+
+		$query->set( 'meta_key', 'lgsdn_start_at' );
+		$query->set( 'orderby', 'meta_value' );
 	}
 
 	/**

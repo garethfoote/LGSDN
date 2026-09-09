@@ -21,6 +21,8 @@ require_once LGSDN_CORE_DIR . 'src/class-content-types.php';
 require_once LGSDN_CORE_DIR . 'src/class-taxonomies.php';
 require_once LGSDN_CORE_DIR . 'src/class-practice-styles.php';
 require_once LGSDN_CORE_DIR . 'src/class-service-styles.php';
+require_once LGSDN_CORE_DIR . 'src/class-service-content.php';
+require_once LGSDN_CORE_DIR . 'src/playbook-card.php';
 require_once LGSDN_CORE_DIR . 'src/class-fields.php';
 require_once LGSDN_CORE_DIR . 'src/class-playbook-validation.php';
 require_once LGSDN_CORE_DIR . 'src/class-homepage-fields.php';
@@ -36,6 +38,7 @@ add_action( 'enqueue_block_editor_assets', 'lgsdn_enqueue_editor_assets' );
 LGSDN_Fields::hooks();
 LGSDN_Practice_Styles::hooks();
 LGSDN_Service_Styles::hooks();
+LGSDN_Service_Content::hooks();
 LGSDN_Playbook_Validation::hooks();
 LGSDN_Homepage_Fields::hooks();
 LGSDN_Editor::hooks();
@@ -98,4 +101,5 @@ function lgsdn_register_dynamic_blocks(): void {
 	register_block_type( LGSDN_CORE_DIR . 'blocks/homepage' );
 	register_block_type( LGSDN_CORE_DIR . 'blocks/playbook-index' );
 	register_block_type( LGSDN_CORE_DIR . 'blocks/playbook-article' );
+	register_block_type( LGSDN_CORE_DIR . 'blocks/service-archive' );
 }

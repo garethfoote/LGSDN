@@ -5,11 +5,15 @@
   "version": "0.1.0",
   "title": "LGSDN events list",
   "category": "theme",
-  "description": "Displays upcoming events followed by the most recent past event.",
+  "description": "Displays events in a shared chronological timeline.",
   "attributes": {
     "showHeading": {
       "type": "boolean",
       "default": true
+    },
+    "showAll": {
+      "type": "boolean",
+      "default": false
     }
   },
   "supports": {

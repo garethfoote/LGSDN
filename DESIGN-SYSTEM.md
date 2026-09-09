@@ -69,7 +69,7 @@ The scale follows the semantic roles visible in Figma. Change the `settings.typo
 | Section title / H2 | Srbija Sans | 36px / 120% |
 | Page lead | Atkinson Hyperlegible Next | 24px compact, 28px medium, 32px wide / 150% |
 | Article lead | Atkinson Hyperlegible Next | 24px compact, 28px medium and wide / 150% |
-| Event title | Atkinson Hyperlegible Next | 22px / 125% |
+| Event title | Srbija Sans | 28px at every breakpoint / 125% |
 | Feature body | Atkinson Hyperlegible Next | 18px / 150% |
 | Card title | Atkinson Hyperlegible Next Medium | 20px / 150% |
 | Body extra large | Atkinson Hyperlegible Next | 24px / 120% |
@@ -86,3 +86,17 @@ Page lead copy steps from 24px on compact screens, to 28px at the medium breakpo
 Spacing tokens use a restrained progression: 4, 8, 16, 24, 32, 48, 72, and 96px. In WordPress they use the conventional slugs `10` through `80`, which avoids breaking existing block content. The 4px `10` token is reserved for tightly related component content such as a card title, taxonomy tags, and date.
 
 Page gutters are fluid: `clamp(1.25rem, 4vw, 3.25rem)`.
+
+## Events timeline
+
+The `lgsdn/events-list` block and both event prototypes share the `lgsdn-events__*` classes in `style.css`. Homepage section spacing remains in `homepage.css`. The timeline uses the existing 48rem and 64rem breakpoints: compact month gutter below 48rem, larger type and spacing from 48rem, and right-aligned actions from 64rem. A per-row decorative rail changes from solid to dashed at the first past event, including within a shared month. Month labels group by both year and month.
+
+The Events archive passes the block's `showAll` attribute, which includes the complete past history and applies the `lgsdn-events--all` modifier. That modifier increases row padding from the existing spacing scale and raises the image size to 9rem compact / 12rem medium and wide without changing the shared markup.
+
+Event titles use the existing 28px base H3 size through `--lgsdn-heading-h3-base-size`; the older `large` font-size preset remains unchanged for other components. Past rows use muted text and put the Past badge before the date. Locations use uppercase presentation and a decorative map pin. The isolated Events specimen uses a fixed 20 October 2026 reference date to show the upcoming/past transition independently of the current date.
+
+Run the deterministic date-selection and rendering checks with `docker compose exec -T wordpress php /var/www/html/wp-content/plugins/lgsdn-core/tests/events-timeline.php`. These checks do not modify the database.
+
+Event photos use the native WordPress featured image at medium resolution. Homepage photos are 128px wide; the archive modifier increases them to 144px compact and 192px from the medium breakpoint. Each has a minimum 1.25:1 landscape height and stretches to the full height of the event content and action when the row grows. On narrow screens the image column uses up to 35% of the available row width, stays beside the content, and spans both content and action rows. The image is cropped with `object-fit: cover`; past-event images use reduced opacity. A pictured event with a valid format displays a shared black format tag that protrudes from the image's top-left edge, while events without an image omit both the image column and tag.
+
+Custom LGSDN actions use `.button` with `.lgsdn-button--arrow` for internal onward journeys or `.lgsdn-button--external` for off-site links. Their shared sizing and interaction rules live in `assets/css/buttons.css`, loaded on the frontend, in the editor, and by button specimens. Native WordPress blocks retain their generated `.wp-block-button__link` markup. Event buttons inherit the shared padding and responsive type size; their event-specific rules handle wrapping and the same thin border used by homepage feature actions. Registration buttons say **Register** and use the external-link icon because they go directly to the booking site.

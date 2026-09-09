@@ -4,29 +4,33 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>LGSDN homepage prototype</title>
+	<link rel="stylesheet" href="../assets/css/reset.css">
+	<link rel="stylesheet" href="../style.css">
+	<link rel="stylesheet" href="../assets/css/buttons.css">
 	<link rel="stylesheet" href="../assets/css/homepage.css">
+	<link rel="stylesheet" href="../assets/css/header.css">
 	<script src="../assets/js/navigation.js" defer></script>
 	<script src="../assets/js/hero-graphic.js" defer></script>
 </head>
 <body>
 	<a class="skip-link" href="#main-content">Skip to main content</a>
-	<div class="site-frame">
-		<header class="site-header">
-			<a class="site-logo" href="homepage.html" aria-label="Local Government Service Design Network home">
-				<img src="../assets/images/logo.svg" alt="" width="84" height="25">
-			</a>
-			<nav class="site-nav" id="site-navigation" aria-label="Main navigation">
-				<button class="menu-close" type="button" aria-label="Close menu"><span aria-hidden="true">×</span></button>
-				<a href="#about">About</a>
-				<a href="#playbook">Playbook</a>
-				<a href="#events">Events</a>
-				<a href="#people">People</a>
-				<a class="button button--nav" href="#join">Join</a>
-			</nav>
-			<button class="menu-backdrop" type="button" aria-label="Close menu" tabindex="-1"></button>
-			<button class="menu-button" type="button" aria-label="Open menu" aria-controls="site-navigation" aria-expanded="false"><span></span><span></span><span></span></button>
-		</header>
+	<header class="site-header">
+		<a class="site-logo" href="homepage.html" aria-label="Local Government Service Design Network home">
+			<img src="../assets/images/logo.svg" alt="" width="84" height="25">
+		</a>
+		<nav class="site-nav" id="site-navigation" aria-label="Main navigation">
+			<button class="menu-close" type="button" aria-label="Close menu"><span aria-hidden="true">×</span></button>
+			<a href="#about">About</a>
+			<a href="#playbook">Playbook</a>
+			<a href="/events/">Events</a>
+			<a href="#people">People</a>
+			<a class="button button--nav" href="#join">Join</a>
+		</nav>
+		<button class="menu-backdrop" type="button" aria-label="Close menu" tabindex="-1"></button>
+		<button class="menu-button" type="button" aria-label="Open menu" aria-controls="site-navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+	</header>
 
+	<div class="site-frame">
 		<main id="main-content" tabindex="-1">
 			<section class="home-hero" id="about">
 				<div class="home-hero__copy">
@@ -70,20 +74,53 @@
 				</div>
 			</article>
 
-			<section class="events" id="events">
-				<h2>Join us at an event</h2>
-				<div class="event-row">
-					<div class="event-row__left"><span class="event-row__title">Service design community meetup</span><span class="event-row__location">Manchester</span></div>
-					<div class="event-row__date-group"><time class="event-row__date" datetime="2026-09-18">18 Sep 2026</time></div>
-				</div>
-				<div class="event-row">
-					<div class="event-row__left"><span class="event-row__title">Playbook launch workshop</span><span class="event-row__location">Online</span></div>
-					<div class="event-row__date-group"><time class="event-row__date" datetime="2026-10-04">4 Oct 2026</time></div>
-				</div>
-				<div class="event-row event-row--past">
-					<div class="event-row__left"><span class="event-row__title">Spring practitioners gathering</span><span class="event-row__location">Manchester</span></div>
-					<div class="event-row__date-group"><time class="event-row__date" datetime="2026-03-12">12 Mar 2026</time><span class="tag tag--past">Past</span></div>
-				</div>
+			<section class="lgsdn-events" id="events">
+				<h2 class="lgsdn-events__heading">Join us at an event</h2>
+				<ul class="lgsdn-events__list" role="list">
+					<li class="lgsdn-events__item">
+						<div class="lgsdn-events__month" aria-hidden="true"><span class="lgsdn-events__month-name">Dec</span><span class="lgsdn-events__year">2026</span></div>
+						<div class="lgsdn-events__body lgsdn-events__body--with-image">
+							<div class="lgsdn-events__image"><img src="../assets/images/home-feature-image.png" alt="" width="150" height="150" loading="lazy" decoding="async"><span class="lgsdn-events__format-tag">Online</span></div>
+							<div class="lgsdn-events__content">
+								<div class="lgsdn-events__meta"><time class="lgsdn-events__date" datetime="2026-12-18T10:00:00+00:00">Fri, 18th Dec 2026</time></div>
+								<h3 class="lgsdn-events__title"><a href="#event-1">Service design community meetup</a></h3>
+							</div>
+							<div class="lgsdn-events__action"><a class="button lgsdn-button--external lgsdn-events__link" href="https://example.org/register/1" aria-label="Register: Service design community meetup, Fri, 18th Dec 2026"><span class="lgsdn-button__label">Register</span></a></div>
+						</div>
+					</li>
+					<li class="lgsdn-events__item">
+						<div class="lgsdn-events__month" aria-hidden="true"><span class="lgsdn-events__month-name">Nov</span><span class="lgsdn-events__year">2026</span></div>
+						<div class="lgsdn-events__body">
+							<div class="lgsdn-events__content">
+								<div class="lgsdn-events__meta"><time class="lgsdn-events__date" datetime="2026-11-04T10:00:00+00:00">Wed, 4th Nov 2026</time><span class="lgsdn-events__location">Online</span></div>
+								<h3 class="lgsdn-events__title"><a href="#event-2">Network session and meetup</a></h3>
+							</div>
+							<div class="lgsdn-events__action"><a class="button lgsdn-button--external lgsdn-events__link" href="https://example.org/register/2" aria-label="Register: Network session and meetup, Wed, 4th Nov 2026"><span class="lgsdn-button__label">Register</span></a></div>
+						</div>
+					</li>
+					<li class="lgsdn-events__item">
+						<div class="lgsdn-events__month" aria-hidden="true"><span class="lgsdn-events__month-name">Oct</span><span class="lgsdn-events__year">2026</span></div>
+						<div class="lgsdn-events__body lgsdn-events__body--with-image">
+							<div class="lgsdn-events__image"><img src="../assets/images/home-feature-image.png" alt="" width="150" height="150" loading="lazy" decoding="async"><span class="lgsdn-events__format-tag">In person</span></div>
+							<div class="lgsdn-events__content">
+								<div class="lgsdn-events__meta"><time class="lgsdn-events__date" datetime="2026-10-25T10:00:00+00:00">Sun, 25th Oct 2026</time><span class="lgsdn-events__location">London</span></div>
+								<h3 class="lgsdn-events__title"><a href="#event-3">Service design community meetup</a></h3>
+							</div>
+							<div class="lgsdn-events__action"><a class="button lgsdn-button--external lgsdn-events__link" href="https://example.org/register/3" aria-label="Register: Service design community meetup, Sun, 25th Oct 2026"><span class="lgsdn-button__label">Register</span></a></div>
+						</div>
+					</li>
+					<li class="lgsdn-events__item lgsdn-events__item--past">
+						<div class="lgsdn-events__month" aria-hidden="true"></div>
+						<div class="lgsdn-events__body lgsdn-events__body--with-image">
+							<div class="lgsdn-events__image"><img src="../assets/images/home-feature-image.png" alt="" width="150" height="150" loading="lazy" decoding="async"><span class="lgsdn-events__format-tag">In person</span></div>
+							<div class="lgsdn-events__content">
+								<div class="lgsdn-events__meta"><span class="lgsdn-events__badge">Past</span><time class="lgsdn-events__date" datetime="2026-10-15T10:00:00+01:00">Thu, 15th Oct 2026</time><span class="lgsdn-events__location">Manchester</span></div>
+								<h3 class="lgsdn-events__title"><a href="#event-4">Service design community meetup</a></h3>
+							</div>
+							<div class="lgsdn-events__action"><a class="button lgsdn-button--arrow lgsdn-events__link" href="#event-4" aria-label="Details: Service design community meetup, Thu, 15th Oct 2026"><span class="lgsdn-button__label">Details</span></a></div>
+						</div>
+					</li>
+				</ul>
 			</section>
 		</main>
 	</div>

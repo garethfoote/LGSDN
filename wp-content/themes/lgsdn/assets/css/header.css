@@ -11,12 +11,15 @@
 	margin-inline: auto;
 }
 
-.site-header.is-sticky,
+header.site-header,
 .wp-block-template-part.is-sticky {
 	position: sticky;
 	top: var(--lgsdn-admin-bar-height, 0px);
 	z-index: 1000;
 	background: var(--canvas, var(--wp--preset--color--canvas, #f8f8f1));
+}
+
+.wp-block-template-part.is-sticky {
 	box-shadow: 0 2px 6px rgb(39 39 45 / 12%);
 }
 
@@ -33,13 +36,16 @@
 	box-shadow: none;
 }
 
-.site-header.is-sticky.is-scrolled {
-	width: 100vw;
-	margin-inline: calc(50% - 50vw);
+/* Standalone homepage headers span the page in both scroll states. */
+header.site-header {
+	width: 100%;
 	padding-inline: max(
 		var(--lgsdn-gutter, 2.5rem),
-		calc((100vw - var(--lgsdn-wide-width, 94.5rem)) / 2)
+		calc((100% - var(--lgsdn-wide-width, 94.5rem)) / 2)
 	);
+}
+
+header.site-header.is-scrolled {
 	box-shadow: 0 2px 6px rgb(39 39 45 / 12%);
 }
 

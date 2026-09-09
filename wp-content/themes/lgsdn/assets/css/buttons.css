@@ -1,0 +1,134 @@
+/* Shared LGSDN buttons for custom components and their specimens. */
+:root {
+	--lgsdn-type-button-size: 0.9375rem;
+}
+
+.button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 2.3125rem;
+	border: 2px solid var(--off-black, var(--wp--preset--color--ink, #27272d));
+	border-radius: 2.3125rem;
+	padding: 0.4375rem 1rem;
+	background: transparent;
+	color: var(--off-black, var(--wp--preset--color--ink, #27272d));
+	font-size: var(--lgsdn-type-button-size);
+	font-weight: 400;
+	line-height: normal;
+	text-decoration: none;
+	transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+.button--strong {
+	background: var(--off-black, var(--wp--preset--color--ink, #27272d));
+	color: #fff;
+	font-weight: 400;
+}
+
+.button--nav {
+	font-weight: 400;
+}
+
+:where(a, button).button:hover,
+.button.is-hover-demo {
+	background: var(--off-black, var(--wp--preset--color--ink, #27272d));
+	color: #fff;
+	text-decoration-line: underline;
+	text-decoration-thickness: var(--lgsdn-underline-thickness);
+	text-underline-offset: 0.18em;
+}
+
+.lgsdn-button--arrow,
+.lgsdn-button--external {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+.lgsdn-button--arrow::after,
+.lgsdn-button--external::after {
+	display: inline-block;
+	flex: 0 0 auto;
+	transform: translateX(0);
+	text-decoration: none;
+	transition: transform 160ms ease;
+}
+
+.lgsdn-button--arrow::after {
+	content: "→";
+}
+
+.lgsdn-button--external::after {
+	width: 1.125em;
+	height: 1.125em;
+	background-color: currentColor;
+	content: "";
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='black' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M14 5h5v5M10 14 19 5M19 13v6H5V5h6'/%3E%3C/svg%3E") center / contain no-repeat;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='black' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M14 5h5v5M10 14 19 5M19 13v6H5V5h6'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.button.lgsdn-button--arrow:hover,
+.button.lgsdn-button--arrow.is-hover-demo,
+.button.lgsdn-button--external:hover,
+.button.lgsdn-button--external.is-hover-demo {
+	text-decoration: none;
+}
+
+.lgsdn-button--arrow:hover .lgsdn-button__label,
+.lgsdn-button--arrow.is-hover-demo .lgsdn-button__label,
+.lgsdn-button--external:hover .lgsdn-button__label,
+.lgsdn-button--external.is-hover-demo .lgsdn-button__label {
+	text-decoration: underline;
+	text-decoration-thickness: var(--lgsdn-underline-thickness);
+	text-underline-offset: 0.18em;
+}
+
+.lgsdn-button--arrow:hover::after,
+.lgsdn-button--arrow.is-hover-demo::after {
+	transform: translateX(0.2rem);
+}
+
+.lgsdn-button--external:hover::after,
+.lgsdn-button--external.is-hover-demo::after {
+	transform: translate(0.125rem, -0.125rem);
+}
+
+:where(a, button).button--strong:hover,
+.button--strong.is-hover-demo {
+	border-color: var(--off-black, var(--wp--preset--color--ink, #27272d));
+	background: var(--off-black, var(--wp--preset--color--ink, #27272d));
+	color: #fff;
+}
+
+:where(a, button).button:active {
+	background: #fff;
+	color: var(--off-black, var(--wp--preset--color--ink, #27272d));
+}
+
+.button.is-focus-demo {
+	outline: 3px solid var(--focus, var(--wp--preset--color--yellow, #e4d85b));
+	outline-offset: 0.1875rem;
+	box-shadow: 0 0 0 8px var(--off-black, var(--wp--preset--color--ink, #27272d));
+}
+
+@media (min-width: 48rem) {
+	:root {
+		--lgsdn-type-button-size: 1.125rem;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.button,
+	.lgsdn-button--arrow::after,
+	.lgsdn-button--external::after {
+		transition: none;
+	}
+}
+
+@media (forced-colors: active) {
+	.button.is-focus-demo {
+		outline-color: Highlight;
+		box-shadow: none;
+	}
+}

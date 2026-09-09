@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class LGSDN_Installer {
-	private const SCHEMA_VERSION = '7';
+	private const SCHEMA_VERSION = '8';
 	private const OPTION_NAME = 'lgsdn_content_schema_version';
 
 	private const TERMS = array(
@@ -102,6 +102,7 @@ final class LGSDN_Installer {
 		self::seed_homepage_links();
 		self::seed_homepage_preview();
 		update_option( self::OPTION_NAME, self::SCHEMA_VERSION, false );
+		flush_rewrite_rules();
 	}
 
 	private static function seed_terms(): void {

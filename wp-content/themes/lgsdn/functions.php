@@ -42,12 +42,18 @@ add_action(
 			array( 'lgsdn-reset' ),
 			$asset_version( 'style.css' )
 		);
+		wp_enqueue_style(
+			'lgsdn-buttons',
+			get_theme_file_uri( 'assets/css/buttons.css' ),
+			array( 'lgsdn' ),
+			$asset_version( 'assets/css/buttons.css' )
+		);
 
 		if ( is_front_page() ) {
 			wp_enqueue_style(
 				'lgsdn-homepage',
 				get_theme_file_uri( 'assets/css/homepage.css' ),
-				array( 'lgsdn' ),
+				array( 'lgsdn-buttons' ),
 				$asset_version( 'assets/css/homepage.css' )
 			);
 		}
@@ -55,7 +61,7 @@ add_action(
 		wp_enqueue_style(
 			'lgsdn-header',
 			get_theme_file_uri( 'assets/css/header.css' ),
-			array( is_front_page() ? 'lgsdn-homepage' : 'lgsdn' ),
+			array( is_front_page() ? 'lgsdn-homepage' : 'lgsdn-buttons' ),
 			$asset_version( 'assets/css/header.css' )
 		);
 		wp_enqueue_script(
@@ -111,6 +117,6 @@ add_action(
 add_action(
 	'after_setup_theme',
 	static function (): void {
-		add_editor_style( array( 'assets/css/reset.css', 'style.css' ) );
+		add_editor_style( array( 'assets/css/reset.css', 'style.css', 'assets/css/buttons.css' ) );
 	}
 );

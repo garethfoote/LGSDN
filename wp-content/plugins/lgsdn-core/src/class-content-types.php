@@ -47,11 +47,11 @@ final class LGSDN_Content_Types {
 				'labels' => self::labels( 'Event', 'Events' ),
 				'public' => true,
 				'show_in_rest' => true,
-				'has_archive' => false,
+				'has_archive' => 'events',
 				'rewrite' => array( 'slug' => 'events' ),
 				'menu_icon' => 'dashicons-calendar-alt',
 				'menu_position' => 22,
-				'supports' => array( 'title', 'revisions', 'custom-fields' ),
+				'supports' => array( 'title', 'editor', 'thumbnail', 'revisions', 'custom-fields' ),
 			)
 		);
 	}

@@ -62,23 +62,23 @@ $primary_service_for_item = static function ( int $item_id ): ?WP_Term {
 ?>
 <div <?php echo get_block_wrapper_attributes( array( 'class' => 'homepage-render alignfull' ) ); ?>>
 	<a class="skip-link" href="#main-content">Skip to main content</a>
-	<div class="site-frame">
-		<header class="site-header">
-			<a class="site-logo" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="Local Government Service Design Network home">
-				<img src="<?php echo esc_url( $image_base . '/logo.svg' ); ?>" alt="" width="84" height="25">
-			</a>
-			<nav class="site-nav" id="site-navigation" aria-label="Main navigation">
-				<button class="menu-close" type="button" aria-label="Close menu"><span aria-hidden="true">×</span></button>
-				<a href="#about">About</a>
-				<a href="<?php echo esc_url( $playbook_url ); ?>">Playbook</a>
-				<a href="#events">Events</a>
-				<a href="<?php echo esc_url( $network_url ); ?>">People</a>
-				<a class="button button--nav" href="<?php echo esc_url( $join_url ); ?>">Join</a>
-			</nav>
-			<button class="menu-backdrop" type="button" aria-label="Close menu" tabindex="-1"></button>
-			<button class="menu-button" type="button" aria-label="Open menu" aria-controls="site-navigation" aria-expanded="false"><span></span><span></span><span></span></button>
-		</header>
+	<header class="site-header">
+		<a class="site-logo" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="Local Government Service Design Network home">
+			<img src="<?php echo esc_url( $image_base . '/logo.svg' ); ?>" alt="" width="84" height="25">
+		</a>
+		<nav class="site-nav" id="site-navigation" aria-label="Main navigation">
+			<button class="menu-close" type="button" aria-label="Close menu"><span aria-hidden="true">×</span></button>
+			<a href="#about">About</a>
+			<a href="<?php echo esc_url( $playbook_url ); ?>">Playbook</a>
+			<a href="<?php echo esc_url( home_url( '/events/' ) ); ?>">Events</a>
+			<a href="<?php echo esc_url( $network_url ); ?>">People</a>
+			<a class="button button--nav" href="<?php echo esc_url( $join_url ); ?>">Join</a>
+		</nav>
+		<button class="menu-backdrop" type="button" aria-label="Close menu" tabindex="-1"></button>
+		<button class="menu-button" type="button" aria-label="Open menu" aria-controls="site-navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+	</header>
 
+	<div class="site-frame">
 		<main id="main-content" tabindex="-1">
 			<section class="home-hero" id="about">
 				<div class="home-hero__copy">

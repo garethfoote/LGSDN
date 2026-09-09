@@ -1,66 +1,117 @@
 <?php
 /**
- * Events list block.
+ * Shared events timeline. Dates are local wall times in the site timezone.
  */
 
 $show_heading = ! isset( $attributes['showHeading'] ) || (bool) $attributes['showHeading'];
-$now = current_time( 'Y-m-d\\TH:i' );
-$upcoming = get_posts(
-	array(
-		'post_type' => 'lgsdn_event',
-		'post_status' => 'publish',
-		'posts_per_page' => 5,
-		'meta_key' => 'lgsdn_start_at',
-		'meta_value' => $now,
-		'meta_compare' => '>=',
-		'orderby' => 'meta_value',
-		'order' => 'ASC',
-	)
-);
-$past = get_posts(
-	array(
-		'post_type' => 'lgsdn_event',
-		'post_status' => 'publish',
-		'posts_per_page' => 1,
-		'meta_key' => 'lgsdn_start_at',
-		'meta_value' => $now,
-		'meta_compare' => '<',
-		'orderby' => 'meta_value',
-		'order' => 'DESC',
-	)
-);
-$events = array_merge( $upcoming, $past );
+$show_all = ! empty( $attributes['showAll'] );
+$now = current_datetime();
+$timezone = wp_timezone();
 
+// Validate before limiting so malformed dates cannot displace eligible events.
+$select_events = static function ( bool $past, ?int $limit ) use ( $now, $timezone ): array {
+	$selected = array();
+	$page = 1;
+	$batch_size = 20;
+	do {
+		$candidates = get_posts(
+			array(
+				'post_type' => 'lgsdn_event',
+				'post_status' => 'publish',
+				'posts_per_page' => $batch_size,
+				'paged' => $page++,
+				'meta_key' => 'lgsdn_start_at',
+				// Include this minute in both queries; timestamps decide the boundary below.
+				'meta_value' => $now->format( $past ? 'Y-m-d\TH:i:s' : 'Y-m-d\TH:i' ),
+				'meta_compare' => $past ? '<=' : '>=',
+				'orderby' => array( 'meta_value' => $past ? 'DESC' : 'ASC', 'ID' => 'ASC' ),
+			)
+		);
+		foreach ( $candidates as $event ) {
+			$raw = get_post_meta( $event->ID, 'lgsdn_start_at', true );
+			if ( ! preg_match( '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2})?$/D', $raw ) ) {
+				continue;
+			}
+			$normalized = strlen( $raw ) === 16 ? $raw . ':00' : $raw;
+			$starts = DateTimeImmutable::createFromFormat( '!Y-m-d\TH:i:s', $normalized, $timezone );
+			if ( ! $starts || $starts->format( 'Y-m-d\TH:i:s' ) !== $normalized || ( $starts < $now ) !== $past ) {
+				continue;
+			}
+			$selected[] = array( 'post' => $event, 'starts' => $starts, 'past' => $past );
+			if ( null !== $limit && count( $selected ) === $limit ) {
+				break;
+			}
+		}
+	} while ( ( null === $limit || count( $selected ) < $limit ) && count( $candidates ) === $batch_size );
+	return $selected;
+};
+
+// The homepage is curated; the archive continues the same descending timeline
+// through every valid event, including the complete past history.
+$events = array_merge(
+	array_reverse( $select_events( false, $show_all ? null : 5 ) ),
+	$select_events( true, $show_all ? null : 1 )
+);
 if ( empty( $events ) ) {
 	return;
 }
+
+$previous_month = '';
+$title_tag = $show_heading ? 'h3' : 'h2';
+$format_labels = array( 'online' => 'Online', 'in-person' => 'In person', 'hybrid' => 'Hybrid' );
 ?>
-<section <?php echo get_block_wrapper_attributes( array( 'class' => 'lgsdn-events events' ) ); ?>>
-	<?php if ( $show_heading ) : ?><h2>Join us at an event</h2><?php endif; ?>
-	<ul class="lgsdn-events__list">
-		<?php foreach ( $events as $event ) : ?>
+<section <?php echo get_block_wrapper_attributes( array( 'class' => 'lgsdn-events' . ( $show_all ? ' lgsdn-events--all' : '' ) ) ); ?>>
+	<?php if ( $show_heading ) : ?><h2 class="lgsdn-events__heading">Join us at an event</h2><?php endif; ?>
+	<ul class="lgsdn-events__list" role="list">
+		<?php foreach ( $events as $entry ) : ?>
 			<?php
-			$starts = get_post_meta( $event->ID, 'lgsdn_start_at', true );
-			$is_past = $starts && $starts < $now;
+			$event = $entry['post'];
+			$starts = $entry['starts'];
+			$is_past = $entry['past'];
+			$month = $starts->format( 'Y-m' );
 			$location = get_post_meta( $event->ID, 'lgsdn_location', true );
 			$mode = get_post_meta( $event->ID, 'lgsdn_event_mode', true );
-			$booking_url = get_post_meta( $event->ID, 'lgsdn_booking_url', true );
+			$format_label = $format_labels[ $mode ] ?? '';
+			$booking_url = esc_url( get_post_meta( $event->ID, 'lgsdn_booking_url', true ) );
+			$permalink = get_permalink( $event );
+			$title = get_the_title( $event );
+			$date = wp_date( 'D, jS M Y', $starts->getTimestamp(), $timezone );
+			$has_registration = $booking_url && ! $is_past;
+			$action = $has_registration ? 'Register' : 'Details';
+			$destination = $has_registration ? $booking_url : $permalink;
+			$action_modifier = $has_registration ? 'lgsdn-button--external' : 'lgsdn-button--arrow';
+			$image_sizes = $show_all ? '(min-width: 64rem) 12rem, (min-width: 48rem) 10rem, 35vw' : '128px';
+			$image = get_the_post_thumbnail( $event->ID, 'medium', array( 'alt' => '', 'loading' => 'lazy', 'decoding' => 'async', 'sizes' => $image_sizes ) );
+			$location = $location ?: ( $image ? '' : $format_label );
 			?>
-			<li class="lgsdn-events__item event-row<?php echo $is_past ? ' is-past event-row--past' : ''; ?>">
-				<div class="event-row__left">
-					<a class="event-row__title" href="<?php echo esc_url( get_permalink( $event ) ); ?>"><?php echo esc_html( get_the_title( $event ) ); ?></a>
-					<?php if ( $location || $mode ) : ?>
-						<span class="event-row__location"><?php echo esc_html( $location ?: ucfirst( $mode ) ); ?></span>
+			<li class="lgsdn-events__item<?php echo $is_past ? ' lgsdn-events__item--past' : ''; ?>">
+				<div class="lgsdn-events__month" aria-hidden="true">
+					<?php if ( $month !== $previous_month ) : ?>
+						<span class="lgsdn-events__month-name"><?php echo esc_html( wp_date( 'M', $starts->getTimestamp(), $timezone ) ); ?></span>
+						<span class="lgsdn-events__year"><?php echo esc_html( $starts->format( 'Y' ) ); ?></span>
 					<?php endif; ?>
 				</div>
-				<div class="event-row__date-group">
-					<?php if ( $starts ) : ?>
-						<time class="event-row__date" datetime="<?php echo esc_attr( $starts ); ?>"><?php echo esc_html( wp_date( 'j M Y', strtotime( $starts ) ) ); ?></time>
+				<div class="lgsdn-events__body<?php echo $image ? ' lgsdn-events__body--with-image' : ''; ?>">
+					<?php if ( $image ) : ?>
+						<div class="lgsdn-events__image">
+							<?php echo $image; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Generated by WordPress. ?>
+							<?php if ( $format_label ) : ?><span class="lgsdn-events__format-tag"><?php echo esc_html( $format_label ); ?></span><?php endif; ?>
+						</div>
 					<?php endif; ?>
-					<?php if ( $is_past ) : ?><span class="tag tag--past">Past</span><?php endif; ?>
-					<?php if ( $booking_url && ! $is_past ) : ?><a class="button event-row__book" href="<?php echo esc_url( $booking_url ); ?>">Book</a><?php endif; ?>
+					<div class="lgsdn-events__content">
+						<div class="lgsdn-events__meta">
+							<?php if ( $is_past ) : ?><span class="lgsdn-events__badge">Past</span><?php endif; ?>
+							<time class="lgsdn-events__date" datetime="<?php echo esc_attr( $starts->format( DATE_W3C ) ); ?>"><?php echo esc_html( $date ); ?></time>
+							<?php if ( $location ) : ?><span class="lgsdn-events__location"><?php echo esc_html( $location ); ?></span><?php endif; ?>
+						</div>
+						<<?php echo $title_tag; ?> class="lgsdn-events__title"><a href="<?php echo esc_url( $permalink ); ?>"><?php echo esc_html( $title ); ?></a></<?php echo $title_tag; ?>>
+					</div>
+					<div class="lgsdn-events__action">
+						<a class="button <?php echo esc_attr( $action_modifier ); ?> lgsdn-events__link" href="<?php echo esc_url( $destination ); ?>" aria-label="<?php echo esc_attr( $action . ': ' . $title . ', ' . $date ); ?>"><span class="lgsdn-button__label"><?php echo esc_html( $action ); ?></span></a>
+					</div>
 				</div>
 			</li>
+			<?php $previous_month = $month; ?>
 		<?php endforeach; ?>
 	</ul>
 </section>
