@@ -31,7 +31,7 @@ See [`DESIGN-SYSTEM.md`](DESIGN-SYSTEM.md) for the editable token locations and 
 - **Playbook items**: structured examples classified by Service, Practice, Council, Purpose, and Challenge.
 - **People**: name, biography, image, role, organisation, and optional profile link.
 - **Events**: description, date range, location, format, and optional booking link.
-- **Pages**: Home, Join, Network, Playbook, and ordinary information pages.
+- **Pages**: Home, Join, Network, Events, Playbook, and ordinary information pages.
 
 Service, Practice, Purpose, and Challenge are controlled vocabularies: editors can assign terms but only administrators can change the vocabulary. Editors may add and manage Council terms.
 
@@ -53,8 +53,16 @@ Homepage events come from **Events**. The **Event details** panel provides start
 
 Use the standard WordPress content editor on an event to describe what it is. This article body appears on the event's detail page and supports the usual blocks, including paragraphs, headings, links, lists, and images.
 
-The Events archive at `/events/` reuses the timeline for every valid upcoming and past event. Its rows have increased vertical spacing and larger photos while the homepage keeps the compact curated variant.
+Edit **Pages → Join us at an event** to change the title and introductory content above the complete events timeline. The dedicated Events page template keeps the generated listing in place beneath that editable content. Individual events continue to be managed under **Events** and use URLs below `/events/`.
 
-Upcoming events with a booking link display **Register** with an external-link icon and link directly to the registration site. Otherwise the action is **Details**, linking to the event page; titles always link to that page. Past events have a **Past** badge and a dashed timeline rail. The shared timeline retains its month gutter on small screens, with actions below titles until the wide breakpoint.
+The Events page at `/events/` reuses the timeline for every valid upcoming and past event. Its rows have increased vertical spacing and larger photos while the homepage keeps the compact curated variant.
 
-Add an event photo using **Featured image** in the event editor. The timeline shows a rounded photo, up to 128px wide on the homepage and 192px wide on the Events archive, that stretches alongside the full event content at narrower widths. When the event has a format, the photo carries a black **In person**, **Online**, or **Hybrid** tag at its top-left edge. Past-event photos are faded slightly while their format tags remain fully opaque. Events without a featured image use the available space for their text, with no placeholder or format tag; for these events, the format remains the fallback location text.
+Upcoming events with a booking link display **Register** with an external-link icon and link directly to the registration site. Otherwise the action is **Details**, linking to the event page; titles always link to that page. Past events have a **Past** badge and a dashed timeline rail. The shared timeline retains its month gutter on small screens. At the compact breakpoint, every event keeps its action below the title; pictured events place both rows beneath the image. From the medium breakpoint, pictured events keep their content and action together beneath the image.
+
+Add an event photo using **Featured image** in the event editor. Below the wide breakpoint, the timeline shows a rounded, full-width photo above the event content and action. On wide layouts, the photo sits beside the content at up to 128px wide on the homepage and 192px wide on the Events page. When an event has a format, the photo carries a black **In person**, **Online**, or **Hybrid** tag at its top-left edge. Past-event photos are faded slightly while their format tags remain fully opaque. Events without a featured image use the available space for their text, with no placeholder or format tag; for these events, the format remains the fallback location text.
+
+## Editing the network page
+
+Manage members under **People**. Add the person's name as the title, their full biography in the main editor, their role in **Person details**, their council in **Councils**, and their portrait using **Featured image**. The optional excerpt is used as the short biography on the Network page; when it is blank, the page creates a short version from the main biography.
+
+The Network page lists every published person in menu order and then alphabetically. Portraits are circular with the shared ink stroke. Profiles without an uploaded portrait use `assets/images/person-fallback.png`. People do not have separate public detail pages, and cards do not link to authored articles yet.

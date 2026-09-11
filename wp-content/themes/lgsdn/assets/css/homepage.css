@@ -89,6 +89,12 @@ body.home .wp-site-blocks > .wp-block-lgsdn-homepage,
 	max-width: none;
 }
 
+/* Contain viewport-wide decoration at the page edge, beyond the content column. */
+.homepage-render,
+body:has(> .site-frame) {
+	overflow-x: clip;
+}
+
 .wp-block-lgsdn-homepage .block-editor-rich-text__editable {
 	border-radius: 2px;
 }
@@ -177,7 +183,6 @@ a {
 	width: 100%;
 	max-width: calc(var(--lgsdn-wide-width) + (2 * var(--lgsdn-gutter)));
 	margin-inline: auto;
-	overflow-x: clip;
 }
 
 .site-header {
@@ -358,7 +363,6 @@ display: grid;
 
 .homepage-playbook {
 	position: relative;
-	overflow-x: clip;
 	padding-block: calc(var(--lgsdn-section-space) - 1rem) calc(var(--lgsdn-section-space) + 1rem);
 }
 
@@ -402,12 +406,6 @@ display: grid;
 	border-top: 1px solid var(--off-black);
 	content: "";
 	transform: translateX(-50%);
-}
-
-/* Keep the scroll viewport inside the site frame's clipping boundary. */
-.homepage-service-row,
-.homepage-case-study-row {
-	max-width: 100%;
 }
 
 .homepage-service-row {
@@ -848,11 +846,6 @@ display: grid;
 #events.lgsdn-events,
 .prototype-canvas > .lgsdn-events {
 	padding: var(--lgsdn-section-space) var(--lgsdn-gutter) var(--wp--preset--spacing--50, 2rem);
-}
-
-.site-footer {
-	height: 5rem;
-	background: var(--navy);
 }
 
 .prototype-page {

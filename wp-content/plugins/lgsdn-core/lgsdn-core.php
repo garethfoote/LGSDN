@@ -73,11 +73,18 @@ function lgsdn_enqueue_editor_assets(): void {
  */
 function lgsdn_register_dynamic_blocks(): void {
 	$homepage_preview_path = get_theme_file_path( 'assets/css/homepage.css' );
+	$footer_preview_path = get_theme_file_path( 'assets/css/footer.css' );
 	$homepage_editor_path = LGSDN_CORE_DIR . 'blocks/homepage/index.js';
+	wp_register_style(
+		'lgsdn-footer-editor',
+		get_theme_file_uri( 'assets/css/footer.css' ),
+		array(),
+		file_exists( $footer_preview_path ) ? (string) filemtime( $footer_preview_path ) : LGSDN_CORE_VERSION
+	);
 	wp_register_style(
 		'lgsdn-homepage-editor',
 		get_theme_file_uri( 'assets/css/homepage.css' ),
-		array(),
+		array( 'lgsdn-footer-editor' ),
 		file_exists( $homepage_preview_path ) ? (string) filemtime( $homepage_preview_path ) : LGSDN_CORE_VERSION
 	);
 	wp_register_script(
@@ -101,5 +108,6 @@ function lgsdn_register_dynamic_blocks(): void {
 	register_block_type( LGSDN_CORE_DIR . 'blocks/homepage' );
 	register_block_type( LGSDN_CORE_DIR . 'blocks/playbook-index' );
 	register_block_type( LGSDN_CORE_DIR . 'blocks/playbook-article' );
+	register_block_type( LGSDN_CORE_DIR . 'blocks/network-index' );
 	register_block_type( LGSDN_CORE_DIR . 'blocks/service-archive' );
 }

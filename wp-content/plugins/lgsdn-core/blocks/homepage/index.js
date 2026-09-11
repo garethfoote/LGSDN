@@ -168,7 +168,33 @@
 						)
 					)
 				),
-				el( 'footer', { className: 'site-footer' } )
+				el(
+					'footer',
+					{ className: 'lgsdn-site-footer' },
+					el(
+						'div',
+						{ className: 'lgsdn-site-footer__inner' },
+						el(
+							'a',
+							{ className: 'lgsdn-site-footer__logo', href: '#', onClick: stopLink, 'aria-label': 'Local Government Service Design Network home' },
+							el( 'img', { src: imageBase + '/logo.svg', alt: '' } )
+						),
+						el(
+							'nav',
+							{ className: 'lgsdn-site-footer__nav', 'aria-label': 'Footer navigation' },
+							el( 'a', { href: '#', onClick: stopLink }, 'Accessibility statement' ),
+							el( 'a', { href: '#', onClick: stopLink }, 'Join the network' ),
+							el( 'a', { href: '#', onClick: stopLink }, 'GitHub' )
+						),
+						el(
+							'p',
+							{ className: 'lgsdn-site-footer__copyright' },
+							'Except where otherwise stated, original content published by the Local Government Service Design Network is available under the ',
+							el( 'a', { href: 'https://creativecommons.org/licenses/by/4.0/', rel: 'license', onClick: stopLink }, 'Creative Commons Attribution 4.0 International licence' ),
+							'.'
+						)
+					)
+				)
 			)
 		);
 	}

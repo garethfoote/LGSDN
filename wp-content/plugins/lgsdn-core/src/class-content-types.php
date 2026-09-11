@@ -32,12 +32,15 @@ final class LGSDN_Content_Types {
 			array(
 				'labels' => self::labels( 'Person', 'People' ),
 				'public' => true,
+				'publicly_queryable' => false,
+				'exclude_from_search' => true,
 				'show_in_rest' => true,
 				'has_archive' => false,
-				'rewrite' => array( 'slug' => 'network' ),
+				'rewrite' => false,
+				'query_var' => false,
 				'menu_icon' => 'dashicons-groups',
 				'menu_position' => 21,
-				'supports' => array( 'title', 'editor', 'thumbnail', 'page-attributes', 'revisions', 'custom-fields' ),
+				'supports' => array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes', 'revisions', 'custom-fields' ),
 			)
 		);
 
@@ -47,7 +50,7 @@ final class LGSDN_Content_Types {
 				'labels' => self::labels( 'Event', 'Events' ),
 				'public' => true,
 				'show_in_rest' => true,
-				'has_archive' => 'events',
+				'has_archive' => false,
 				'rewrite' => array( 'slug' => 'events' ),
 				'menu_icon' => 'dashicons-calendar-alt',
 				'menu_position' => 22,

@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class LGSDN_Installer {
-	private const SCHEMA_VERSION = '8';
+	private const SCHEMA_VERSION = '10';
 	private const OPTION_NAME = 'lgsdn_content_schema_version';
 
 	private const TERMS = array(
@@ -82,6 +82,8 @@ final class LGSDN_Installer {
 		self::migrate_primary_services();
 		self::seed_homepage_links();
 		self::seed_homepage_preview();
+		self::seed_events_page();
+		self::seed_accessibility_statement();
 		update_option( self::OPTION_NAME, self::SCHEMA_VERSION, false );
 		flush_rewrite_rules();
 	}
@@ -101,6 +103,8 @@ final class LGSDN_Installer {
 		self::migrate_primary_services();
 		self::seed_homepage_links();
 		self::seed_homepage_preview();
+		self::seed_events_page();
+		self::seed_accessibility_statement();
 		update_option( self::OPTION_NAME, self::SCHEMA_VERSION, false );
 		flush_rewrite_rules();
 	}
@@ -248,6 +252,86 @@ final class LGSDN_Installer {
 			array(
 				'ID' => $homepage_id,
 				'post_content' => '<!-- wp:lgsdn/homepage {"align":"full","lock":{"move":true,"remove":true}} /-->',
+			)
+		);
+	}
+
+	/**
+	 * Ensure the editable Events landing page owns /events/.
+	 */
+	private static function seed_events_page(): void {
+		$page = get_page_by_path( 'events', OBJECT, 'page' );
+
+		if ( ! $page instanceof WP_Post ) {
+			$page_id = wp_insert_post(
+				array(
+					'post_type' => 'page',
+					'post_status' => 'publish',
+					'post_name' => 'events',
+					'post_title' => 'Join us at an event',
+					'post_content' => '',
+				),
+				true
+			);
+
+			if ( is_wp_error( $page_id ) ) {
+				return;
+			}
+		} else {
+			$page_id = $page->ID;
+		}
+
+		$current_template = get_post_meta( $page_id, '_wp_page_template', true );
+		if ( '' === $current_template || 'default' === $current_template ) {
+			update_post_meta( $page_id, '_wp_page_template', 'page-events' );
+		}
+	}
+
+	/**
+	 * Publish a modest, editable accessibility statement when one does not exist.
+	 */
+	private static function seed_accessibility_statement(): void {
+		if ( get_page_by_path( 'accessibility-statement', OBJECT, 'page' ) instanceof WP_Post ) {
+			return;
+		}
+
+		$content = <<<HTML
+<!-- wp:paragraph {"fontSize":"lead"} -->
+<p class="has-lead-font-size">We want as many people as possible to be able to use the Local Government Service Design Network website.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Using this website</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>You should be able to zoom in without text becoming difficult to read, navigate the website using a keyboard, and use the website with a screen reader.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">How accessible this website is</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>This website is being developed and reviewed. We have not yet completed a formal accessibility audit, so there may be issues we have not identified.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Report an accessibility problem</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>If you have difficulty using this website or need information in a different format, use the contact details on the <a href="/join/">Join the network</a> page. We will use your feedback to improve the website.</p>
+<!-- /wp:paragraph -->
+HTML;
+
+		wp_insert_post(
+			array(
+				'post_type' => 'page',
+				'post_status' => 'publish',
+				'post_name' => 'accessibility-statement',
+				'post_title' => 'Accessibility statement',
+				'post_content' => $content,
 			)
 		);
 	}

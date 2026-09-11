@@ -64,6 +64,12 @@ add_action(
 			array( is_front_page() ? 'lgsdn-homepage' : 'lgsdn-buttons' ),
 			$asset_version( 'assets/css/header.css' )
 		);
+		wp_enqueue_style(
+			'lgsdn-footer',
+			get_theme_file_uri( 'assets/css/footer.css' ),
+			array( 'lgsdn-header' ),
+			$asset_version( 'assets/css/footer.css' )
+		);
 		wp_enqueue_script(
 			'lgsdn-navigation',
 			get_theme_file_uri( 'assets/js/navigation.js' ),
@@ -117,6 +123,6 @@ add_action(
 add_action(
 	'after_setup_theme',
 	static function (): void {
-		add_editor_style( array( 'assets/css/reset.css', 'style.css', 'assets/css/buttons.css' ) );
+		add_editor_style( array( 'assets/css/reset.css', 'style.css', 'assets/css/buttons.css', 'assets/css/footer.css' ) );
 	}
 );

@@ -1,0 +1,111 @@
+/* Shared site footer and short-page layout. */
+
+.wp-site-blocks,
+.homepage-render {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+.wp-site-blocks > main,
+.homepage-render > .site-frame {
+	width: 100%;
+	flex: 1 0 auto;
+}
+
+.lgsdn-site-footer {
+	--lgsdn-footer-background: #000;
+	margin-top: clamp(3rem, 6vw, 6rem);
+	background: var(--lgsdn-footer-background);
+	color: var(--wp--preset--color--white, #fff);
+}
+
+.lgsdn-site-footer__inner {
+	display: grid;
+	width: 100%;
+	max-width: calc(var(--lgsdn-wide-width, 94.5rem) + (2 * var(--lgsdn-gutter, 2.5rem)));
+	margin-inline: auto;
+	grid-template-columns: auto minmax(0, 1fr);
+	grid-template-areas:
+		"logo nav"
+		"copyright copyright";
+	align-items: start;
+	gap: var(--wp--preset--spacing--60, 3rem) var(--wp--preset--spacing--60, 3rem);
+	padding: var(--wp--preset--spacing--60, 3rem) var(--lgsdn-gutter, 2.5rem) var(--wp--preset--spacing--40, 1.5rem);
+}
+
+.lgsdn-site-footer__logo {
+	grid-area: logo;
+	display: block;
+	width: 102px;
+	height: auto;
+	padding-block: 0.25rem;
+}
+
+.lgsdn-site-footer__logo img {
+	display: block;
+	width: 100%;
+	height: auto;
+	filter: brightness(0) invert(1);
+}
+
+.lgsdn-site-footer__nav {
+	grid-area: nav;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	gap: var(--wp--preset--spacing--30, 1rem) var(--wp--preset--spacing--40, 1.5rem);
+}
+
+.lgsdn-site-footer a {
+	color: inherit;
+	font-weight: 400;
+	text-decoration-line: underline;
+	text-decoration-thickness: var(--lgsdn-underline-thickness, 0.1em);
+	text-underline-offset: 0.18em;
+}
+
+.lgsdn-site-footer a:hover {
+	text-decoration-thickness: 0.18em;
+}
+
+.lgsdn-site-footer a:focus-visible {
+	box-shadow: 0 0 0 8px var(--wp--preset--color--white, #fff);
+}
+
+.lgsdn-site-footer__copyright {
+	grid-area: copyright;
+	margin: 0;
+	border-top: 1px solid color-mix(in srgb, currentColor 35%, transparent);
+	padding-top: var(--wp--preset--spacing--30, 1rem);
+	font-size: var(--wp--preset--font-size--body-small, 0.875rem);
+}
+
+@media (max-width: 47.999rem) {
+	.lgsdn-site-footer__inner {
+		grid-template-columns: minmax(0, 1fr);
+		grid-template-areas:
+			"logo"
+			"nav"
+			"copyright";
+		gap: var(--wp--preset--spacing--40, 1.5rem);
+	}
+
+	.lgsdn-site-footer__nav {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: var(--wp--preset--spacing--20, 0.5rem);
+	}
+}
+
+@media (forced-colors: active) {
+	.lgsdn-site-footer {
+		border-top: 1px solid CanvasText;
+		background: Canvas;
+		color: CanvasText;
+	}
+
+	.lgsdn-site-footer__logo img {
+		filter: none;
+	}
+}

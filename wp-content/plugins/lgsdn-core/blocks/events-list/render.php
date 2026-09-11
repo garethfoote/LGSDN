@@ -80,7 +80,9 @@ $format_labels = array( 'online' => 'Online', 'in-person' => 'In person', 'hybri
 			$action = $has_registration ? 'Register' : 'Details';
 			$destination = $has_registration ? $booking_url : $permalink;
 			$action_modifier = $has_registration ? 'lgsdn-button--external' : 'lgsdn-button--arrow';
-			$image_sizes = $show_all ? '(min-width: 64rem) 12rem, (min-width: 48rem) 10rem, 35vw' : '128px';
+			$image_sizes = $show_all
+				? '(min-width: 64rem) 12rem, 100vw'
+				: '(min-width: 64rem) 8rem, 100vw';
 			$image = get_the_post_thumbnail( $event->ID, 'medium', array( 'alt' => '', 'loading' => 'lazy', 'decoding' => 'async', 'sizes' => $image_sizes ) );
 			$location = $location ?: ( $image ? '' : $format_label );
 			?>

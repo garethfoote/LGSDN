@@ -6,6 +6,7 @@
 
 	rows.forEach( ( scroller ) => {
 		const row = scroller.closest( '.homepage-service-row, .homepage-case-study-row, .lgsdn-playbook-service-row' );
+		const isHomepageRow = row && row.matches( '.homepage-service-row, .homepage-case-study-row' );
 		const intro = row ? row.querySelector( '[data-service-intro], [data-case-study-intro]' ) : null;
 		const cards = Array.from( scroller.children );
 		const scrollIndicators = document.createElement( 'div' );
@@ -123,9 +124,11 @@
 		};
 
 		const updateLayout = () => {
-			const rowLeft = row.getBoundingClientRect().left;
-			const layoutViewportWidth = document.documentElement.clientWidth;
-			row.style.width = `${ Math.max( 0, layoutViewportWidth - rowLeft ) }px`;
+			if ( isHomepageRow ) {
+				const rowLeft = row.getBoundingClientRect().left;
+				const layoutViewportWidth = document.documentElement.clientWidth;
+				row.style.width = `${ Math.max( 0, layoutViewportWidth - rowLeft ) }px`;
+			}
 			updateIntroVisibility();
 			updateScrollIndicators();
 		};

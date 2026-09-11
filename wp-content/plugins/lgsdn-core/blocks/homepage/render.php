@@ -183,5 +183,5 @@ $primary_service_for_item = static function ( int $item_id ): ?WP_Term {
 			</div>
 		</main>
 	</div>
-	<footer class="site-footer"></footer>
+	<?php echo do_blocks( '<!-- wp:template-part {"slug":"footer","theme":"lgsdn","tagName":"footer"} /-->' ); ?>
 </div>
