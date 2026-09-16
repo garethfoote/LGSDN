@@ -34,6 +34,10 @@ You can optionally provide a different output directory as the first argument.
 
 This creates upload-ready archives at `wp-content/themes/lgsdn-theme.zip` and `wp-content/plugins/lgsdn-core.zip`. The theme and plugin folders are included at the archive root, as required by WordPress. Plugin tests are left out of the production archive. The generated ZIPs are ignored by Git.
 
+Each export also increments the shared patch version (for example, `0.1.0` becomes `0.1.1`) in the theme and plugin headers before creating the archives.
+
+The WordPress admin **Tools → Export** screen remains useful when you only need a portable XML export of selected content for importing into another WordPress installation. It does not include the complete database, users, settings, or all plugin data.
+
 ## Design system
 
 The theme includes a responsive specimen template for reviewing typography, colour, spacing, layout, interface elements, and contour artwork. In the local development database it is available at <http://localhost:8080/design-system/>.

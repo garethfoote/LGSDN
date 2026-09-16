@@ -46,16 +46,25 @@ $is_external_url = static function ( string $url ) use ( $site_host ): bool {
 
 $date_label = '';
 $time_label = '';
+$datetime_value = '';
 if ( $starts ) {
 	$date_label = wp_date( 'D jS F, Y', $starts->getTimestamp(), $timezone );
-	$time_label = wp_date( 'H:i', $starts->getTimestamp(), $timezone );
+	$has_start_time = '00:00' !== $starts->format( 'H:i' );
+	$has_end_time = $ends && '00:00' !== $ends->format( 'H:i' );
+	$datetime_value = $has_start_time ? $starts->format( DATE_W3C ) : $starts->format( 'Y-m-d' );
+	if ( $ends && $ends->format( 'Y-m-d' ) !== $starts->format( 'Y-m-d' ) ) {
+		$date_label .= ' – ' . wp_date( 'D jS F, Y', $ends->getTimestamp(), $timezone );
+	}
 
-	if ( $ends ) {
-		if ( $ends->format( 'Y-m-d' ) === $starts->format( 'Y-m-d' ) ) {
+	if ( $has_start_time ) {
+		$time_label = wp_date( 'H:i', $starts->getTimestamp(), $timezone );
+
+		if ( $ends && $has_end_time ) {
+			if ( $ends->format( 'Y-m-d' ) === $starts->format( 'Y-m-d' ) ) {
 			$time_label .= '–' . wp_date( 'H:i', $ends->getTimestamp(), $timezone );
-		} else {
-			$date_label .= ' – ' . wp_date( 'D jS F, Y', $ends->getTimestamp(), $timezone );
+			} else {
 			$time_label .= ' – ' . wp_date( 'H:i', $ends->getTimestamp(), $timezone );
+			}
 		}
 	}
 }
@@ -80,8 +89,8 @@ if ( $starts ) {
 						<div class="lgsdn-event__metadata-item lgsdn-event__metadata-item--date">
 							<dt class="screen-reader-text">Date and time</dt>
 							<dd>
-								<time datetime="<?php echo esc_attr( $starts->format( DATE_W3C ) ); ?>"><?php echo esc_html( $date_label ); ?></time>
-								<span><?php echo esc_html( $time_label ); ?></span>
+								<time datetime="<?php echo esc_attr( $datetime_value ); ?>"><?php echo esc_html( $date_label ); ?></time>
+								<?php if ( $time_label ) : ?><span><?php echo esc_html( $time_label ); ?></span><?php endif; ?>
 							</dd>
 						</div>
 					<?php endif; ?>

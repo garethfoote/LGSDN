@@ -2,6 +2,7 @@
 """Create upload-ready WordPress theme and plugin archives."""
 
 from pathlib import Path
+import re
 import sys
 import zipfile
 
@@ -20,6 +21,32 @@ PACKAGES = (
 )
 
 
+def bump_versions() -> str:
+    theme_file = PROJECT_ROOT / "wp-content/themes/lgsdn/style.css"
+    plugin_file = PROJECT_ROOT / "wp-content/plugins/lgsdn-core/lgsdn-core.php"
+    theme = theme_file.read_bytes().decode("utf-8")
+    plugin = plugin_file.read_bytes().decode("utf-8")
+
+    theme_match = re.search(r"^Version:\s*(\d+)\.(\d+)\.(\d+)\s*$", theme, re.MULTILINE)
+    plugin_match = re.search(r"^ \* Version:\s*(\d+)\.(\d+)\.(\d+)\s*$", plugin, re.MULTILINE)
+    if not theme_match or not plugin_match:
+        raise ValueError("Could not find theme and plugin versions")
+
+    theme_version = tuple(map(int, theme_match.groups()))
+    plugin_version = tuple(map(int, plugin_match.groups()))
+    if theme_version != plugin_version:
+        raise ValueError("Theme and plugin versions do not match")
+
+    version = f"{theme_version[0]}.{theme_version[1]}.{theme_version[2] + 1}"
+    theme = re.sub(r"^Version:\s*\d+\.\d+\.\d+\s*$", f"Version: {version}", theme, count=1, flags=re.MULTILINE)
+    plugin = re.sub(r"^( \* Version:)\s*\d+\.\d+\.\d+\s*$", rf"\g<1> {version}", plugin, count=1, flags=re.MULTILINE)
+    plugin = re.sub(r"(define\(\s*'LGSDN_CORE_VERSION',\s*')[^']+(')", rf"\g<1>{version}\g<2>", plugin, count=1)
+
+    theme_file.write_bytes(theme.encode("utf-8"))
+    plugin_file.write_bytes(plugin.encode("utf-8"))
+    return version
+
+
 def add_directory(archive: zipfile.ZipFile, source: Path, archive_root: str, excluded: set[str]) -> None:
     for path in sorted(source.rglob("*")):
         relative = path.relative_to(source)
@@ -36,6 +63,8 @@ def add_directory(archive: zipfile.ZipFile, source: Path, archive_root: str, exc
 def main() -> int:
     output_root = Path(sys.argv[1]).expanduser() if len(sys.argv) > 1 else DEFAULT_OUTPUT
     output_root.mkdir(parents=True, exist_ok=True)
+    version = bump_versions()
+    print(f"Bumped theme and plugin version to {version}")
 
     for archive_root, source, relative_archive, excluded in PACKAGES:
         if not source.is_dir():
