@@ -17,7 +17,7 @@ The browser is the source of truth for the LGSDN visual system. The WordPress ed
 
 ## Colour palette
 
-The six controlled Service area colours mirror the `Brand Colors` collection in the Figma `Sketching` file. The admin selects the Base-mode token by name; it never stores a one-off hexadecimal value. The Contrast-mode values are recorded beside the Base values in `LGSDN_Service_Styles` for components that need the alternate Figma mode.
+The five controlled Service area colours mirror the approved selection from the Figma `Brand Colors` collection. The admin selects the Base-mode token by name; it never stores a one-off hexadecimal value. The Contrast-mode values are recorded beside the Base values in `LGSDN_Service_Styles` for components that need the alternate Figma mode.
 
 ## Breakpoints
 
@@ -36,12 +36,11 @@ Service-area cards take their visual identity from their primary Service area. A
 
 | Token | Base | Contrast | Card text |
 |---|---|---|---|
-| Service area gold | `#FAC558` | `#AB9300` | Ink |
-| Service area blue | `#4B66FF` | `#4B5AFF` | White |
-| Service area purple | `#C6AFE3` | `#9F8AC0` | Ink |
-| Service area olive | `#4B5A2B` | `#4B5A37` | White |
-| Service area orange | `#FF9D4D` | `#EA7200` | Ink |
-| Service area pink | `#FACDE1` | `#B3889B` | Ink |
+| Service area mustard | `#B59B00` | `#8A7600` | Ink |
+| Service area blue | `#4B5AFF` | `#3444C7` | White |
+| Service area purple | `#C7AFE1` | `#9B83B8` | Ink |
+| Service area green | `#4B5B37` | `#3A472B` | White |
+| Service area orange | `#FF7D01` | `#C45F00` | Ink |
 
 The palette values are owned by `LGSDN_Service_Styles`. Service-area term metadata stores only the stable colour token name rather than a hexadecimal value or asset URL. The legacy `lilac` token is read as `purple` so existing content keeps its appearance. Practice terms no longer expose this palette in their admin screen; their existing token metadata remains available to preserve legacy practice contour fallbacks.
 
@@ -99,4 +98,4 @@ Run the deterministic date-selection and rendering checks with `docker compose e
 
 Event photos use the native WordPress featured image at medium resolution. Below the wide breakpoint, a pictured event places its photo across the top in a dedicated row. At the compact breakpoint, the event content and action stack in separate rows beneath it; from the medium breakpoint, they share the row beneath the image. Homepage photos are 8rem high in this layout; the full-list modifier used on the Events page increases them to 9rem compact and 12rem from the medium breakpoint. From the wide breakpoint, photos return to an 8rem-wide column on the homepage or a 12rem-wide Events page column, with a minimum 1.25:1 landscape height that can stretch with the row. The image is cropped with `object-fit: cover`; past-event images use reduced opacity. A pictured event with a valid format displays a shared black format tag that protrudes from the image's top-left edge, while events without an image omit both the image row and tag.
 
-Custom LGSDN actions use `.button` with `.lgsdn-button--arrow` for internal onward journeys or `.lgsdn-button--external` for off-site links. Their shared sizing and interaction rules live in `assets/css/buttons.css`, loaded on the frontend, in the editor, and by button specimens. Native WordPress blocks retain their generated `.wp-block-button__link` markup. Event buttons inherit the shared padding and responsive type size; their event-specific rules handle wrapping and the same thin border used by homepage feature actions. Registration buttons say **Register** and use the external-link icon because they go directly to the booking site.
+Custom LGSDN actions use `.button` with `.lgsdn-button--arrow` for internal onward journeys or `.lgsdn-button--external` for off-site links. The external-link variant uses `↗` to indicate a different site or domain; it does not imply that the link opens a new tab. Text links do not animate the icon, while button-style external actions retain the short diagonal movement. Their shared sizing and interaction rules live in `assets/css/buttons.css`, loaded on the frontend, in the editor, and by button specimens. Native WordPress blocks retain their generated `.wp-block-button__link` markup. Event timeline buttons inherit the shared padding and responsive type size, always say **Details**, and lead to the event page. An upcoming event page with a booking link uses the external-link variant and its editor-configured call to action text, defaulting to **Register** when that text is blank. Event resources receive the external indicator only when their URL points away from the LGSDN domain; files hosted in the WordPress Media Library remain ordinary links. The subordinate **View on Google Maps** location link intentionally omits the icon to preserve its relationship with the location and avoid competing with the primary registration action.

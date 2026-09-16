@@ -7,6 +7,7 @@
 	rows.forEach( ( scroller ) => {
 		const row = scroller.closest( '.homepage-service-row, .homepage-case-study-row, .lgsdn-playbook-service-row' );
 		const isHomepageRow = row && row.matches( '.homepage-service-row, .homepage-case-study-row' );
+		const isPlaybookRow = row && row.matches( '.lgsdn-playbook-service-row' );
 		const intro = row ? row.querySelector( '[data-service-intro], [data-case-study-intro]' ) : null;
 		const cards = Array.from( scroller.children );
 		const scrollIndicators = document.createElement( 'div' );
@@ -42,14 +43,20 @@
 		previousButton.addEventListener( 'click', () => scrollCards( -1 ) );
 		nextButton.addEventListener( 'click', () => scrollCards( 1 ) );
 
+		const minimap = document.createElement( 'div' );
+		minimap.className = 'lgsdn-horizontal-scroll-map';
+		const viewportFrame = document.createElement( 'span' );
+		viewportFrame.className = 'lgsdn-horizontal-scroll-map__viewport';
+		viewportFrame.setAttribute( 'aria-hidden', 'true' );
+		scrollIndicators.appendChild( minimap );
+
 		const dots = cards.map( ( card, index ) => {
 			const dot = document.createElement( 'button' );
 			const title = card.querySelector( 'h3, h4' );
 
-			dot.className = 'lgsdn-horizontal-scroll-dot';
+			dot.className = 'lgsdn-horizontal-scroll-map__card';
 			dot.type = 'button';
 			dot.setAttribute( 'aria-label', `Show ${ title ? title.textContent.trim() : `card ${ index + 1 }` }` );
-			dot.setAttribute( 'aria-pressed', 'false' );
 			dot.addEventListener( 'click', () => {
 				const maxScrollLeft = Math.max( 0, scroller.scrollWidth - scroller.clientWidth );
 				const centeredScrollLeft = card.offsetLeft + ( card.offsetWidth / 2 ) - ( scroller.clientWidth / 2 );
@@ -57,9 +64,10 @@
 
 				scroller.scrollTo( { left: targetScrollLeft, behavior: reducedMotionQuery.matches ? 'auto' : 'smooth' } );
 			} );
-			scrollIndicators.appendChild( dot );
+			minimap.appendChild( dot );
 			return dot;
 		} );
+		minimap.appendChild( viewportFrame );
 		scrollIndicators.append( nextButton );
 
 		scrollIndicators.className = 'lgsdn-horizontal-scroll-indicators';
@@ -78,25 +86,52 @@
 			previousButton.disabled = scroller.scrollLeft <= 1;
 			nextButton.disabled = scroller.scrollLeft >= maxScrollLeft - 1;
 
-			cards.forEach( ( card, index ) => {
-				const cardRect = card.getBoundingClientRect();
-				const visibleWidth = Math.max( 0, Math.min( cardRect.right, viewportRight ) - Math.max( cardRect.left, viewportLeft ) );
-				const visibilityRatio = cardRect.width > 0 ? visibleWidth / cardRect.width : 0;
-				const isFullyVisible = visibilityRatio >= 0.999;
-				const isPartiallyVisible = visibleWidth > 0 && ! isFullyVisible;
-				const isClippedOnLeft = isPartiallyVisible && cardRect.left < viewportLeft;
-				const isClippedOnRight = isPartiallyVisible && cardRect.right > viewportRight;
+			if ( ! cards.length ) {
+				return;
+			}
 
-				dots[ index ].classList.toggle( 'is-active', isFullyVisible );
-				dots[ index ].classList.toggle( 'is-partial-left', isClippedOnLeft );
-				dots[ index ].classList.toggle( 'is-partial-right', isClippedOnRight );
-				dots[ index ].setAttribute( 'aria-pressed', isFullyVisible ? 'true' : 'false' );
+			const cardRects = cards.map( ( card ) => card.getBoundingClientRect() );
+			cardRects.forEach( ( rect, index ) => {
+				dots[ index ].classList.toggle( 'is-visible', rect.right > viewportLeft && rect.left < viewportRight );
 			} );
+			// Map cards and the gaps between them separately, preserving exact
+			// fractions even though the miniature gaps use a different scale.
+			const mapPosition = ( position ) => {
+				for ( let index = 0; index < cards.length; index++ ) {
+					const rect = cardRects[ index ];
+					const dot = dots[ index ];
+					if ( position <= rect.left ) {
+						if ( index === 0 ) {
+							// Represent only real empty space before the first card.
+							// Cap its miniature width at two pixels, without a state switch.
+							const clearance = rect.width > 0 ? Math.min( 2, ( rect.left - position ) / rect.width * dot.offsetWidth ) : 0;
+							return dot.offsetLeft - clearance;
+						}
+						const previousRect = cardRects[ index - 1 ];
+						const previousDot = dots[ index - 1 ];
+						const gapStart = previousDot.offsetLeft + previousDot.offsetWidth;
+						const fraction = ( position - previousRect.right ) / ( rect.left - previousRect.right );
+						return gapStart + fraction * ( dot.offsetLeft - gapStart );
+					}
+					if ( position <= rect.right ) {
+						return dot.offsetLeft + ( position - rect.left ) / rect.width * dot.offsetWidth;
+					}
+				}
+				const lastDot = dots[ dots.length - 1 ];
+				const lastRect = cardRects[ cardRects.length - 1 ];
+				const clearance = lastRect.width > 0 ? Math.min( 2, ( position - lastRect.right ) / lastRect.width * lastDot.offsetWidth ) : 0;
+				return lastDot.offsetLeft + lastDot.offsetWidth + clearance;
+			};
+			const frameLeft = mapPosition( viewportLeft );
+			const frameRight = mapPosition( viewportRight );
+			viewportFrame.style.left = `${ frameLeft }px`;
+			viewportFrame.style.width = `${ Math.max( 0, frameRight - frameLeft ) }px`;
 		};
 
 		if ( 'ResizeObserver' in window ) {
 			const resizeObserver = new ResizeObserver( updateScrollIndicators );
 			resizeObserver.observe( scroller );
+			resizeObserver.observe( minimap );
 		}
 
 		let introWasHidden = false;
@@ -124,10 +159,18 @@
 		};
 
 		const updateLayout = () => {
+			const layoutViewportWidth = document.documentElement.clientWidth;
+
 			if ( isHomepageRow ) {
 				const rowLeft = row.getBoundingClientRect().left;
-				const layoutViewportWidth = document.documentElement.clientWidth;
 				row.style.width = `${ Math.max( 0, layoutViewportWidth - rowLeft ) }px`;
+			} else if ( isPlaybookRow ) {
+				const contentLeft = row.parentElement.getBoundingClientRect().left;
+
+				row.style.width = `${ layoutViewportWidth }px`;
+				row.style.marginLeft = `${ -contentLeft }px`;
+				scroller.style.paddingLeft = `${ contentLeft }px`;
+				scroller.style.scrollPaddingLeft = `${ contentLeft }px`;
 			}
 			updateIntroVisibility();
 			updateScrollIndicators();

@@ -40,6 +40,7 @@ services:
         }
     volumes:
       - wordpress_data:/var/www/html
+      - ./docker/php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini:ro
       - ./wp-content/plugins/lgsdn-core:/var/www/html/wp-content/plugins/lgsdn-core
       - ./wp-content/themes/lgsdn:/var/www/html/wp-content/themes/lgsdn
 

@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class LGSDN_Installer {
-	private const SCHEMA_VERSION = '10';
+	private const SCHEMA_VERSION = '13';
 	private const OPTION_NAME = 'lgsdn_content_schema_version';
 
 	private const TERMS = array(
@@ -80,7 +80,9 @@ final class LGSDN_Installer {
 		self::seed_practice_styles();
 		self::seed_service_styles();
 		self::migrate_primary_services();
+		self::seed_contribute_page();
 		self::seed_homepage_links();
+		self::migrate_homepage_contribute_link();
 		self::seed_homepage_preview();
 		self::seed_events_page();
 		self::seed_accessibility_statement();
@@ -101,7 +103,9 @@ final class LGSDN_Installer {
 		self::seed_practice_styles();
 		self::seed_service_styles();
 		self::migrate_primary_services();
+		self::seed_contribute_page();
 		self::seed_homepage_links();
+		self::migrate_homepage_contribute_link();
 		self::seed_homepage_preview();
 		self::seed_events_page();
 		self::seed_accessibility_statement();
@@ -223,7 +227,7 @@ final class LGSDN_Installer {
 			return;
 		}
 
-		$paths = array( 'join', 'playbook', 'join' );
+		$paths = array( 'join', 'playbook', 'contribute' );
 		foreach ( $paths as $offset => $path ) {
 			$key = 'lgsdn_home_feature_' . ( $offset + 1 ) . '_page_id';
 			if ( metadata_exists( 'post', $homepage_id, $key ) ) {
@@ -257,6 +261,26 @@ final class LGSDN_Installer {
 	}
 
 	/**
+	 * Move the default Contribute card away from Join without overriding an
+	 * editor's intentionally selected destination.
+	 */
+	private static function migrate_homepage_contribute_link(): void {
+		$homepage_id  = absint( get_option( 'page_on_front' ) );
+		$contribute   = get_page_by_path( 'contribute', OBJECT, 'page' );
+		$join         = get_page_by_path( 'join', OBJECT, 'page' );
+		$current_link = absint( get_post_meta( $homepage_id, 'lgsdn_home_feature_3_page_id', true ) );
+
+		if ( ! $homepage_id || ! $contribute instanceof WP_Post || ! $join instanceof WP_Post ) {
+			return;
+		}
+
+		$current_page = $current_link ? get_post( $current_link ) : null;
+		if ( $current_link === $join->ID || ! $current_page instanceof WP_Post || 'page' !== $current_page->post_type ) {
+			update_post_meta( $homepage_id, 'lgsdn_home_feature_3_page_id', $contribute->ID );
+		}
+	}
+
+	/**
 	 * Ensure the editable Events landing page owns /events/.
 	 */
 	private static function seed_events_page(): void {
@@ -284,6 +308,37 @@ final class LGSDN_Installer {
 		$current_template = get_post_meta( $page_id, '_wp_page_template', true );
 		if ( '' === $current_template || 'default' === $current_template ) {
 			update_post_meta( $page_id, '_wp_page_template', 'page-events' );
+		}
+	}
+
+	/**
+	 * Ensure the editable Contribute landing page owns /contribute/.
+	 */
+	private static function seed_contribute_page(): void {
+		$page = get_page_by_path( 'contribute', OBJECT, 'page' );
+
+		if ( ! $page instanceof WP_Post ) {
+			$page_id = wp_insert_post(
+				array(
+					'post_type' => 'page',
+					'post_status' => 'publish',
+					'post_name' => 'contribute',
+					'post_title' => 'Contribute',
+					'post_content' => '<!-- wp:heading {"level":1,"fontSize":"display"} --><h1 class="wp-block-heading has-display-font-size">Contribute</h1><!-- /wp:heading -->' . "\n" . '<!-- wp:paragraph {"className":"lgsdn-intro"} --><p class="lgsdn-intro">Share an example of service design practice from your work in local government.</p><!-- /wp:paragraph -->',
+				),
+				true
+			);
+
+			if ( is_wp_error( $page_id ) ) {
+				return;
+			}
+		} else {
+			$page_id = $page->ID;
+		}
+
+		$current_template = get_post_meta( $page_id, '_wp_page_template', true );
+		if ( '' === $current_template || 'default' === $current_template ) {
+			update_post_meta( $page_id, '_wp_page_template', 'page-contribute' );
 		}
 	}
 

@@ -37,7 +37,7 @@ $service_terms = array_values(
 );
 
 $service_style = $primary_service ? LGSDN_Service_Styles::for_term( $primary_service ) : array(
-	'background' => '#FF9D4D',
+	'background' => '#FF7D01',
 	'foreground' => '#27272D',
 	'icon' => 'service',
 );

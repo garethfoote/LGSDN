@@ -5,16 +5,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-function lgsdn_primary_service_for_item ( int $item_id ): ?WP_Term {
+function lgsdn_services_for_item( int $item_id ): array {
 	$services = get_the_terms( $item_id, 'lgsdn_service' );
 	$services = $services && ! is_wp_error( $services ) ? array_values( $services ) : array();
 	$primary_service_id = absint( get_post_meta( $item_id, 'lgsdn_primary_service_id', true ) );
 
-	foreach ( $services as $service ) {
-		if ( $service->term_id === $primary_service_id ) {
-			return $service;
+	foreach ( $services as $index => $service ) {
+		if ( $service->term_id !== $primary_service_id ) {
+			continue;
 		}
+
+		unset( $services[ $index ] );
+		array_unshift( $services, $service );
+		break;
 	}
+
+	return array_values( $services );
+}
+
+function lgsdn_primary_service_for_item( int $item_id ): ?WP_Term {
+	$services = lgsdn_services_for_item( $item_id );
 
 	return $services[0] ?? null;
 }
@@ -23,38 +33,29 @@ function lgsdn_render_playbook_card( int $heading_level = 4 ): void {
 	$heading_tag = 'h' . max( 2, min( 6, $heading_level ) );
 	$image_base = get_theme_file_uri( 'assets/images' );
 	$item_id = get_the_ID();
-	$primary_service = lgsdn_primary_service_for_item( $item_id );
+	$services = lgsdn_services_for_item( $item_id );
 	$councils = get_the_terms( $item_id, 'lgsdn_council' );
 	$council_label = $councils && ! is_wp_error( $councils ) ? implode( ', ', wp_list_pluck( $councils, 'name' ) ) : '';
-	$service_style = $primary_service
-		? LGSDN_Service_Styles::for_term( $primary_service )
-		: array(
-			'background' => '#E4E7EE',
-			'foreground' => '#27272D',
-		);
 	$case_study_tags = array();
-	if ( $primary_service ) {
+	foreach ( $services as $service ) {
 		$case_study_tags[] = array(
-			'name' => $primary_service->name,
+			'name' => $service->name,
 			'taxonomy' => 'lgsdn_service',
-			'primary' => true,
+			'style' => LGSDN_Service_Styles::for_term( $service ),
 		);
 	}
-	foreach ( array( 'lgsdn_service', 'lgsdn_practice', 'lgsdn_purpose', 'lgsdn_challenge' ) as $taxonomy ) {
+	foreach ( array( 'lgsdn_practice', 'lgsdn_purpose', 'lgsdn_challenge' ) as $taxonomy ) {
 		$terms = get_the_terms( $item_id, $taxonomy );
 		if ( ! $terms || is_wp_error( $terms ) ) {
 			continue;
 		}
 
 		foreach ( $terms as $term ) {
-			if ( $primary_service && 'lgsdn_service' === $taxonomy && $term->term_id === $primary_service->term_id ) {
-				continue;
-			}
 			if ( ! in_array( $term->name, array_column( $case_study_tags, 'name' ), true ) ) {
 				$case_study_tags[] = array(
 					'name' => $term->name,
 					'taxonomy' => $taxonomy,
-					'primary' => false,
+					'style' => null,
 				);
 			}
 		}
@@ -84,7 +85,8 @@ function lgsdn_render_playbook_card( int $heading_level = 4 ): void {
 				<?php if ( $case_study_tags ) : ?>
 					<div class="lgsdn-playbook-card__tags" aria-label="Case study classifications">
 						<?php foreach ( $case_study_tags as $label ) : ?>
-							<span class="lgsdn-playbook-tag <?php echo $label['primary'] ? 'lgsdn-playbook-tag--service' : 'lgsdn-playbook-tag--secondary'; ?>" <?php echo $label['primary'] ? 'style="--lgsdn-service-tag-bg:' . esc_attr( $service_style['background'] ) . ';--lgsdn-service-tag-fg:' . esc_attr( $service_style['foreground'] ) . ';"' : ''; ?>><?php echo esc_html( $label['name'] ); ?></span>
+							<?php $is_service = 'lgsdn_service' === $label['taxonomy']; ?>
+							<span class="lgsdn-playbook-tag <?php echo $is_service ? 'lgsdn-playbook-tag--service' : 'lgsdn-playbook-tag--secondary'; ?>" <?php echo $is_service ? 'style="--lgsdn-service-tag-bg:' . esc_attr( $label['style']['background'] ) . ';--lgsdn-service-tag-fg:' . esc_attr( $label['style']['foreground'] ) . ';"' : ''; ?>><?php echo esc_html( $label['name'] ); ?></span>
 						<?php endforeach; ?>
 					</div>
 				<?php endif; ?>

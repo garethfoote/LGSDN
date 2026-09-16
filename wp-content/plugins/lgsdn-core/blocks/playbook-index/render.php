@@ -107,6 +107,18 @@ $service_terms = LGSDN_Service_Styles::homepage_terms();
 		</figure>
 	</section>
 
+	<section class="lgsdn-playbook-contribute" aria-labelledby="contribute-title">
+		<div class="lgsdn-playbook-contribute__inner lgsdn-playbook-shell">
+			<div class="lgsdn-playbook-contribute__copy">
+				<h2 id="contribute-title">Contribute</h2>
+				<p>We capture insights from our innovation processes to share learnable knowledge — through studies, analyses, data visualisations, and publications.</p>
+			</div>
+			<a class="button button--strong button--large lgsdn-button--arrow" href="<?php echo esc_url( home_url( '/contribute/' ) ); ?>">
+				<span class="lgsdn-button__label">Contribute</span>
+			</a>
+		</div>
+	</section>
+
 	<section class="lgsdn-playbook-listing lgsdn-playbook-shell" aria-labelledby="case-studies-title">
 		<section class="lgsdn-playbook-services" aria-labelledby="service-areas-title">
 			<header class="lgsdn-playbook-section-header">

@@ -115,7 +115,7 @@ $html = render_timeline();
 check( array( 5, 4, 3, 2, 1, 8 ) === event_ids( $html ), 'Select the next five, display descending, then only the most recent past.' );
 check( 1 === substr_count( $html, 'class="lgsdn-events__month-name"' ), 'Repeated month labels remain suppressed across the past boundary.' );
 check( 1 === substr_count( $html, 'lgsdn-events__item--past' ), 'Only the past row gets the dashed-rail modifier.' );
-check( ! str_contains( $html, 'old-booking' ), 'Past actions never link to booking.' );
+check( ! str_contains( $html, 'old-booking' ), 'Timeline actions never link directly to booking.' );
 check( str_contains( $html, '2026-10-25T12:00:00+00:00' ) && str_contains( $html, '2026-10-24T12:00:00+01:00' ), 'Datetime attributes use the correct side of the London DST transition.' );
 check( str_contains( $html, 'Sun, 25th Oct 2026' ), 'The weekday is generated from the stored date.' );
 $html = render_timeline( false, true );
@@ -139,8 +139,8 @@ fixture( 4, '2026-10-30T10:00', array( 'lgsdn_event_mode' => 'hybrid' ) );
 $html = render_timeline( false );
 check( ! str_contains( $html, 'lgsdn-events__heading' ) && str_contains( $html, '<h2 class="lgsdn-events__title"' ), 'Heading visibility and event heading levels respect showHeading.' );
 check( 4 === substr_count( $html, 'class="lgsdn-events__month-name"' ), 'The same month in different years gets separate labels.' );
-check( str_contains( $html, 'class="button lgsdn-button--external lgsdn-events__link" href="https://example.org/register"' ) && str_contains( $html, '>Register</span>' ), 'Upcoming booking actions use their external URL, label and icon modifier.' );
-check( str_contains( $html, 'aria-label="Details: Event 2, Mon, 4th Jan 2027"' ), 'Fallback actions have an event-specific accessible name.' );
+check( ! str_contains( $html, 'https://example.org/register' ) && 4 === substr_count( $html, '>Details</span>' ), 'Every timeline action leads to event details, including events with a booking link.' );
+check( str_contains( $html, 'aria-label="Details: Event 2, Mon, 4th Jan 2027"' ), 'Detail actions have an event-specific accessible name.' );
 check( str_contains( $html, '>Online</span>' ) && str_contains( $html, '>In person</span>' ) && str_contains( $html, '>Hybrid</span>' ), 'All format fallbacks use readable labels.' );
 check( str_contains( $html, '>London</span>' ), 'Explicit location takes priority over format.' );
 check( ! str_contains( $html, '<script>' ) && str_contains( $html, '&lt;script&gt;' ), 'Titles and accessible labels are escaped.' );
@@ -150,7 +150,7 @@ $fixtures[1]->image = '<img src="workshop.jpg" alt="" width="150" height="150">'
 $html = render_timeline();
 check( 1 === substr_count( $html, 'lgsdn-events__body--with-image' ) && str_contains( $html, 'src="workshop.jpg"' ), 'Only events with photos use the image layout.' );
 check( 1 === substr_count( $html, 'class="lgsdn-events__format-tag"' ) && str_contains( $html, '<span class="lgsdn-events__format-tag">Online</span>' ), 'Only pictured events expose their readable format as an image tag.' );
-check( str_contains( $html, 'class="button lgsdn-button--arrow lgsdn-events__link"' ) && str_contains( $html, 'class="button lgsdn-button--external lgsdn-events__link"' ) && ! str_contains( $html, 'wp-block-button' ), 'Internal and external event actions reuse the appropriate shared LGSDN button variant.' );
+check( 4 === substr_count( $html, 'class="button lgsdn-button--arrow lgsdn-events__link"' ) && ! str_contains( $html, 'lgsdn-button--external' ) && ! str_contains( $html, 'wp-block-button' ), 'Every event action reuses the shared internal button variant.' );
 
 $fixtures = array();
 fixture( 1, '2026-10-20T12:00' );

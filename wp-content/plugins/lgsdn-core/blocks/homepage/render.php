@@ -17,7 +17,7 @@ $page_url = static function ( int $selected_id, string $fallback_path ): string 
 	return $fallback instanceof WP_Post ? (string) get_permalink( $fallback ) : home_url( '/' . trim( $fallback_path, '/' ) . '/' );
 };
 
-$feature_fallbacks = array( 'join', 'playbook', 'join' );
+$feature_fallbacks = array( 'join', 'playbook', 'contribute' );
 $feature_cta_labels = array( 'Join', 'Browse', 'Contribute' );
 $feature_cta_suffixes = array( ' the network', ' the playbook', ' an example' );
 $features = array();
@@ -46,19 +46,6 @@ $case_studies = new WP_Query(
 );
 
 
-$primary_service_for_item = static function ( int $item_id ): ?WP_Term {
-	$services = get_the_terms( $item_id, 'lgsdn_service' );
-	$services = $services && ! is_wp_error( $services ) ? array_values( $services ) : array();
-	$primary_service_id = absint( get_post_meta( $item_id, 'lgsdn_primary_service_id', true ) );
-
-	foreach ( $services as $service ) {
-		if ( $service->term_id === $primary_service_id ) {
-			return $service;
-		}
-	}
-
-	return $services[0] ?? null;
-};
 ?>
 <div <?php echo get_block_wrapper_attributes( array( 'class' => 'homepage-render alignfull' ) ); ?>>
 	<a class="skip-link" href="#main-content">Skip to main content</a>
@@ -143,15 +130,9 @@ $primary_service_for_item = static function ( int $item_id ): ?WP_Term {
 							<?php while ( $case_studies->have_posts() ) : $case_studies->the_post(); ?>
 								<?php
 								$item_id = get_the_ID();
-								$primary_service = $primary_service_for_item( $item_id );
+								$item_services = lgsdn_services_for_item( $item_id );
 								$councils = get_the_terms( $item_id, 'lgsdn_council' );
 								$council_label = $councils && ! is_wp_error( $councils ) ? implode( ', ', wp_list_pluck( $councils, 'name' ) ) : '';
-								$service_style = $primary_service
-									? LGSDN_Service_Styles::for_term( $primary_service )
-									: array(
-										'background' => '#FF9D4D',
-										'foreground' => '#27272D',
-									);
 								?>
 								<a class="homepage-case-study-card" href="<?php the_permalink(); ?>">
 									<div class="homepage-case-study-card__media">
@@ -165,8 +146,13 @@ $primary_service_for_item = static function ( int $item_id ): ?WP_Term {
 										<?php endif; ?>
 									</div>
 									<div class="homepage-case-study-card__body">
-										<?php if ( $primary_service ) : ?>
-											<span class="homepage-case-study-card__tag" style="--case-study-tag-bg:<?php echo esc_attr( $service_style['background'] ); ?>;--case-study-tag-fg:<?php echo esc_attr( $service_style['foreground'] ); ?>;"><?php echo esc_html( $primary_service->name ); ?></span>
+										<?php if ( $item_services ) : ?>
+											<div class="homepage-case-study-card__tags" aria-label="Service areas">
+												<?php foreach ( $item_services as $item_service ) : ?>
+													<?php $item_service_style = LGSDN_Service_Styles::for_term( $item_service ); ?>
+													<span class="homepage-case-study-card__tag" style="--case-study-tag-bg:<?php echo esc_attr( $item_service_style['background'] ); ?>;--case-study-tag-fg:<?php echo esc_attr( $item_service_style['foreground'] ); ?>;"><?php echo esc_html( $item_service->name ); ?></span>
+												<?php endforeach; ?>
+											</div>
 										<?php endif; ?>
 										<h4><?php the_title(); ?></h4>
 									</div>

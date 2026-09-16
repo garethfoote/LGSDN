@@ -26,8 +26,11 @@ final class LGSDN_Fields {
 			'lgsdn_start_at' => array( 'Starts', 'datetime-local' ),
 			'lgsdn_end_at' => array( 'Ends', 'datetime-local' ),
 			'lgsdn_location' => array( 'Location', 'text' ),
+			'lgsdn_map_url' => array( 'Map link (optional)', 'url' ),
 			'lgsdn_event_mode' => array( 'Format', 'select' ),
 			'lgsdn_booking_url' => array( 'Booking link (optional)', 'url' ),
+			'lgsdn_booking_label' => array( 'Call to action text (optional)', 'text' ),
+			'lgsdn_event_resources' => array( 'Resources (optional)', 'resource-links' ),
 		),
 	);
 
@@ -38,6 +41,27 @@ final class LGSDN_Fields {
 		add_action( 'manage_lgsdn_event_posts_custom_column', array( __CLASS__, 'render_event_column' ), 10, 2 );
 		add_filter( 'manage_edit-lgsdn_event_sortable_columns', array( __CLASS__, 'sortable_event_columns' ) );
 		add_action( 'pre_get_posts', array( __CLASS__, 'order_events_admin_list' ) );
+		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_admin_assets' ) );
+	}
+
+	/**
+	 * Load the repeatable resource-link controls on Event edit screens.
+	 */
+	public static function enqueue_admin_assets(): void {
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		if ( ! $screen || 'lgsdn_event' !== $screen->post_type ) {
+			return;
+		}
+
+		$path = LGSDN_CORE_DIR . 'assets/js/event-resources.js';
+		wp_enqueue_media();
+		wp_enqueue_script(
+			'lgsdn-event-resources',
+			plugins_url( 'assets/js/event-resources.js', LGSDN_CORE_FILE ),
+			array( 'media-editor' ),
+			file_exists( $path ) ? (string) filemtime( $path ) : LGSDN_CORE_VERSION,
+			true
+		);
 	}
 
 	/**
@@ -121,15 +145,32 @@ final class LGSDN_Fields {
 			foreach ( $fields as $key => $field ) {
 				$is_boolean = 'checkbox' === $field[1];
 				$is_integer = in_array( $field[1], array( 'person-select', 'service-select', 'practice-select' ), true );
+				$is_resources = 'resource-links' === $field[1];
+				$show_in_rest = true;
+				if ( $is_resources ) {
+					$show_in_rest = array(
+						'schema' => array(
+							'type' => 'array',
+							'items' => array(
+								'type' => 'object',
+								'properties' => array(
+									'label' => array( 'type' => 'string' ),
+									'url' => array( 'type' => 'string', 'format' => 'uri' ),
+									'attachment_id' => array( 'type' => 'integer' ),
+								),
+							),
+						),
+					);
+				}
 				register_post_meta(
 					$post_type,
 					$key,
 					array(
 						'single' => true,
-						'type' => $is_boolean ? 'boolean' : ( $is_integer ? 'integer' : 'string' ),
-						'show_in_rest' => true,
-						'default' => $is_boolean ? false : ( $is_integer ? 0 : '' ),
-						'sanitize_callback' => $is_boolean ? 'rest_sanitize_boolean' : ( $is_integer ? 'absint' : array( __CLASS__, 'sanitize_meta' ) ),
+						'type' => $is_resources ? 'array' : ( $is_boolean ? 'boolean' : ( $is_integer ? 'integer' : 'string' ) ),
+						'show_in_rest' => $show_in_rest,
+						'default' => $is_resources ? array() : ( $is_boolean ? false : ( $is_integer ? 0 : '' ) ),
+						'sanitize_callback' => $is_resources ? array( __CLASS__, 'sanitize_resources' ) : ( $is_boolean ? 'rest_sanitize_boolean' : ( $is_integer ? 'absint' : array( __CLASS__, 'sanitize_meta' ) ) ),
 						'auth_callback' => static function (): bool {
 							return current_user_can( 'edit_posts' );
 						},
@@ -145,6 +186,41 @@ final class LGSDN_Fields {
 		}
 
 		return sanitize_text_field( (string) $value );
+	}
+
+	/**
+	 * Keep only complete, safe event resource links.
+	 *
+	 * @return array<int, array{label:string,url:string,attachment_id:int}>
+	 */
+	public static function sanitize_resources( mixed $value ): array {
+		if ( ! is_array( $value ) ) {
+			return array();
+		}
+
+		$resources = array();
+		foreach ( array_slice( $value, 0, 20 ) as $resource ) {
+			if ( ! is_array( $resource ) ) {
+				continue;
+			}
+
+			$label = sanitize_text_field( (string) ( $resource['label'] ?? '' ) );
+			$url = esc_url_raw( (string) ( $resource['url'] ?? '' ) );
+			$attachment_id = absint( $resource['attachment_id'] ?? 0 );
+			if ( $attachment_id && 'attachment' === get_post_type( $attachment_id ) ) {
+				$attachment_url = wp_get_attachment_url( $attachment_id );
+				$url = $attachment_url ? esc_url_raw( $attachment_url ) : $url;
+			} else {
+				$attachment_id = 0;
+			}
+			if ( '' === $label || '' === $url ) {
+				continue;
+			}
+
+			$resources[] = array( 'label' => $label, 'url' => $url, 'attachment_id' => $attachment_id );
+		}
+
+		return $resources;
 	}
 
 	public static function add_meta_boxes(): void {
@@ -175,6 +251,23 @@ final class LGSDN_Fields {
 	}
 
 	private static function render_control( string $key, string $type, mixed $value ): void {
+		if ( 'resource-links' === $type ) {
+			$resources = self::sanitize_resources( $value );
+			$resources = $resources ?: array( array( 'label' => '', 'url' => '', 'attachment_id' => 0 ) );
+			echo '<div class="lgsdn-event-resources-editor" data-event-resources data-field-name="' . esc_attr( $key ) . '">';
+			echo '<div data-event-resource-rows>';
+			foreach ( $resources as $index => $resource ) {
+				self::render_resource_row( $key, (string) $index, $resource );
+			}
+			echo '</div>';
+			echo '<button type="button" class="button" data-add-event-resource>Add resource</button>';
+			echo '<p class="description">Enter an external URL or choose an uploaded file from the Media Library.</p>';
+			echo '<template data-event-resource-template>';
+			self::render_resource_row( $key, '__INDEX__', array( 'label' => '', 'url' => '', 'attachment_id' => 0 ) );
+			echo '</template></div>';
+			return;
+		}
+
 		if ( 'checkbox' === $type ) {
 			echo '<label><input type="checkbox" id="' . esc_attr( $key ) . '" name="' . esc_attr( $key ) . '" value="1" ' . checked( (bool) $value, true, false ) . '> Show this item in the featured homepage position</label>';
 			return;
@@ -254,6 +347,22 @@ final class LGSDN_Fields {
 		echo '<input class="regular-text" type="' . esc_attr( $type ) . '" id="' . esc_attr( $key ) . '" name="' . esc_attr( $key ) . '" value="' . esc_attr( (string) $value ) . '">';
 	}
 
+	/**
+	 * Render one editable event resource row.
+	 *
+	 * @param array{label:string,url:string,attachment_id:int} $resource Resource values.
+	 */
+	private static function render_resource_row( string $key, string $index, array $resource ): void {
+		$name = esc_attr( $key . '[' . $index . ']' );
+		echo '<div class="lgsdn-event-resource-row" data-event-resource-row style="display:grid;grid-template-columns:minmax(10rem,1fr) minmax(16rem,2fr) auto auto;gap:8px;margin-bottom:8px;align-items:center">';
+		echo '<input type="hidden" name="' . $name . '[attachment_id]" value="' . esc_attr( (string) $resource['attachment_id'] ) . '" data-event-resource-attachment-id>';
+		echo '<input type="text" name="' . $name . '[label]" value="' . esc_attr( $resource['label'] ) . '" placeholder="Presentation slides" aria-label="Resource label" data-event-resource-label>';
+		echo '<input type="url" name="' . $name . '[url]" value="' . esc_attr( $resource['url'] ) . '" placeholder="https://" aria-label="Resource URL" data-event-resource-url>';
+		echo '<button type="button" class="button" data-choose-event-resource>Choose file</button>';
+		echo '<button type="button" class="button-link-delete" data-remove-event-resource>Remove</button>';
+		echo '</div>';
+	}
+
 	public static function save( int $post_id ): void {
 		$post_type = get_post_type( $post_id );
 		if (
@@ -270,6 +379,16 @@ final class LGSDN_Fields {
 		foreach ( self::FIELD_GROUPS[ $post_type ] as $key => $field ) {
 			if ( 'checkbox' === $field[1] ) {
 				update_post_meta( $post_id, $key, isset( $_POST[ $key ] ) );
+				continue;
+			}
+
+			if ( 'resource-links' === $field[1] ) {
+				$value = isset( $_POST[ $key ] ) ? self::sanitize_resources( wp_unslash( $_POST[ $key ] ) ) : array();
+				if ( empty( $value ) ) {
+					delete_post_meta( $post_id, $key );
+				} else {
+					update_post_meta( $post_id, $key, $value );
+				}
 				continue;
 			}
 

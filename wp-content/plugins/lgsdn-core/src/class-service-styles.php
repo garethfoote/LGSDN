@@ -33,46 +33,42 @@ final class LGSDN_Service_Styles {
 	 * metadata stores only the stable token key.
 	 */
 	private const COLOURS = array(
-		'gold' => array(
-			'label' => 'Gold',
-			'background' => '#FAC558',
-			'contrast' => '#AB9300',
+		'mustard' => array(
+			'label' => 'Mustard',
+			'background' => '#B59B00',
+			'contrast' => '#8A7600',
 			'foreground' => '#27272D',
 		),
 		'blue' => array(
 			'label' => 'Blue',
-			'background' => '#4B66FF',
-			'contrast' => '#4B5AFF',
+			'background' => '#4B5AFF',
+			'contrast' => '#3444C7',
 			'foreground' => '#FFFFFF',
 		),
 		'purple' => array(
 			'label' => 'Purple',
-			'background' => '#C6AFE3',
-			'contrast' => '#9F8AC0',
+			'background' => '#C7AFE1',
+			'contrast' => '#9B83B8',
 			'foreground' => '#27272D',
 		),
-		'olive' => array(
-			'label' => 'Olive',
-			'background' => '#4B5A2B',
-			'contrast' => '#4B5A37',
+		'green' => array(
+			'label' => 'Green',
+			'background' => '#4B5B37',
+			'contrast' => '#3A472B',
 			'foreground' => '#FFFFFF',
 		),
 		'orange' => array(
 			'label' => 'Orange',
-			'background' => '#FF9D4D',
-			'contrast' => '#EA7200',
-			'foreground' => '#27272D',
-		),
-		'pink' => array(
-			'label' => 'Pink',
-			'background' => '#FACDE1',
-			'contrast' => '#B3889B',
+			'background' => '#FF7D01',
+			'contrast' => '#C45F00',
 			'foreground' => '#27272D',
 		),
 	);
 
 	private const LEGACY_COLOUR_ALIASES = array(
 		'lilac' => 'purple',
+		'gold' => 'mustard',
+		'olive' => 'green',
 	);
 
 	public static function hooks(): void {
@@ -174,7 +170,7 @@ final class LGSDN_Service_Styles {
 			$defaults[ self::ORDER_META ] = 10;
 			$defaults[ self::FEATURED_META ] = true;
 		} elseif ( str_contains( $name, 'adult social care' ) ) {
-			$defaults[ self::COLOUR_META ] = 'gold';
+			$defaults[ self::COLOUR_META ] = 'mustard';
 			$defaults[ self::ICON_META ] = 'care';
 			$defaults[ self::ORDER_META ] = 20;
 			$defaults[ self::FEATURED_META ] = true;
@@ -189,7 +185,7 @@ final class LGSDN_Service_Styles {
 			$defaults[ self::ORDER_META ] = 40;
 			$defaults[ self::FEATURED_META ] = true;
 		} elseif ( str_contains( $name, 'democracy and participation' ) ) {
-			$defaults[ self::COLOUR_META ] = 'olive';
+			$defaults[ self::COLOUR_META ] = 'green';
 			$defaults[ self::ICON_META ] = 'democracy';
 			$defaults[ self::ORDER_META ] = 50;
 			$defaults[ self::FEATURED_META ] = true;

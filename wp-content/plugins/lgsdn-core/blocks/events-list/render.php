@@ -72,14 +72,9 @@ $format_labels = array( 'online' => 'Online', 'in-person' => 'In person', 'hybri
 			$location = get_post_meta( $event->ID, 'lgsdn_location', true );
 			$mode = get_post_meta( $event->ID, 'lgsdn_event_mode', true );
 			$format_label = $format_labels[ $mode ] ?? '';
-			$booking_url = esc_url( get_post_meta( $event->ID, 'lgsdn_booking_url', true ) );
 			$permalink = get_permalink( $event );
 			$title = get_the_title( $event );
 			$date = wp_date( 'D, jS M Y', $starts->getTimestamp(), $timezone );
-			$has_registration = $booking_url && ! $is_past;
-			$action = $has_registration ? 'Register' : 'Details';
-			$destination = $has_registration ? $booking_url : $permalink;
-			$action_modifier = $has_registration ? 'lgsdn-button--external' : 'lgsdn-button--arrow';
 			$image_sizes = $show_all
 				? '(min-width: 64rem) 12rem, 100vw'
 				: '(min-width: 64rem) 8rem, 100vw';
@@ -109,7 +104,7 @@ $format_labels = array( 'online' => 'Online', 'in-person' => 'In person', 'hybri
 						<<?php echo $title_tag; ?> class="lgsdn-events__title"><a href="<?php echo esc_url( $permalink ); ?>"><?php echo esc_html( $title ); ?></a></<?php echo $title_tag; ?>>
 					</div>
 					<div class="lgsdn-events__action">
-						<a class="button <?php echo esc_attr( $action_modifier ); ?> lgsdn-events__link" href="<?php echo esc_url( $destination ); ?>" aria-label="<?php echo esc_attr( $action . ': ' . $title . ', ' . $date ); ?>"><span class="lgsdn-button__label"><?php echo esc_html( $action ); ?></span></a>
+						<a class="button lgsdn-button--arrow lgsdn-events__link" href="<?php echo esc_url( $permalink ); ?>" aria-label="<?php echo esc_attr( 'Details: ' . $title . ', ' . $date ); ?>"><span class="lgsdn-button__label">Details</span></a>
 					</div>
 				</div>
 			</li>

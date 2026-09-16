@@ -30,6 +30,13 @@
 	font-weight: 400;
 }
 
+/* A larger CTA that keeps the shared button treatment and interaction states. */
+.button--large {
+	min-height: 3.5rem;
+	padding: 0.75rem 1.25rem;
+	font-size: 1.25rem;
+}
+
 :where(a, button).button:hover,
 .button.is-hover-demo {
 	background: var(--off-black, var(--wp--preset--color--ink, #27272d));
@@ -52,6 +59,11 @@
 	flex: 0 0 auto;
 	transform: translateX(0);
 	text-decoration: none;
+}
+
+.lgsdn-button--arrow::after,
+.button.lgsdn-button--external::after,
+.wp-block-button__link.lgsdn-button--external::after {
 	transition: transform 160ms ease;
 }
 
@@ -60,12 +72,9 @@
 }
 
 .lgsdn-button--external::after {
-	width: 1.125em;
-	height: 1.125em;
-	background-color: currentColor;
-	content: "";
-	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='black' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M14 5h5v5M10 14 19 5M19 13v6H5V5h6'/%3E%3C/svg%3E") center / contain no-repeat;
-	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='black' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M14 5h5v5M10 14 19 5M19 13v6H5V5h6'/%3E%3C/svg%3E") center / contain no-repeat;
+	font-size: 1.125em;
+	line-height: 1;
+	content: "↗";
 }
 
 .button.lgsdn-button--arrow:hover,
@@ -89,8 +98,10 @@
 	transform: translateX(0.2rem);
 }
 
-.lgsdn-button--external:hover::after,
-.lgsdn-button--external.is-hover-demo::after {
+.button.lgsdn-button--external:hover::after,
+.button.lgsdn-button--external.is-hover-demo::after,
+.wp-block-button__link.lgsdn-button--external:hover::after,
+.wp-block-button__link.lgsdn-button--external.is-hover-demo::after {
 	transform: translate(0.125rem, -0.125rem);
 }
 
@@ -116,12 +127,17 @@
 	:root {
 		--lgsdn-type-button-size: 1.125rem;
 	}
+
+	.button--large {
+		font-size: 1.5rem;
+	}
 }
 
 @media (prefers-reduced-motion: reduce) {
 	.button,
 	.lgsdn-button--arrow::after,
-	.lgsdn-button--external::after {
+	.button.lgsdn-button--external::after,
+	.wp-block-button__link.lgsdn-button--external::after {
 		transition: none;
 	}
 }

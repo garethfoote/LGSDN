@@ -26,12 +26,11 @@
         { "slug": "aqua", "name": "Aqua", "color": "#58d5d2" },
         { "slug": "coral", "name": "Coral", "color": "#ff7657" },
         { "slug": "yellow", "name": "Yellow", "color": "#e4d85b" },
-        { "slug": "practice-gold", "name": "Practice gold", "color": "#FAC558" },
-        { "slug": "practice-blue", "name": "Practice blue", "color": "#4B66FF" },
-        { "slug": "practice-purple", "name": "Practice purple", "color": "#C6AFE3" },
-        { "slug": "practice-olive", "name": "Practice olive", "color": "#4B5A2B" },
-        { "slug": "practice-orange", "name": "Practice orange", "color": "#FF9D4D" },
-        { "slug": "practice-pink", "name": "Practice pink", "color": "#FACDE1" },
+        { "slug": "practice-mustard", "name": "Practice mustard", "color": "#B59B00" },
+        { "slug": "practice-blue", "name": "Practice blue", "color": "#4B5AFF" },
+        { "slug": "practice-purple", "name": "Practice purple", "color": "#C7AFE1" },
+        { "slug": "practice-green", "name": "Practice green", "color": "#4B5B37" },
+        { "slug": "practice-orange", "name": "Practice orange", "color": "#FF7D01" },
         { "slug": "white", "name": "White", "color": "#ffffff" }
       ]
     },
@@ -176,6 +175,7 @@
     { "name": "page-network", "title": "Network page", "postTypes": ["page"] },
     { "name": "page-events", "title": "Events page", "postTypes": ["page"] },
     { "name": "page-playbook", "title": "Playbook page", "postTypes": ["page"] },
+    { "name": "page-contribute", "title": "Contribute page", "postTypes": ["page"] },
     { "name": "page-design-system", "title": "Design system specimen", "postTypes": ["page"] }
   ],
   "templateParts": [
