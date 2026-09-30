@@ -44,6 +44,8 @@ The theme includes a responsive specimen template for reviewing typography, colo
 
 See [`DESIGN-SYSTEM.md`](DESIGN-SYSTEM.md) for the editable token locations and breakpoint rationale. The type and spacing scales live in `wp-content/themes/lgsdn/theme.json`; responsive component rules live in `wp-content/themes/lgsdn/style.css`.
 
+Interactive [contour experiments](http://localhost:8080/wp-content/themes/lgsdn/prototypes/contours/) compare gentle waves and Perlin motion using SVG or Canvas, with adjustable movement and display settings. They are standalone prototypes and do not change the homepage. Implementation notes and geometry checks are in `wp-content/themes/lgsdn/prototypes/contours/README.md`.
+
 ## Content model
 
 - **Playbook items**: structured examples classified by Service, Practice, Council, Purpose, and Challenge.

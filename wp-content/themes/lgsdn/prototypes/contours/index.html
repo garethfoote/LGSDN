@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contour experiments · LGSDN</title>
+  <link rel="stylesheet" href="../../assets/css/reset.css">
+  <link rel="stylesheet" href="../../style.css">
+  <link rel="stylesheet" href="../../assets/css/homepage.css">
+  <link rel="stylesheet" href="contour-lab.css">
+  <script type="module" src="contour-lab.mjs"></script>
+</head>
+<body class="contour-lab">
+  <a class="skip-link" href="#main-content">Skip to experiments</a>
+  <header class="contour-lab__header">
+    <a href="../homepage.html" aria-label="LGSDN homepage prototype"><img src="../../assets/images/logo.svg" width="84" height="25" alt="LGSDN"></a>
+    <span>Motion studies</span>
+    <a href="../components/hero.html">Homepage reference ↗</a>
+    <a href="?study=gentle-waves-canvas">Gentle waves · Canvas ↗</a>
+  </header>
+  <main id="main-content" class="contour-lab__main" tabindex="-1">
+    <div class="contour-lab__intro"><h1>Contour experiments</h1><p>Whole contours. One experiment at a time.</p></div>
+    <div class="contour-lab__layout">
+      <section class="contour-lab__preview" aria-label="Contour preview">
+        <div class="contour-lab__preview-heading"><h2 id="scene-title">Gentle waves</h2><span id="play-status" role="status">Loading</span></div>
+        <div class="contour-lab__stage" id="stage">
+          <div class="contour-lab__disc" id="disc">
+            <svg id="svg" viewBox="0 0 225 225" aria-hidden="true"></svg>
+            <canvas id="canvas" aria-hidden="true" hidden></canvas>
+            <img id="original" src="../../assets/images/hero-graphic-mark.svg" alt="" hidden>
+          </div>
+        </div>
+        <div class="contour-lab__transport">
+          <button type="button" id="play" disabled>Pause</button>
+          <button type="button" id="restart" aria-label="Restart motion" disabled>Restart</button>
+          <label class="contour-lab__check"><input type="checkbox" id="reference"> Show original</label>
+        </div>
+        <details class="contour-lab__diagnostics"><summary>About and live performance</summary>
+        <p class="contour-lab__description" id="description">A few broad waves gently bend the existing contours.</p>
+        <dl class="contour-lab__metrics" aria-label="Animation measurements">
+          <div><dt>Frame rate</dt><dd id="fps">—</dd></div>
+          <div><dt>Frame interval · 95%</dt><dd id="cadence">—</dd></div>
+          <div><dt>JS draw · 95%</dt><dd id="cost">—</dd></div>
+          <div><dt>Drawing surface</dt><dd id="surface">—</dd></div>
+        </dl>
+        <p class="contour-lab__note">JS draw measures curve calculation and drawing calls, excluding the browser’s later painting. Frame timing includes other work on this page.</p>
+        </details>
+        <p class="contour-lab__note" id="motion-note" hidden>Reduced motion is enabled. The preview starts still; choose Play to try the animation.</p>
+      </section>
+      <aside class="contour-lab__controls" aria-label="Experiment controls">
+        <div class="contour-lab__control"><label for="experiment">Experiment</label><select id="experiment"><option value="waves">01 · Gentle waves</option><option value="perlin">02 · Perlin flow</option></select></div>
+        <fieldset class="contour-lab__fieldset"><legend>Draw with</legend><div class="contour-lab__segmented"><label><input type="radio" name="renderer" value="svg" checked><span>SVG</span></label><label><input type="radio" name="renderer" value="canvas"><span>Canvas</span></label></div></fieldset>
+        <fieldset class="contour-lab__fieldset" id="motion-controls"><legend>Movement</legend>
+          <div class="contour-lab__control"><label for="speed">Speed <output for="speed" id="speed-value">3.0×</output></label><input id="speed" type="range" min="0.1" max="12" step="0.1" value="3"></div>
+          <div class="contour-lab__control"><label for="amount">Movement amount <output for="amount" id="amount-value">45%</output></label><input id="amount" type="range" min="0" max="100" step="1" value="45"></div>
+          <div class="contour-lab__control"><label for="detail">Shape detail <output for="detail" id="detail-value">2</output></label><input id="detail" type="range" min="1" max="4" step="1" value="2"></div>
+          <div class="contour-lab__control"><label for="cohesion">Move together <output for="cohesion" id="cohesion-value">85%</output></label><input id="cohesion" type="range" min="0" max="100" step="1" value="85"></div>
+          <label class="contour-lab__check"><input id="fixedOuter" type="checkbox"> Keep the outer contour still</label>
+          <p class="contour-lab__note">All contours stay closed, nested and inside the disc at every setting.</p>
+        </fieldset>
+        <details class="contour-lab__settings"><summary>Display and performance</summary>
+          <div class="contour-lab__control"><label for="size">Maximum diameter <output id="size-value" for="size">400px</output></label><input id="size" type="range" min="160" max="600" step="10" value="400"></div>
+          <div class="contour-lab__control"><label for="quality">Points per contour</label><select id="quality"><option value="128">128 · Light</option><option value="256" selected>256 · Balanced</option><option value="512">512 · Fine</option></select></div>
+          <div class="contour-lab__control"><label for="density">Canvas pixel density</label><select id="density" disabled><option value="native">Match screen</option><option value="2">Up to 2×</option><option value="1">1×</option></select></div>
+          <div class="contour-lab__control"><label for="colour">Background</label><select id="colour"><option value="purple">Practice purple</option><option value="green">Practice green</option><option value="blue">Practice blue</option></select></div>
+          <label class="contour-lab__check"><input id="dots" type="checkbox" checked> Show the three reference dots</label>
+        </details>
+        <button type="button" class="contour-lab__reset" id="reset">Reset this experiment</button>
+        <p class="contour-lab__note">Speed changes the motion rate, not the amount of work per frame. Each experiment remembers its movement settings in this browser.</p>
+      </aside>
+    </div>
+    <noscript><p>JavaScript is needed for these interactive demos. <a href="../components/hero.html">View the static homepage reference.</a></p></noscript>
+  </main>
+</body>
+</html>
