@@ -26,6 +26,7 @@ require_once LGSDN_CORE_DIR . 'src/playbook-card.php';
 require_once LGSDN_CORE_DIR . 'src/class-fields.php';
 require_once LGSDN_CORE_DIR . 'src/class-playbook-validation.php';
 require_once LGSDN_CORE_DIR . 'src/class-homepage-fields.php';
+require_once LGSDN_CORE_DIR . 'src/class-playbook-page-fields.php';
 require_once LGSDN_CORE_DIR . 'src/class-editor.php';
 require_once LGSDN_CORE_DIR . 'src/class-installer.php';
 
@@ -41,6 +42,7 @@ LGSDN_Service_Styles::hooks();
 LGSDN_Service_Content::hooks();
 LGSDN_Playbook_Validation::hooks();
 LGSDN_Homepage_Fields::hooks();
+LGSDN_Playbook_Page_Fields::hooks();
 LGSDN_Editor::hooks();
 LGSDN_Installer::hooks();
 
@@ -75,6 +77,7 @@ function lgsdn_register_dynamic_blocks(): void {
 	$homepage_preview_path = get_theme_file_path( 'assets/css/homepage.css' );
 	$footer_preview_path = get_theme_file_path( 'assets/css/footer.css' );
 	$homepage_editor_path = LGSDN_CORE_DIR . 'blocks/homepage/index.js';
+	$playbook_editor_path = LGSDN_CORE_DIR . 'blocks/playbook-index/index.js';
 	wp_register_style(
 		'lgsdn-footer-editor',
 		get_theme_file_uri( 'assets/css/footer.css' ),
@@ -101,6 +104,18 @@ function lgsdn_register_dynamic_blocks(): void {
 			'imageBase' => get_theme_file_uri( 'assets/images' ),
 			'defaults' => LGSDN_Homepage_Fields::defaults(),
 		)
+	);
+	wp_register_script(
+		'lgsdn-playbook-editor',
+		plugins_url( 'blocks/playbook-index/index.js', LGSDN_CORE_FILE ),
+		array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-data' ),
+		file_exists( $playbook_editor_path ) ? (string) filemtime( $playbook_editor_path ) : LGSDN_CORE_VERSION,
+		true
+	);
+	wp_localize_script(
+		'lgsdn-playbook-editor',
+		'lgsdnPlaybookEditor',
+		array( 'defaults' => LGSDN_Playbook_Page_Fields::defaults() )
 	);
 
 	register_block_type( LGSDN_CORE_DIR . 'blocks/featured-playbook' );

@@ -21,10 +21,8 @@ $items = new WP_Query( array(
 <div <?php echo get_block_wrapper_attributes( array( 'class' => 'lgsdn-service-archive lgsdn-playbook-article-shell' ) ); ?>>
 	<div class="lgsdn-service-archive__header">
 		<header class="lgsdn-playbook-article__title"><h1><?php echo esc_html( $term->name ); ?></h1></header>
-		<div class="lgsdn-playbook-article__service-card" style="--lgsdn-service-card-bg:<?php echo esc_attr( $service_style['background'] ); ?>;--lgsdn-service-card-fg:<?php echo esc_attr( $service_style['foreground'] ); ?>;">
-			<span class="lgsdn-playbook-article__service-label">Service</span>
+		<div class="lgsdn-playbook-article__service-card lgsdn-service-archive__service-icon lgsdn-service-archive__service-icon--<?php echo esc_attr( $service_style['icon'] ); ?>" style="--lgsdn-service-card-bg:<?php echo esc_attr( $service_style['gradient'] ); ?>;--lgsdn-service-card-fg:#FFFFFF;" aria-hidden="true">
 			<img class="lgsdn-playbook-article__service-icon" src="<?php echo esc_url( LGSDN_Service_Styles::icon_url( $service_style['icon'] ) ); ?>" alt="">
-			<span class="lgsdn-playbook-service-card__title"><?php echo esc_html( $term->name ); ?></span>
 		</div>
 		<?php if ( trim( wp_strip_all_tags( $introduction ) ) ) : ?>
 			<div class="lgsdn-service-archive__introduction lgsdn-playbook-article__copy">

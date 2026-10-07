@@ -20,6 +20,7 @@ $page_url = static function ( int $selected_id, string $fallback_path ): string 
 $feature_fallbacks = array( 'join', 'playbook', 'contribute' );
 $feature_cta_labels = array( 'Join', 'Browse', 'Contribute' );
 $feature_cta_suffixes = array( ' the network', ' the playbook', ' an example' );
+$feature_icon_names = array( 'join', 'browse', 'contribute' );
 $features = array();
 for ( $index = 1; $index <= 3; $index++ ) {
 	$features[] = array(
@@ -55,7 +56,7 @@ $case_studies = new WP_Query(
 		</a>
 		<nav class="site-nav" id="site-navigation" aria-label="Main navigation">
 			<button class="menu-close" type="button" aria-label="Close menu"><span aria-hidden="true">×</span></button>
-			<a href="#about">About</a>
+			<a href="<?php echo esc_url( home_url( '/about/' ) ); ?>">About</a>
 			<a href="<?php echo esc_url( $playbook_url ); ?>">Playbook</a>
 			<a href="<?php echo esc_url( home_url( '/events/' ) ); ?>">Events</a>
 			<a href="<?php echo esc_url( $network_url ); ?>">People</a>
@@ -82,7 +83,10 @@ $case_studies = new WP_Query(
 			<section class="feature-grid" id="join" aria-label="Ways to take part">
 				<?php foreach ( $features as $index => $feature ) : ?>
 					<article class="feature-card">
-						<h2><?php echo esc_html( $feature['title'] ); ?></h2>
+						<div class="feature-card__heading">
+							<img class="feature-card__icon" src="<?php echo esc_url( $image_base . '/home-feature-' . $feature_icon_names[ $index ] . '.svg' ); ?>" alt="" aria-hidden="true" width="26" height="26">
+							<h2><?php echo esc_html( $feature['title'] ); ?></h2>
+						</div>
 						<p><?php echo nl2br( esc_html( $feature['body'] ) ); ?></p>
 						<a class="button lgsdn-button--arrow" href="<?php echo esc_url( $feature['url'] ); ?>"><span class="lgsdn-button__label"><?php echo esc_html( $feature_cta_labels[ $index ] ); ?></span><span class="screen-reader-text"><?php echo esc_html( $feature_cta_suffixes[ $index ] ); ?></span></a>
 					</article>
@@ -92,7 +96,6 @@ $case_studies = new WP_Query(
 			<section class="homepage-playbook" id="playbook" aria-labelledby="homepage-playbook-title">
 				<div class="homepage-playbook__intro">
 					<h2 id="homepage-playbook-title">From the playbook</h2>
-					<p>Find out how service design works with these services in local government.</p>
 				</div>
 				<div class="homepage-service-row" aria-label="Explore by service area">
 					<article class="homepage-service-intro" data-service-intro>
@@ -110,10 +113,10 @@ $case_studies = new WP_Query(
 								$service_url = $playbook_url;
 							}
 							?>
-							<a class="homepage-service-card homepage-service-card--<?php echo esc_attr( $service_style['colour'] ); ?>" style="--lgsdn-service-card-fg:<?php echo esc_attr( $service_style['foreground'] ); ?>" href="<?php echo esc_url( $service_url ); ?>">
-								<span class="homepage-service-card__label">Service</span>
-								<img class="homepage-service-card__icon homepage-service-card__icon--<?php echo esc_attr( $service_style['icon'] ); ?>" src="<?php echo esc_url( LGSDN_Service_Styles::icon_url( $service_style['icon'] ) ); ?>" alt="">
-								<h3 class="lgsdn-playbook-service-card__title"><?php echo esc_html( $service_term->name ); ?></h3>
+							<a class="lgsdn-service-card lgsdn-service-card--<?php echo esc_attr( $service_style['colour'] ); ?>" style="--lgsdn-service-card-bg:<?php echo esc_attr( $service_style['gradient'] ); ?>" href="<?php echo esc_url( $service_url ); ?>">
+								<span class="lgsdn-service-card__label">Service</span>
+								<img class="lgsdn-service-card__icon lgsdn-service-card__icon--<?php echo esc_attr( $service_style['icon'] ); ?>" src="<?php echo esc_url( LGSDN_Service_Styles::icon_url( $service_style['icon'] ) ); ?>" alt="">
+								<h3 class="lgsdn-service-card__title"><?php echo esc_html( $service_term->name ); ?></h3>
 							</a>
 						<?php endforeach; ?>
 					</div>

@@ -16,7 +16,7 @@ add_action(
 		<link rel="icon" href="<?php echo esc_url( $favicon_uri . 'favicon.svg' ); ?>" type="image/svg+xml">
 		<link rel="apple-touch-icon" href="<?php echo esc_url( $favicon_uri . 'apple-touch-icon.png' ); ?>">
 		<link rel="manifest" href="<?php echo esc_url( $favicon_uri . 'site.webmanifest' ); ?>">
-		<meta name="theme-color" content="#FFFFFF">
+		<meta name="theme-color" content="#F8F8F1">
 		<?php
 	}
 );

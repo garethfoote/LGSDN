@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class LGSDN_Installer {
-	private const SCHEMA_VERSION = '13';
+	private const SCHEMA_VERSION = '23';
 	private const OPTION_NAME = 'lgsdn_content_schema_version';
 
 	private const TERMS = array(
@@ -80,10 +80,17 @@ final class LGSDN_Installer {
 		self::seed_practice_styles();
 		self::seed_service_styles();
 		self::migrate_primary_services();
+		self::seed_about_page();
+		self::migrate_about_title();
+		self::seed_join_page();
+		self::migrate_join_cta();
+		self::migrate_join_editor_structure();
 		self::seed_contribute_page();
+		self::migrate_contribute_title();
 		self::seed_homepage_links();
 		self::migrate_homepage_contribute_link();
 		self::seed_homepage_preview();
+		self::seed_playbook_preview();
 		self::seed_events_page();
 		self::seed_accessibility_statement();
 		update_option( self::OPTION_NAME, self::SCHEMA_VERSION, false );
@@ -103,10 +110,17 @@ final class LGSDN_Installer {
 		self::seed_practice_styles();
 		self::seed_service_styles();
 		self::migrate_primary_services();
+		self::seed_about_page();
+		self::migrate_about_title();
+		self::seed_join_page();
+		self::migrate_join_cta();
+		self::migrate_join_editor_structure();
 		self::seed_contribute_page();
+		self::migrate_contribute_title();
 		self::seed_homepage_links();
 		self::migrate_homepage_contribute_link();
 		self::seed_homepage_preview();
+		self::seed_playbook_preview();
 		self::seed_events_page();
 		self::seed_accessibility_statement();
 		update_option( self::OPTION_NAME, self::SCHEMA_VERSION, false );
@@ -261,6 +275,34 @@ final class LGSDN_Installer {
 	}
 
 	/**
+	 * Give the Playbook page a locked editor preview without replacing custom content.
+	 */
+	private static function seed_playbook_preview(): void {
+		$page = get_page_by_path( 'playbook', OBJECT, 'page' );
+		if ( ! $page instanceof WP_Post ) {
+			return;
+		}
+
+		$current_content = trim( (string) $page->post_content );
+		$legacy_content = 'Real examples of service design in local government: what people tried, what they learned, and what others can reuse.';
+
+		if ( str_contains( $current_content, '<!-- wp:lgsdn/playbook-index' ) ) {
+			return;
+		}
+
+		if ( '' !== $current_content && $legacy_content !== trim( wp_strip_all_tags( $current_content ) ) ) {
+			return;
+		}
+
+		wp_update_post(
+			array(
+				'ID' => $page->ID,
+				'post_content' => '<!-- wp:lgsdn/playbook-index {"align":"full","lock":{"move":true,"remove":true}} /-->',
+			)
+		);
+	}
+
+	/**
 	 * Move the default Contribute card away from Join without overriding an
 	 * editor's intentionally selected destination.
 	 */
@@ -312,19 +354,201 @@ final class LGSDN_Installer {
 	}
 
 	/**
+	 * Ensure the editable About landing page owns /about/.
+	 */
+	private static function seed_about_page(): void {
+		self::seed_content_page( 'about', 'About the network', 'page-about', 'lgsdn/about-content' );
+	}
+
+	/**
+	 * The editor already presents the page title. Remove the original seeded H1
+	 * block so editors see one title and the template remains its single source.
+	 */
+	private static function migrate_about_title(): void {
+		$page = get_page_by_path( 'about', OBJECT, 'page' );
+		if ( ! $page instanceof WP_Post ) {
+			return;
+		}
+
+		$content = (string) $page->post_content;
+		$content = preg_replace(
+			'#<!-- wp:heading[^>]*-->\s*<h1[^>]*>About the network</h1>\s*<!-- /wp:heading -->\s*#s',
+			'',
+			$content,
+			1,
+			$replacements
+		) ?? $content;
+
+		if ( $replacements ) {
+			wp_update_post(
+				array(
+					'ID' => $page->ID,
+					'post_content' => $content,
+				)
+			);
+			delete_post_meta( $page->ID, '_lgsdn_seeded_content_hash' );
+		}
+	}
+
+	/**
+	 * Ensure the editable Join landing page owns /join/.
+	 */
+	private static function seed_join_page(): void {
+		self::seed_content_page( 'join', 'Join the network', 'page-join', 'lgsdn/join-content' );
+	}
+
+	/**
+	 * Move the original compact Join calls to action to the current large hero
+	 * action without replacing any other content an editor may have changed.
+	 */
+	private static function migrate_join_cta(): void {
+		$page = get_page_by_path( 'join', OBJECT, 'page' );
+		if ( ! $page instanceof WP_Post ) {
+			return;
+		}
+
+		$content = (string) $page->post_content;
+		$hero_cta = '<!-- wp:html -->' . "\n"
+			. '<a class="button button--strong button--large lgsdn-button--external" href="https://bit.ly/43UrxsR"><span class="lgsdn-button__label">Join the Basecamp</span></a>' . "\n"
+			. '<!-- /wp:html -->';
+
+		$content = preg_replace(
+			'#<!-- wp:buttons -->\s*<div class="wp-block-buttons">.*?<span class="lgsdn-button__label">How to join</span>.*?<!-- /wp:buttons -->#s',
+			$hero_cta,
+			$content,
+			1,
+			$hero_replacements
+		) ?? $content;
+
+		$content = preg_replace(
+			'#<!-- wp:buttons -->\s*<div class="wp-block-buttons">.*?<span class="lgsdn-button__label">Join the Slack workspace</span>.*?<!-- /wp:buttons -->#s',
+			'',
+			$content,
+			1,
+			$section_replacements
+		) ?? $content;
+
+		if ( $hero_replacements || $section_replacements ) {
+			wp_update_post(
+				array(
+					'ID' => $page->ID,
+					'post_content' => $content,
+				)
+			);
+			delete_post_meta( $page->ID, '_lgsdn_seeded_content_hash' );
+		}
+	}
+
+	/**
+	 * Use the page title as the single H1 and convert the hero action into a
+	 * native locked Button block. Its label and URL remain editable.
+	 */
+	private static function migrate_join_editor_structure(): void {
+		$page = get_page_by_path( 'join', OBJECT, 'page' );
+		if ( ! $page instanceof WP_Post ) {
+			return;
+		}
+
+		$content = (string) $page->post_content;
+		$content = preg_replace(
+			'#<!-- wp:heading[^>]*-->\s*<h1[^>]*>Join the network</h1>\s*<!-- /wp:heading -->\s*#s',
+			'',
+			$content,
+			1,
+			$title_replacements
+		) ?? $content;
+
+		$button_block = '<!-- wp:buttons {"className":"lgsdn-content-page__hero-action","lock":{"move":true,"remove":true}} -->' . "\n"
+			. '<div class="wp-block-buttons lgsdn-content-page__hero-action"><!-- wp:button {"lock":{"move":true,"remove":true}} -->' . "\n"
+			. '<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://bit.ly/43UrxsR">Join the Basecamp</a></div>' . "\n"
+			. '<!-- /wp:button --></div>' . "\n"
+			. '<!-- /wp:buttons -->';
+
+		$content = preg_replace(
+			'#<!-- wp:html -->\s*<a[^>]*>\s*<span class="lgsdn-button__label">Join the Basecamp</span>\s*</a>\s*<!-- /wp:html -->#s',
+			$button_block,
+			$content,
+			1,
+			$button_replacements
+		) ?? $content;
+
+		$update = array( 'ID' => $page->ID );
+		if ( $title_replacements || $button_replacements ) {
+			$update['post_content'] = $content;
+		}
+		if ( 'Join' === $page->post_title ) {
+			$update['post_title'] = 'Join the network';
+		}
+
+		if ( count( $update ) > 1 ) {
+			wp_update_post( $update );
+			delete_post_meta( $page->ID, '_lgsdn_seeded_content_hash' );
+		}
+	}
+
+	/**
 	 * Ensure the editable Contribute landing page owns /contribute/.
 	 */
 	private static function seed_contribute_page(): void {
+		$legacy_content = '<!-- wp:heading {"level":1,"fontSize":"display"} --><h1 class="wp-block-heading has-display-font-size">Contribute</h1><!-- /wp:heading -->' . "\n" . '<!-- wp:paragraph {"className":"lgsdn-intro"} --><p class="lgsdn-intro">Share an example of service design practice from your work in local government.</p><!-- /wp:paragraph -->';
+
+		self::seed_content_page( 'contribute', 'Contribute', 'page-contribute', 'lgsdn/contribute-content', $legacy_content );
+	}
+
+	/**
+	 * Remove the former in-content H1. The native page title remains the one
+	 * canonical value whether it is changed in the editor or through Quick Edit.
+	 */
+	private static function migrate_contribute_title(): void {
 		$page = get_page_by_path( 'contribute', OBJECT, 'page' );
+		if ( ! $page instanceof WP_Post ) {
+			return;
+		}
+
+		$content = (string) $page->post_content;
+		$pattern = '#<!-- wp:heading[^>]*-->\s*<h1[^>]*>(.*?)</h1>\s*<!-- /wp:heading -->\s*#s';
+		$content = preg_replace( $pattern, '', $content, 1, $replacements ) ?? $content;
+
+		if ( $replacements ) {
+			wp_update_post(
+				array(
+					'ID' => $page->ID,
+					'post_content' => $content,
+				)
+			);
+			delete_post_meta( $page->ID, '_lgsdn_seeded_content_hash' );
+		}
+	}
+
+	/**
+	 * Create a content page and assign its shared page pattern and template.
+	 * Existing editor-authored content is never replaced; the legacy content
+	 * argument allows a known installer default to move to its finished pattern.
+	 */
+	private static function seed_content_page( string $slug, string $title, string $template, string $pattern, string $legacy_content = '' ): void {
+		$page              = get_page_by_path( $slug, OBJECT, 'page' );
+		$pattern_reference = '<!-- wp:pattern {"slug":"' . $pattern . '"} /-->';
+		$pattern_path      = get_theme_file_path( 'patterns/' . str_replace( 'lgsdn/', '', $pattern ) . '.php' );
+		$seed_hash_key     = '_lgsdn_seeded_content_hash';
+		$uses_seed_content = false;
+
+		if ( ! is_readable( $pattern_path ) ) {
+			return;
+		}
+
+		ob_start();
+		include $pattern_path;
+		$pattern_content = trim( (string) ob_get_clean() );
+		$previous_pattern_content = str_replace( '{"tagName":"section",', '{', $pattern_content );
 
 		if ( ! $page instanceof WP_Post ) {
 			$page_id = wp_insert_post(
 				array(
 					'post_type' => 'page',
 					'post_status' => 'publish',
-					'post_name' => 'contribute',
-					'post_title' => 'Contribute',
-					'post_content' => '<!-- wp:heading {"level":1,"fontSize":"display"} --><h1 class="wp-block-heading has-display-font-size">Contribute</h1><!-- /wp:heading -->' . "\n" . '<!-- wp:paragraph {"className":"lgsdn-intro"} --><p class="lgsdn-intro">Share an example of service design practice from your work in local government.</p><!-- /wp:paragraph -->',
+					'post_name' => $slug,
+					'post_title' => $title,
+					'post_content' => $pattern_content,
 				),
 				true
 			);
@@ -332,13 +556,37 @@ final class LGSDN_Installer {
 			if ( is_wp_error( $page_id ) ) {
 				return;
 			}
+
+			$uses_seed_content = true;
 		} else {
 			$page_id = $page->ID;
+
+			$current_content = trim( (string) $page->post_content );
+			$stored_hash     = (string) get_post_meta( $page_id, $seed_hash_key, true );
+			$is_seeded       = $stored_hash && hash_equals( $stored_hash, hash( 'sha256', $current_content ) );
+			$is_legacy       = ( $legacy_content && $current_content === trim( $legacy_content ) )
+				|| $current_content === $pattern_reference
+				|| $current_content === $previous_pattern_content;
+
+			if ( $is_seeded || $is_legacy ) {
+				wp_update_post(
+					array(
+						'ID' => $page_id,
+						'post_content' => $pattern_content,
+					)
+				);
+				$uses_seed_content = true;
+			}
+		}
+
+		if ( $uses_seed_content ) {
+			$saved_content = trim( (string) get_post_field( 'post_content', $page_id ) );
+			update_post_meta( $page_id, $seed_hash_key, hash( 'sha256', $saved_content ) );
 		}
 
 		$current_template = get_post_meta( $page_id, '_wp_page_template', true );
 		if ( '' === $current_template || 'default' === $current_template ) {
-			update_post_meta( $page_id, '_wp_page_template', 'page-contribute' );
+			update_post_meta( $page_id, '_wp_page_template', $template );
 		}
 	}
 

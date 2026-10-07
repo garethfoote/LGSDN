@@ -34,6 +34,24 @@ $fallback_image = get_theme_file_uri( 'assets/images/person-fallback.png' );
 			$bio = has_excerpt( $person )
 				? get_the_excerpt( $person )
 				: wp_trim_words( wp_strip_all_tags( do_blocks( $person->post_content ) ), 34, '&hellip;' );
+			$playbook_url = home_url( '/playbook/' );
+			$author_articles = new WP_Query(
+				array(
+					'post_type' => 'lgsdn_playbook',
+					'post_status' => 'publish',
+					'posts_per_page' => 1,
+					'fields' => 'ids',
+					'no_found_rows' => true,
+					'meta_query' => array(
+						array(
+							'key' => 'lgsdn_contributor_id',
+							'value' => $person->ID,
+							'compare' => '=',
+							'type' => 'NUMERIC',
+						),
+					),
+				)
+			);
 			$image = get_the_post_thumbnail(
 				$person->ID,
 				'medium',
@@ -60,6 +78,9 @@ $fallback_image = get_theme_file_uri( 'assets/images/person-fallback.png' );
 						<?php if ( $role ) : ?><p class="lgsdn-person-card__role"><?php echo esc_html( $role ); ?></p><?php endif; ?>
 						<h2 class="lgsdn-person-card__name" id="person-<?php echo esc_attr( (string) $person->ID ); ?>-name"><?php echo esc_html( get_the_title( $person ) ); ?></h2>
 						<?php if ( $bio ) : ?><p class="lgsdn-person-card__bio"><?php echo esc_html( $bio ); ?></p><?php endif; ?>
+						<?php if ( $author_articles->have_posts() ) : ?>
+							<a class="lgsdn-person-card__articles" href="<?php echo esc_url( add_query_arg( 'contributor', $person->ID, $playbook_url ) . '#case-study-panel' ); ?>" aria-label="<?php echo esc_attr( 'Read ' . get_the_title( $person ) . '’s case studies' ); ?>">Read case studies</a>
+						<?php endif; ?>
 					</div>
 				</article>
 			</li>

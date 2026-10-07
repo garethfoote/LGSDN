@@ -5,8 +5,14 @@
 
 $post_id = isset( $block->context['postId'] ) ? absint( $block->context['postId'] ) : get_queried_object_id();
 $page_title = $post_id ? get_the_title( $post_id ) : 'Playbook';
-$page_title = 'Playbook' === $page_title ? 'LGSDN Playbook' : $page_title;
 $image_base = get_theme_file_uri( 'assets/images' );
+$contribute_title = LGSDN_Playbook_Page_Fields::value( $post_id, 'lgsdn_playbook_contribute_title' );
+$contribute_body = LGSDN_Playbook_Page_Fields::value( $post_id, 'lgsdn_playbook_contribute_body' );
+$contribute_button_label = LGSDN_Playbook_Page_Fields::value( $post_id, 'lgsdn_playbook_contribute_button_label' );
+$contribute_button_url = LGSDN_Playbook_Page_Fields::value( $post_id, 'lgsdn_playbook_contribute_button_url' );
+$contribute_button_href = str_starts_with( $contribute_button_url, '/' ) && ! str_starts_with( $contribute_button_url, '//' )
+	? home_url( $contribute_button_url )
+	: $contribute_button_url;
 
 $filter_taxonomies = array(
 	'lgsdn_service' => 'Service area',
@@ -19,6 +25,13 @@ $filter_sentence_labels = array(
 	'lgsdn_challenge' => 'challenges',
 );
 $active_filters = array();
+$submitted_search = isset( $_GET['search'] ) ? wp_unslash( $_GET['search'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+$search_query = is_string( $submitted_search ) ? sanitize_text_field( $submitted_search ) : '';
+$search_query = trim( $search_query );
+$contributor_id = isset( $_GET['contributor'] ) ? absint( wp_unslash( $_GET['contributor'] ) ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+if ( $contributor_id && ( 'lgsdn_person' !== get_post_type( $contributor_id ) || 'publish' !== get_post_status( $contributor_id ) ) ) {
+	$contributor_id = 0;
+}
 
 foreach ( $filter_taxonomies as $taxonomy => $label ) {
 	$query_key = str_replace( 'lgsdn_', '', $taxonomy );
@@ -51,6 +64,21 @@ $query_args = array(
 	'order' => 'oldest' === $sort ? 'ASC' : ( 'title' === $sort ? 'ASC' : 'DESC' ),
 );
 
+if ( $search_query ) {
+	$query_args['s'] = $search_query;
+}
+
+if ( $contributor_id ) {
+	$query_args['meta_query'] = array(
+		array(
+			'key' => 'lgsdn_contributor_id',
+			'value' => $contributor_id,
+			'compare' => '=',
+			'type' => 'NUMERIC',
+		),
+	);
+}
+
 if ( $active_filters ) {
 	$query_args['tax_query'] = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 		'relation' => 'AND',
@@ -66,9 +94,28 @@ if ( $active_filters ) {
 	}
 }
 
-$items = new WP_Query(
-	$query_args
-);
+$search_posts_search = null;
+if ( $search_query ) {
+	$search_posts_search = static function ( string $search, WP_Query $query ) use ( $search_query ): string {
+		global $wpdb;
+
+		$like = '%' . $wpdb->esc_like( $search_query ) . '%';
+		return $wpdb->prepare(
+			" AND ({$wpdb->posts}.post_title LIKE %s OR {$wpdb->posts}.post_excerpt LIKE %s)",
+			$like,
+			$like
+		);
+	};
+	add_filter( 'posts_search', $search_posts_search, 10, 2 );
+}
+
+try {
+	$items = new WP_Query( $query_args );
+} finally {
+	if ( $search_posts_search ) {
+		remove_filter( 'posts_search', $search_posts_search, 10 );
+	}
+}
 
 $result_count = (int) $items->found_posts;
 $result_count_label = sprintf(
@@ -87,11 +134,19 @@ foreach ( $active_filters as $taxonomy => $slugs ) {
 }
 
 $filter_status = 'Showing ' . $result_count_label . '.';
+if ( $search_query ) {
+	$filter_status .= ' Search: ' . $search_query . '.';
+}
 if ( $active_filter_labels ) {
 	$filter_status .= ' Active filters: ' . implode( ', ', $active_filter_labels ) . '.';
 } else {
 	$filter_status .= ' No filters applied.';
 }
+if ( $contributor_id ) {
+	$filter_status .= ' Author: ' . get_the_title( $contributor_id ) . '.';
+}
+
+$has_active_criteria = $search_query || $active_filters || $contributor_id;
 
 $service_terms = LGSDN_Service_Styles::homepage_terms();
 
@@ -110,11 +165,11 @@ $service_terms = LGSDN_Service_Styles::homepage_terms();
 	<section class="lgsdn-playbook-contribute" aria-labelledby="contribute-title">
 		<div class="lgsdn-playbook-contribute__inner lgsdn-playbook-shell">
 			<div class="lgsdn-playbook-contribute__copy">
-				<h2 id="contribute-title">Contribute</h2>
-				<p>We capture insights from our innovation processes to share learnable knowledge — through studies, analyses, data visualisations, and publications.</p>
+				<h2 id="contribute-title"><?php echo esc_html( $contribute_title ); ?></h2>
+				<p><?php echo esc_html( $contribute_body ); ?></p>
 			</div>
-			<a class="button button--strong button--large lgsdn-button--arrow" href="<?php echo esc_url( home_url( '/contribute/' ) ); ?>">
-				<span class="lgsdn-button__label">Contribute</span>
+			<a class="button button--strong button--large lgsdn-button--arrow" href="<?php echo esc_url( $contribute_button_href ); ?>">
+				<span class="lgsdn-button__label"><?php echo esc_html( $contribute_button_label ); ?></span>
 			</a>
 		</div>
 	</section>
@@ -123,7 +178,6 @@ $service_terms = LGSDN_Service_Styles::homepage_terms();
 		<section class="lgsdn-playbook-services" aria-labelledby="service-areas-title">
 			<header class="lgsdn-playbook-section-header">
 				<h2 id="service-areas-title">Explore by service area</h2>
-				<p>Find out how service design works with these services in local government.</p>
 			</header>
 			<?php if ( $service_terms ) : ?>
 				<div class="lgsdn-playbook-service-row" aria-label="Explore by service area">
@@ -137,10 +191,10 @@ $service_terms = LGSDN_Service_Styles::homepage_terms();
 								$service_url = get_permalink( $post_id );
 							}
 							?>
-							<a class="lgsdn-playbook-service-card lgsdn-playbook-service-card--<?php echo esc_attr( $service_style['colour'] ); ?>" style="--lgsdn-service-card-fg:<?php echo esc_attr( $service_style['foreground'] ); ?>" href="<?php echo esc_url( $service_url ); ?>">
-								<span class="lgsdn-playbook-service-card__label">Service</span>
-								<img class="lgsdn-playbook-service-card__icon lgsdn-playbook-service-card__icon--<?php echo esc_attr( $service_style['icon'] ); ?>" src="<?php echo esc_url( LGSDN_Service_Styles::icon_url( $service_style['icon'] ) ); ?>" alt="">
-								<h3 class="lgsdn-playbook-service-card__title"><?php echo esc_html( $service_term->name ); ?></h3>
+							<a class="lgsdn-service-card lgsdn-service-card--<?php echo esc_attr( $service_style['colour'] ); ?>" style="--lgsdn-service-card-bg:<?php echo esc_attr( $service_style['gradient'] ); ?>" href="<?php echo esc_url( $service_url ); ?>">
+								<span class="lgsdn-service-card__label">Service</span>
+								<img class="lgsdn-service-card__icon lgsdn-service-card__icon--<?php echo esc_attr( $service_style['icon'] ); ?>" src="<?php echo esc_url( LGSDN_Service_Styles::icon_url( $service_style['icon'] ) ); ?>" alt="">
+								<h3 class="lgsdn-service-card__title"><?php echo esc_html( $service_term->name ); ?></h3>
 							</a>
 						<?php endforeach; ?>
 					</div>
@@ -151,12 +205,11 @@ $service_terms = LGSDN_Service_Styles::homepage_terms();
 		<section class="lgsdn-playbook-case-studies" id="case-study-panel" role="tabpanel" data-playbook-panel="case-studies" aria-labelledby="case-studies-title">
 			<header class="lgsdn-playbook-section-header">
 				<h2 id="case-studies-title" tabindex="-1" data-playbook-heading="case-studies">Read the case studies</h2>
-				<p>Explore real examples of service design practice in local government.</p>
 			</header>
 
 		<div class="lgsdn-playbook-browse">
 			<form class="lgsdn-playbook-filters" method="get" action="<?php echo esc_url( get_permalink( $post_id ) ); ?>" data-playbook-filter-form aria-describedby="playbook-filter-hint">
-				<p id="playbook-filter-hint" class="screen-reader-text">Choose one option from each filter. Selections across categories must all match.</p>
+				<p id="playbook-filter-hint" class="screen-reader-text">Choose one option from each filter, or search case study titles and excerpts. Selections across categories must all match.</p>
 
 				<?php foreach ( $filter_taxonomies as $taxonomy => $label ) : ?>
 					<?php
@@ -185,17 +238,18 @@ $service_terms = LGSDN_Service_Styles::homepage_terms();
 						<button class="lgsdn-playbook-facet__clear" type="button" data-clear-facet <?php echo $selected_value ? '' : 'hidden'; ?> aria-label="<?php echo esc_attr( 'Remove ' . strtolower( $label ) . ' filter' ); ?>">×</button>
 					</div>
 				<?php endforeach; ?>
+				<?php if ( $contributor_id ) : ?><input type="hidden" name="contributor" value="<?php echo esc_attr( (string) $contributor_id ); ?>"><?php endif; ?>
 
-				<button class="lgsdn-playbook-filter-button" type="submit">Apply filters</button>
-
-				<label class="lgsdn-playbook-search" hidden>
-					<span class="screen-reader-text">Search case studies (not yet available)</span>
-					<input type="search" placeholder="Search" aria-disabled="true" readonly>
+				<label class="lgsdn-playbook-search" for="lgsdn-playbook-search">
+					<span class="screen-reader-text">Search case studies by title or excerpt</span>
+					<input id="lgsdn-playbook-search" type="search" name="search" value="<?php echo esc_attr( $search_query ); ?>" placeholder="Search case studies" autocomplete="off" data-playbook-search>
 					<svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
 						<circle cx="10.75" cy="10.75" r="5.75"></circle>
 						<path d="m15 15 4 4"></path>
 					</svg>
 				</label>
+
+				<button class="lgsdn-playbook-filter-button" type="submit">Apply filters</button>
 
 				<label class="lgsdn-playbook-sort" hidden>
 					<span>Sort by</span>
@@ -209,13 +263,19 @@ $service_terms = LGSDN_Service_Styles::homepage_terms();
 				</label>
 			</form>
 
-			<div class="lgsdn-playbook-active-filters" aria-labelledby="active-filters-label" data-active-filters <?php echo $active_filters ? '' : 'hidden'; ?>>
+			<div class="lgsdn-playbook-active-filters" aria-labelledby="active-filters-label" data-active-filters <?php echo $has_active_criteria ? '' : 'hidden'; ?>>
 				<span id="active-filters-label" class="screen-reader-text">Active filters</span>
 				<div class="lgsdn-playbook-active-filters__sentence lgsdn-type-filter-sentence">
 					<span class="lgsdn-playbook-filter-scaffolding">Showing </span>
+					<?php if ( $search_query ) : ?>
+						<span class="lgsdn-playbook-filter-group-label">case studies</span><span class="lgsdn-playbook-filter-scaffolding"> matching </span>
+						<span class="lgsdn-playbook-filter-value-unit">
+							<span class="lgsdn-playbook-filter-value"><span class="lgsdn-playbook-filter-value__label">“<?php echo esc_html( $search_query ); ?>”</span></span><?php if ( $active_filters ) : ?><span class="lgsdn-playbook-filter-punctuation" aria-hidden="true">,</span><?php else : ?><span class="lgsdn-playbook-filter-period" aria-hidden="true">.</span><?php endif; ?>
+						</span>
+					<?php endif; ?>
 					<?php $active_group_index = 0; ?>
 					<?php foreach ( $active_filters as $taxonomy => $slugs ) : ?>
-						<?php if ( $active_group_index > 0 ) : ?>
+						<?php if ( $search_query || $active_group_index > 0 ) : ?>
 							<span class="lgsdn-playbook-filter-group-connector">and </span>
 						<?php endif; ?>
 						<span class="lgsdn-playbook-filter-group-label"><?php echo esc_html( $filter_sentence_labels[ $taxonomy ] ); ?></span><span class="lgsdn-playbook-filter-scaffolding"> matching </span>
@@ -236,7 +296,17 @@ $service_terms = LGSDN_Service_Styles::homepage_terms();
 						<?php ++$active_group_index; ?>
 					<?php endforeach; ?>
 				</div>
-				<a class="lgsdn-playbook-clear-filters" href="<?php echo esc_url( add_query_arg( array( 'sort' => $sort ), get_permalink( $post_id ) ) ); ?>" data-clear-filters hidden><span aria-hidden="true">×</span> Reset all filters</a>
+				<div class="lgsdn-playbook-active-filters__controls">
+					<?php if ( $contributor_id ) : ?>
+						<a class="lgsdn-playbook-active-filter" href="<?php echo esc_url( remove_query_arg( 'contributor' ) ); ?>" aria-label="<?php echo esc_attr( 'Remove author filter: ' . get_the_title( $contributor_id ) ); ?>">
+							<span class="lgsdn-playbook-active-filter__type">Author</span>
+							<span class="lgsdn-playbook-active-filter__value"><?php echo esc_html( get_the_title( $contributor_id ) ); ?></span>
+							<span class="lgsdn-playbook-active-filter__remove" aria-hidden="true"></span>
+						</a>
+						<span class="lgsdn-playbook-active-filters__separator" aria-hidden="true"></span>
+					<?php endif; ?>
+					<a class="lgsdn-playbook-clear-filters" href="<?php echo esc_url( add_query_arg( array( 'sort' => $sort ), get_permalink( $post_id ) ) ); ?>" data-clear-filters><span class="lgsdn-playbook-clear-filters__icon" aria-hidden="true">×</span><span class="lgsdn-playbook-clear-filters__label">Reset all filters</span></a>
+				</div>
 			</div>
 
 			<p class="screen-reader-text" aria-live="polite" aria-atomic="true" data-filter-status><?php echo esc_html( $filter_status ); ?></p>
@@ -254,7 +324,7 @@ $service_terms = LGSDN_Service_Styles::homepage_terms();
 				<?php endwhile; ?>
 			</div>
 			<?php else : ?>
-				<p class="lgsdn-playbook-empty">No case studies match those filters. Remove one or more filters to broaden the results.</p>
+				<p class="lgsdn-playbook-empty">No case studies match your search and filters. Try another search or remove a filter to broaden the results.</p>
 			<?php endif; ?>
 		</div>
 		</section>

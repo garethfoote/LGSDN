@@ -105,6 +105,12 @@ header.site-header.is-scrolled {
 	color: var(--wp--preset--color--white, #fff);
 }
 
+.site-nav .button[aria-current="page"] {
+	background: var(--wp--preset--color--ink, #27272d);
+	color: var(--wp--preset--color--white, #fff);
+	text-decoration: none;
+}
+
 .menu-button {
 	display: none;
 	width: 2.75rem;

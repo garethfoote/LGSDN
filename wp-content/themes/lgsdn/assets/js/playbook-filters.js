@@ -46,7 +46,9 @@
 	selectPanel(initialPanel, false);
 
 	const facets = Array.from(form.querySelectorAll("[data-filter-facet]"));
+	const search = form.querySelector("[data-playbook-search]");
 	let requestController;
+	let searchTimer;
 
 	const updateFacetStates = () => {
 		facets.forEach((facet) => {
@@ -81,6 +83,8 @@
 	};
 
 	const updateResults = async (url = formUrl()) => {
+		window.clearTimeout(searchTimer);
+
 		if (requestController) {
 			requestController.abort();
 		}
@@ -137,6 +141,11 @@
 		}
 	});
 
+	search?.addEventListener("input", () => {
+		window.clearTimeout(searchTimer);
+		searchTimer = window.setTimeout(updateResults, 250);
+	});
+
 	form.addEventListener("submit", (event) => {
 		event.preventDefault();
 		updateResults();
@@ -168,6 +177,10 @@
 					select.value = "";
 				}
 			});
+			form.querySelector('[name="contributor"]')?.remove();
+			if (search) {
+				search.value = "";
+			}
 			updateFacetStates();
 			updateResults();
 		}

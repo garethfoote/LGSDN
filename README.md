@@ -85,4 +85,8 @@ Add an event photo using **Featured image** in the event editor. Below the wide 
 
 Manage members under **People**. Add the person's name as the title, their full biography in the main editor, their role in **Person details**, their council in **Councils**, and their portrait using **Featured image**. The optional excerpt is used as the short biography on the Network page; when it is blank, the page creates a short version from the main biography.
 
-The Network page lists every published person in menu order and then alphabetically. Portraits are circular with the shared ink stroke. Profiles without an uploaded portrait use `assets/images/person-fallback.png`. People do not have separate public detail pages, and cards do not link to authored articles yet.
+The Network page lists every published person in menu order and then alphabetically. Portraits are circular with the shared ink stroke. Profiles without an uploaded portrait use `assets/images/person-fallback.png`. People do not have separate public detail pages. A profile with published case studies has a link to those Playbook items.
+
+## Planned work
+
+- Show the selected author or contributor on Playbook case-study cards.

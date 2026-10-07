@@ -16,6 +16,23 @@ final class LGSDN_Service_Styles {
 	private const DEFAULT_COLOUR = 'orange';
 	private const DEFAULT_ICON = 'service';
 
+	/**
+	 * Service-card gradient controls.
+	 *
+	 * Set angle in degrees. CSS 135 gives a slight bottom-left to top-right slope.
+	 * A zero strength disables colour mixing. Adjust per token while refining the cards.
+	 */
+	private const CARD_GRADIENT = array(
+		'angle' => 135,
+		'strength' => array(
+			'mustard' => 100,
+			'blue' => 100,
+			'purple' => 100,
+			'green' => 100,
+			'orange' => 0,
+		),
+	);
+
 	private const ICONS = array(
 		'service' => 'Service',
 		'bricks' => 'Community safety',
@@ -43,7 +60,7 @@ final class LGSDN_Service_Styles {
 			'label' => 'Blue',
 			'background' => '#4B5AFF',
 			'contrast' => '#3444C7',
-			'foreground' => '#FFFFFF',
+		'foreground' => '#FFFFFF',
 		),
 		'purple' => array(
 			'label' => 'Purple',
@@ -59,8 +76,8 @@ final class LGSDN_Service_Styles {
 		),
 		'orange' => array(
 			'label' => 'Orange',
-			'background' => '#FF7D01',
-			'contrast' => '#C45F00',
+			'background' => '#EA7200',
+			'contrast' => '#EA7200',
 			'foreground' => '#27272D',
 		),
 	);
@@ -205,47 +222,34 @@ final class LGSDN_Service_Styles {
 			$featured = (bool) ( $defaults[ self::FEATURED_META ] ?? false );
 		}
 		$colours = self::colours();
+		$gradient = self::card_gradient( $colour, $colours[ $colour ] );
 
 		return array(
 			'colour' => $colour,
 			'background' => $colours[ $colour ]['background'],
 			'contrast' => $colours[ $colour ]['contrast'],
-			'foreground' => self::foreground_for_background( $colours[ $colour ]['background'] ),
+			'foreground' => '#FFFFFF',
+			'gradient' => $gradient,
 			'icon' => $icon,
 			'order' => $order,
 			'featured' => $featured,
 		);
 	}
 
-	/**
-	 * Pick Ink or White based on the stronger WCAG contrast ratio.
-	 */
-	private static function foreground_for_background( string $hex ): string {
-		$hex = ltrim( $hex, '#' );
-		$rgb = array_map(
-			static function ( string $channel ): float {
-				$value = hexdec( $channel ) / 255;
-				return $value <= 0.03928 ? $value / 12.92 : pow( ( $value + 0.055 ) / 1.055, 2.4 );
-			},
-			str_split( $hex, 2 )
-		);
-		$luminance = ( 0.2126 * $rgb[0] ) + ( 0.7152 * $rgb[1] ) + ( 0.0722 * $rgb[2] );
-		$ink_contrast = ( $luminance + 0.05 ) / 0.05;
-		$white_contrast = 1.05 / ( $luminance + 0.05 );
-
-		// Prefer white when it still passes AA; this keeps dark saturated
-		// cards legible while retaining Ink on lighter palette colours.
-		if ( $white_contrast >= 4.5 ) {
-			return '#FFFFFF';
+	private static function card_gradient( string $colour, array $palette ): string {
+		$strength = max( 0, min( 100, (int) ( self::CARD_GRADIENT['strength'][ $colour ] ?? 0 ) ) );
+		if ( 0 === $strength ) {
+			return $palette['background'];
 		}
 
-		if ( $ink_contrast >= 4.5 ) {
-			return '#27272D';
-		}
-
-		return $white_contrast >= $ink_contrast ? '#FFFFFF' : '#27272D';
+		$angle = max( 0, min( 360, (int) ( self::CARD_GRADIENT['angle'] ?? 135 ) ) );
+		$alternate = $strength . '%';
+		return sprintf( 'linear-gradient(%ddeg, %s, color-mix(in srgb, %s %s, transparent))', $angle, $palette['background'], $palette['contrast'], $alternate );
 	}
 
+	/**
+	 * Prefer White when it passes WCAG AA, otherwise use Ink or the stronger pair.
+	 */
 	public static function homepage_terms(): array {
 		$terms = get_terms(
 			array(

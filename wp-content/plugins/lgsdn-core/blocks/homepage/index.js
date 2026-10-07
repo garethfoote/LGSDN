@@ -64,13 +64,19 @@
 			var title = value( titleKey );
 			var ctaLabels = [ 'Join', 'Browse', 'Contribute' ];
 			var ctaSuffixes = [ ' the network', ' the playbook', ' an example' ];
+			var iconNames = [ 'join', 'browse', 'contribute' ];
 
 			return el(
 				'article',
 				{ className: 'feature-card', key: index },
-				editableText( 'h2', '', title, function ( nextValue ) {
-					updateMeta( titleKey, nextValue );
-				}, 'Feature title' ),
+				el(
+					'div',
+					{ className: 'feature-card__heading' },
+					el( 'img', { className: 'feature-card__icon', src: imageBase + '/home-feature-' + iconNames[ index - 1 ] + '.svg', alt: '', 'aria-hidden': true, width: 26, height: 26 } ),
+					editableText( 'h2', '', title, function ( nextValue ) {
+						updateMeta( titleKey, nextValue );
+					}, 'Feature title' )
+				),
 				editableText( 'p', '', value( bodyKey ), function ( nextValue ) {
 					updateMeta( bodyKey, nextValue );
 				}, 'Feature description' ),

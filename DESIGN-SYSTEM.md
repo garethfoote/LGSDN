@@ -25,14 +25,15 @@ CityLAB Berlin uses several overlapping thresholds around 480, 768, 1024, 1280, 
 
 - **Compact:** below `48rem` / 768px
 - **Medium:** `48rem` / 768px and above
-- **Wide:** `64rem` / 1024px and above
+- **Wide:** `64rem` / 1024px and above (laptop scale)
+- **Extra large:** `90rem` / 1440px and above (full large-screen scale)
 - **Maximum content width:** `85rem` / 1360px
 
 Use a breakpoint only when the content needs it, rather than targeting particular devices.
 
 ## Service area colours
 
-Service-area cards take their visual identity from their primary Service area. Administrators assign one of six controlled tokens to each Service area term; arbitrary colours are not accepted.
+Service-area cards take their visual identity from their primary Service area. Administrators assign one of six controlled tokens to each Service area term; arbitrary colours are not accepted. The cards use white text and icons across the homepage, Playbook listing, service archive, and article detail view.
 
 | Token | Base | Contrast | Card text |
 |---|---|---|---|
@@ -40,9 +41,9 @@ Service-area cards take their visual identity from their primary Service area. A
 | Service area blue | `#4B5AFF` | `#3444C7` | White |
 | Service area purple | `#C7AFE1` | `#9B83B8` | Ink |
 | Service area green | `#4B5B37` | `#3A472B` | White |
-| Service area orange | `#FF7D01` | `#C45F00` | Ink |
+| Service area orange | `#EA7200` | `#EA7200` | Ink |
 
-The palette values are owned by `LGSDN_Service_Styles`. Service-area term metadata stores only the stable colour token name rather than a hexadecimal value or asset URL. The legacy `lilac` token is read as `purple` so existing content keeps its appearance. Practice terms no longer expose this palette in their admin screen; their existing token metadata remains available to preserve legacy practice contour fallbacks.
+The palette values and card gradient controls are owned by `LGSDN_Service_Styles`. Edit `CARD_GRADIENT` in `wp-content/plugins/lgsdn-core/src/class-service-styles.php` to tune the angle in degrees (135 gives a slight bottom-left to top-right slope, with the contrast/darker stop at the bottom) and per-colour strength (0–100). Zero strength leaves the base colour flat; other values blend the contrast token into the gradient. Service-area term metadata stores only the stable colour token name rather than a hexadecimal value or asset URL. The legacy `lilac` token is read as `purple` so existing content keeps its appearance. Practice terms no longer expose this palette in their admin screen; their existing token metadata remains available to preserve legacy practice contour fallbacks.
 
 Playbook taxonomy tags have two roles:
 
@@ -63,10 +64,10 @@ The scale follows the semantic roles visible in Figma. Change the `settings.typo
 
 | Token | Typeface | Size / line height |
 |---|---|---|
-| Display | Srbija Sans | 40px / 110% |
+| Display | Srbija Sans | 40px compact, 48px laptop, 56px extra large / 110% |
 | Page title | Srbija Sans | 36px / 115% |
 | Section title / H2 | Srbija Sans | 36px / 120% |
-| Page lead | Atkinson Hyperlegible Next | 24px compact, 28px medium, 32px wide / 150% |
+| Page lead | Atkinson Hyperlegible Next | 24px compact, 28px medium and laptop, 32px extra large / 150% |
 | Article lead | Atkinson Hyperlegible Next | 24px compact, 28px medium and wide / 150% |
 | Event title | Srbija Sans | 28px at every breakpoint / 125% |
 | Feature body | Atkinson Hyperlegible Next | 18px / 150% |
@@ -78,7 +79,7 @@ The scale follows the semantic roles visible in Figma. Change the `settings.typo
 | Navigation | Atkinson Hyperlegible Next | 30px compact, 20px medium and wide / normal |
 | Tag | Atkinson Hyperlegible Next | 14px / 145% |
 
-Page lead copy steps from 24px on compact screens, to 28px at the medium breakpoint, and 32px at the wide breakpoint. Article leads stop growing at 28px, while normal article paragraphs become 20px from the medium breakpoint onward. Navigation uses its own responsive token rather than the generic small-text preset. On the design-system page, JavaScript highlights the current breakpoint and reads the rendered sample’s computed font size and line height into that row, so CSS remains the source of truth.
+Page lead copy steps from 24px on compact screens, to 28px at the medium and laptop breakpoints, and 32px at the extra-large breakpoint. Article leads stop growing at 28px, while normal article paragraphs become 20px from the medium breakpoint onward. Navigation uses its own responsive token rather than the generic small-text preset. On the design-system page, JavaScript highlights the current breakpoint and reads the rendered sample’s computed font size and line height into that row, so CSS remains the source of truth.
 
 ## Spacing scale
 
