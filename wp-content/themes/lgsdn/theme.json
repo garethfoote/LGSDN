@@ -62,6 +62,12 @@
             {
               "fontFamily": "Atkinson Hyperlegible Next",
               "fontStyle": "normal",
+              "fontWeight": "300",
+              "src": ["file:./assets/fonts/AtkinsonHyperlegibleNext-Light.woff2"]
+            },
+            {
+              "fontFamily": "Atkinson Hyperlegible Next",
+              "fontStyle": "normal",
               "fontWeight": "400",
               "src": ["file:./assets/fonts/AtkinsonHyperlegibleNext-Regular.woff2"]
             },

@@ -48,10 +48,10 @@ $select_events = static function ( bool $past, ?int $limit ) use ( $now, $timezo
 
 // The homepage is curated; the archive continues the same descending timeline
 // through every valid event, including the complete past history.
-$events = array_merge(
-	array_reverse( $select_events( false, $show_all ? null : 5 ) ),
-	$select_events( true, $show_all ? null : 1 )
-);
+$upcoming_events = array_reverse( $select_events( false, $show_all ? null : 5 ) );
+$past_limit = $show_all ? null : ( count( $upcoming_events ) < 3 ? 3 - count( $upcoming_events ) : 1 );
+$past_events = $select_events( true, $past_limit );
+$events = array_merge( $upcoming_events, $past_events );
 if ( empty( $events ) ) {
 	return;
 }
@@ -111,4 +111,9 @@ $format_labels = array( 'online' => 'Online', 'in-person' => 'In person', 'hybri
 			<?php $previous_month = $month; ?>
 		<?php endforeach; ?>
 	</ul>
+	<?php if ( ! $show_all ) : ?>
+		<div class="lgsdn-events__footer">
+			<a class="button button--strong button--large lgsdn-button--arrow" href="<?php echo esc_url( home_url( '/events/' ) ); ?>"><span class="lgsdn-button__label">See all events</span></a>
+		</div>
+	<?php endif; ?>
 </section>

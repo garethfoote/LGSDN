@@ -14,6 +14,18 @@ $people = get_posts(
 	)
 );
 
+$coordinators = array();
+$contributors = array();
+foreach ( $people as $person ) {
+	$is_network_coordinator = (bool) get_post_meta( $person->ID, 'lgsdn_network_coordinator', true );
+	$is_playbook_coordinator = (bool) get_post_meta( $person->ID, 'lgsdn_playbook_coordinator', true );
+	if ( $is_network_coordinator || $is_playbook_coordinator ) {
+		$coordinators[] = $person;
+	} else {
+		$contributors[] = $person;
+	}
+}
+
 if ( empty( $people ) ) {
 	echo '<p ' . get_block_wrapper_attributes( array( 'class' => 'lgsdn-network__empty' ) ) . '>No network profiles have been published yet.</p>';
 	return;
@@ -21,9 +33,17 @@ if ( empty( $people ) ) {
 
 $fallback_image = get_theme_file_uri( 'assets/images/person-fallback.png' );
 ?>
-<section <?php echo get_block_wrapper_attributes( array( 'class' => 'lgsdn-network' ) ); ?> aria-label="People in the network">
-	<ul class="lgsdn-network__grid" role="list">
-		<?php foreach ( $people as $person ) : ?>
+
+<?php
+$render_people = static function ( array $group, string $section_label ) use ( $fallback_image ): void {
+	if ( empty( $group ) ) {
+		return;
+	}
+	?>
+	<section class="lgsdn-network__section" aria-labelledby="<?php echo esc_attr( sanitize_title( $section_label ) ); ?>">
+		<h2 class="lgsdn-network__heading" id="<?php echo esc_attr( sanitize_title( $section_label ) ); ?>"><?php echo esc_html( $section_label ); ?></h2>
+		<ul class="lgsdn-network__grid" role="list">
+		<?php foreach ( $group as $person ) : ?>
 			<?php
 			$councils = get_the_terms( $person->ID, 'lgsdn_council' );
 			$council_names = array();
@@ -31,6 +51,9 @@ $fallback_image = get_theme_file_uri( 'assets/images/person-fallback.png' );
 				$council_names = wp_list_pluck( $councils, 'name' );
 			}
 			$role = trim( (string) get_post_meta( $person->ID, 'lgsdn_role', true ) );
+			$linkedin_url = trim( (string) get_post_meta( $person->ID, 'lgsdn_profile_url', true ) );
+			$is_network_coordinator = (bool) get_post_meta( $person->ID, 'lgsdn_network_coordinator', true );
+			$is_playbook_coordinator = (bool) get_post_meta( $person->ID, 'lgsdn_playbook_coordinator', true );
 			$bio = has_excerpt( $person )
 				? get_the_excerpt( $person )
 				: wp_trim_words( wp_strip_all_tags( do_blocks( $person->post_content ) ), 34, '&hellip;' );
@@ -75,15 +98,70 @@ $fallback_image = get_theme_file_uri( 'assets/images/person-fallback.png' );
 					</div>
 					<div class="lgsdn-person-card__details">
 						<?php if ( $council_names ) : ?><p class="lgsdn-person-card__council"><?php echo esc_html( implode( ', ', $council_names ) ); ?></p><?php endif; ?>
-						<?php if ( $role ) : ?><p class="lgsdn-person-card__role"><?php echo esc_html( $role ); ?></p><?php endif; ?>
-						<h2 class="lgsdn-person-card__name" id="person-<?php echo esc_attr( (string) $person->ID ); ?>-name"><?php echo esc_html( get_the_title( $person ) ); ?></h2>
+						<?php if ( $is_network_coordinator || $is_playbook_coordinator ) : ?>
+							<?php
+							$coordinator_label = $is_network_coordinator && $is_playbook_coordinator
+								? 'Network and Playbook coordinator'
+								: ( $is_network_coordinator ? 'Network coordinator' : 'Playbook coordinator' );
+							?>
+							<p class="lgsdn-person-card__role"><span class="lgsdn-person-card__tag"><?php echo esc_html( $coordinator_label ); ?></span></p>
+						<?php elseif ( $role ) : ?><p class="lgsdn-person-card__role"><?php echo esc_html( $role ); ?></p><?php endif; ?>
+						<div class="lgsdn-person-card__name-row">
+							<h2 class="lgsdn-person-card__name" id="person-<?php echo esc_attr( (string) $person->ID ); ?>-name"><?php echo esc_html( get_the_title( $person ) ); ?></h2>
+							<?php if ( $linkedin_url ) : ?>
+								<a class="lgsdn-person-card__linkedin" href="<?php echo esc_url( $linkedin_url ); ?>" target="_blank" rel="noopener noreferrer" aria-label="<?php echo esc_attr( 'View ' . get_the_title( $person ) . ' on LinkedIn (opens in a new tab)' ); ?>">
+									<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20.45 2H3.55C2.69 2 2 2.68 2 3.52v16.96c0 .84.69 1.52 1.55 1.52h16.9c.86 0 1.55-.68 1.55-1.52V3.52c0-.84-.69-1.52-1.55-1.52ZM8.1 18.9H5.15V9.4H8.1v9.5ZM6.62 8.1a1.71 1.71 0 1 1 0-3.42 1.71 1.71 0 0 1 0 3.42ZM18.9 18.9h-2.94v-4.62c0-1.1-.02-2.52-1.54-2.52-1.54 0-1.78 1.2-1.78 2.44v4.7H9.7V9.4h2.82v1.3h.04c.39-.74 1.35-1.52 2.78-1.52 2.98 0 3.54 1.96 3.54 4.5v5.22Z"/></svg>
+								</a>
+							<?php endif; ?>
+						</div>
 						<?php if ( $bio ) : ?><p class="lgsdn-person-card__bio"><?php echo esc_html( $bio ); ?></p><?php endif; ?>
-						<?php if ( $author_articles->have_posts() ) : ?>
-							<a class="lgsdn-person-card__articles" href="<?php echo esc_url( add_query_arg( 'contributor', $person->ID, $playbook_url ) . '#case-study-panel' ); ?>" aria-label="<?php echo esc_attr( 'Read ' . get_the_title( $person ) . '’s case studies' ); ?>">Read case studies</a>
+						<?php if ( $author_articles->have_posts() || $linkedin_url ) : ?>
+							<div class="lgsdn-person-card__links">
+								<?php if ( $author_articles->have_posts() ) : ?>
+									<a class="lgsdn-person-card__articles" href="<?php echo esc_url( add_query_arg( 'contributor', $person->ID, $playbook_url ) . '#case-study-panel' ); ?>" aria-label="<?php echo esc_attr( 'Read ' . get_the_title( $person ) . '’s case studies' ); ?>">Read case studies</a>
+								<?php endif; ?>
+							</div>
 						<?php endif; ?>
 					</div>
 				</article>
 			</li>
 		<?php endforeach; ?>
-	</ul>
-</section>
+		</ul>
+	</section>
+	<?php
+};
+?>
+<div <?php echo get_block_wrapper_attributes( array( 'class' => 'lgsdn-network' ) ); ?> aria-label="People in the network">
+	<?php $render_people( $coordinators, 'Coordinators' ); ?>
+	<?php $render_people( $contributors, 'Contributors' ); ?>
+	<?php
+	$councils = get_posts(
+		array(
+			'post_type' => 'lgsdn_council',
+			'post_status' => 'publish',
+			'posts_per_page' => -1,
+			'orderby' => array( 'menu_order' => 'ASC', 'title' => 'ASC' ),
+			'order' => 'ASC',
+		)
+	);
+	if ( $councils ) :
+		?>
+		<section class="lgsdn-network__section lgsdn-network__councils" aria-labelledby="network-councils-heading">
+			<h2 class="lgsdn-network__heading" id="network-councils-heading">Councils</h2>
+			<ul class="lgsdn-network__council-grid" role="list">
+				<?php foreach ( $councils as $council ) : ?>
+					<?php
+					$logo = get_the_post_thumbnail( $council->ID, 'medium', array( 'class' => 'lgsdn-network__council-logo', 'alt' => '', 'loading' => 'lazy', 'decoding' => 'async' ) );
+					$display = get_post_meta( $council->ID, 'lgsdn_council_logo_display', true );
+					$show_title = ! $logo || in_array( $display, array( 'title-logo', 'title-only' ), true );
+					$show_logo = $logo && 'title-only' !== $display;
+					?>
+					<li class="lgsdn-network__council-item">
+						<?php if ( $show_logo ) : ?><div class="lgsdn-network__council-mark"><?php echo $logo; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Generated by WordPress. ?></div><?php endif; ?>
+						<?php if ( $show_title ) : ?><h3 class="lgsdn-network__council-name"><?php echo esc_html( get_the_title( $council ) ); ?></h3><?php endif; ?>
+					</li>
+				<?php endforeach; ?>
+			</ul>
+		</section>
+	<?php endif; ?>
+</div>

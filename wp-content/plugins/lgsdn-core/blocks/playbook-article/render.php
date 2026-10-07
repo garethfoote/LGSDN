@@ -64,7 +64,54 @@ $excerpt = get_the_excerpt( $post_id );
 $has_featured_image = has_post_thumbnail( $post_id );
 $contributor_id = absint( get_post_meta( $post_id, 'lgsdn_contributor_id', true ) );
 $contributor = $contributor_id && 'lgsdn_person' === get_post_type( $contributor_id ) ? get_post( $contributor_id ) : null;
+$resources = LGSDN_Fields::sanitize_resources( get_post_meta( $post_id, 'lgsdn_playbook_resources', true ) );
+if ( ! $resources ) {
+	$legacy_resource_url = esc_url_raw( (string) get_post_meta( $post_id, 'lgsdn_resource_url', true ) );
+	if ( $legacy_resource_url ) {
+		$resources = array( array( 'label' => 'Resource', 'url' => $legacy_resource_url, 'attachment_id' => 0 ) );
+	}
+}
+$site_host = strtolower( (string) wp_parse_url( home_url( '/' ), PHP_URL_HOST ) );
+$is_external_url = static function ( string $url ) use ( $site_host ): bool {
+	$host = strtolower( (string) wp_parse_url( $url, PHP_URL_HOST ) );
+	return '' !== $host && '' !== $site_host && $host !== $site_host;
+};
 $content = apply_filters( 'the_content', get_post_field( 'post_content', $post_id ) ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+
+// Offer one case study per classification, avoiding duplicate recommendations.
+$related_items = array();
+$related_taxonomies = array( 'lgsdn_service', 'lgsdn_challenge', 'lgsdn_practice' );
+foreach ( $related_taxonomies as $related_taxonomy ) {
+	$related_terms = 'lgsdn_service' === $related_taxonomy
+		? lgsdn_services_for_item( $post_id )
+		: get_the_terms( $post_id, $related_taxonomy );
+	if ( ! $related_terms || is_wp_error( $related_terms ) ) {
+		continue;
+	}
+
+	$related_query = new WP_Query(
+		array(
+			'post_type' => 'lgsdn_playbook',
+			'post_status' => 'publish',
+			'posts_per_page' => 1,
+			'post__not_in' => array_merge( array( $post_id ), array_keys( $related_items ) ),
+			'tax_query' => array(
+				array(
+					'taxonomy' => $related_taxonomy,
+					'field' => 'term_id',
+					'terms' => wp_list_pluck( $related_terms, 'term_id' ),
+					'operator' => 'IN',
+				),
+			),
+			'orderby' => 'date',
+			'order' => 'DESC',
+		)
+	);
+	if ( $related_query->have_posts() ) {
+		$related_items[ (int) $related_query->posts[0]->ID ] = true;
+	}
+	wp_reset_postdata();
+}
 ?>
 <nav class="lgsdn-playbook-article__back-nav lgsdn-playbook-article-shell" aria-label="Back navigation">
 	<a class="lgsdn-playbook-article__back-link" href="<?php echo esc_url( home_url( '/playbook/' ) ); ?>">
@@ -140,10 +187,45 @@ $content = apply_filters( 'the_content', get_post_field( 'post_content', $post_i
 			</div>
 
 			<div class="lgsdn-playbook-article__copy">
+				<?php if ( $resources ) : ?>
+					<aside class="lgsdn-event__resources" aria-labelledby="lgsdn-playbook-resources-title-<?php echo esc_attr( (string) $post_id ); ?>">
+						<h2 id="lgsdn-playbook-resources-title-<?php echo esc_attr( (string) $post_id ); ?>">Resources</h2>
+						<ul role="list">
+							<?php foreach ( $resources as $resource ) : ?>
+								<li>
+									<a<?php echo $is_external_url( $resource['url'] ) ? ' class="lgsdn-button--external"' : ''; ?> href="<?php echo esc_url( $resource['url'] ); ?>">
+										<span class="lgsdn-button__label"><?php echo esc_html( $resource['label'] ); ?></span>
+									</a>
+								</li>
+							<?php endforeach; ?>
+						</ul>
+					</aside>
+				<?php endif; ?>
 				<div class="lgsdn-article">
 					<?php echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</div>
 			</div>
 		</div>
 	</div>
+	<?php if ( $related_items ) : ?>
+		<section class="lgsdn-playbook-related" aria-labelledby="lgsdn-playbook-related-title-<?php echo esc_attr( (string) $post_id ); ?>">
+			<header class="lgsdn-playbook-section-header">
+				<h2 id="lgsdn-playbook-related-title-<?php echo esc_attr( (string) $post_id ); ?>">Other related case studies</h2>
+			</header>
+			<div class="lgsdn-playbook-grid">
+				<?php foreach ( array_keys( $related_items ) as $related_item_id ) : ?>
+					<?php
+					$related_item = get_post( $related_item_id );
+					if ( ! $related_item instanceof WP_Post ) {
+						continue;
+					}
+					$GLOBALS['post'] = $related_item; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+					setup_postdata( $related_item );
+					lgsdn_render_playbook_card( 3 );
+					?>
+				<?php endforeach; ?>
+			</div>
+		</section>
+	<?php endif; ?>
 </article>
+<?php wp_reset_postdata(); ?>

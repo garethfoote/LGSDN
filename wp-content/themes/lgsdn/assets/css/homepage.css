@@ -292,7 +292,7 @@ a {
 
 .home-hero__graphic-disc {
 	display: flex;
-	width: 100%;
+	width: min(100%, 20rem);
 	aspect-ratio: 1;
 	align-items: center;
 	justify-content: center;
@@ -427,7 +427,7 @@ display: grid;
 .homepage-service-row {
 	--homepage-card-gap: calc(var(--wp--preset--spacing--50, 2rem) - 0.375rem);
 	position: relative;
-	margin-top: 5.75rem;
+	margin-top: var(--wp--preset--spacing--60, 3rem);
 	width: 100%;
 	overflow: visible;
 }
@@ -583,12 +583,6 @@ display: grid;
 	background: var(--spotlight);
 }
 
-.homepage-case-study-card__image {
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-}
-
 .homepage-case-study-card__body {
 	display: flex;
 	min-width: 0;
@@ -615,7 +609,6 @@ display: grid;
 	padding: var(--lgsdn-taxonomy-tag-padding);
 	color: var(--case-study-tag-fg);
 	font-size: 0.875rem;
-	font-weight: 500;
 	line-height: 1.2;
 }
 
@@ -680,12 +673,6 @@ display: grid;
 	position: relative;
 	max-height: 450px;
 	overflow: hidden;
-}
-
-.spotlight__image {
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
 }
 
 .spotlight__content {
@@ -931,10 +918,6 @@ display: grid;
 	font-weight: 400;
 }
 
-.article-copy li {
-	padding-inline-start: 0.25em;
-}
-
 .article-copy li + li {
 	margin-top: 0.45em;
 }
@@ -998,11 +981,6 @@ display: grid;
 	color: var(--muted);
 	font-size: 0.9375rem;
 	text-align: left;
-}
-
-.article-copy table {
-	width: 100%;
-	border-collapse: collapse;
 }
 
 .article-copy :where(th, td) {
@@ -1075,10 +1053,6 @@ display: grid;
 
 	.home-hero__intro {
 		font-size: 1.75rem;
-	}
-
-	.home-hero__graphic-disc {
-		width: min(100%, 20rem);
 	}
 
 	.homepage-service-row,
@@ -1212,10 +1186,6 @@ display: grid;
 		max-height: 20rem;
 	}
 
-	.home-hero__graphic-disc {
-		width: min(100%, 20rem);
-	}
-
 	.home-hero__graphic img {
 		width: min(100%, 20rem);
 		max-height: 20rem;
@@ -1233,7 +1203,6 @@ display: grid;
 	.homepage-service-row {
 		--homepage-card-width: min(72vw, 18rem);
 		--homepage-card-height: 25rem;
-		margin-top: 4rem;
 	}
 
 	.homepage-case-study-row {

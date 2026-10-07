@@ -17,20 +17,11 @@ final class LGSDN_Service_Styles {
 	private const DEFAULT_ICON = 'service';
 
 	/**
-	 * Service-card gradient controls.
-	 *
-	 * Set angle in degrees. CSS 135 gives a slight bottom-left to top-right slope.
-	 * A zero strength disables colour mixing. Adjust per token while refining the cards.
+	 * Service-card gradients run from the decorative top colour to the text-bearing
+	 * bottom colour. Bottom stops are selected to meet WCAG AA for white card text.
 	 */
 	private const CARD_GRADIENT = array(
-		'angle' => 135,
-		'strength' => array(
-			'mustard' => 100,
-			'blue' => 100,
-			'purple' => 100,
-			'green' => 100,
-			'orange' => 0,
-		),
+		'angle' => 180,
 	);
 
 	private const ICONS = array(
@@ -43,11 +34,9 @@ final class LGSDN_Service_Styles {
 	);
 
 	/**
-	 * Brand Colors from the Figma "Sketching" file, Base mode.
-	 *
-	 * The Contrast values are kept alongside the selectable Base values so the
-	 * complete Figma token pair remains available to future components. Admin
-	 * metadata stores only the stable token key.
+	 * Shared palette values stay available to Practice styles. Service-card gradient
+	 * stops are specific to those cards; foreground pairs also keep small colored
+	 * service tags readable. Admin metadata stores only the stable token key.
 	 */
 	private const COLOURS = array(
 		'mustard' => array(
@@ -55,30 +44,48 @@ final class LGSDN_Service_Styles {
 			'background' => '#B59B00',
 			'contrast' => '#8A7600',
 			'foreground' => '#27272D',
+			'gradient_top' => '#9B8400',
+			'gradient_bottom' => '#897600',
 		),
 		'blue' => array(
 			'label' => 'Blue',
 			'background' => '#4B5AFF',
 			'contrast' => '#3444C7',
-		'foreground' => '#FFFFFF',
+			'foreground' => '#FFFFFF',
+			'gradient_top' => '#5A6CFF',
+			'gradient_bottom' => '#4B5AFF',
 		),
 		'purple' => array(
 			'label' => 'Purple',
 			'background' => '#C7AFE1',
 			'contrast' => '#9B83B8',
 			'foreground' => '#27272D',
+			'gradient_top' => '#A183C2',
+			'gradient_bottom' => '#876AA9',
 		),
 		'green' => array(
 			'label' => 'Green',
 			'background' => '#4B5B37',
 			'contrast' => '#3A472B',
 			'foreground' => '#FFFFFF',
+			'gradient_top' => '#4C5B37',
+			'gradient_bottom' => '#3A472B',
 		),
 		'orange' => array(
 			'label' => 'Orange',
 			'background' => '#EA7200',
 			'contrast' => '#EA7200',
 			'foreground' => '#27272D',
+			'gradient_top' => '#F66F00',
+			'gradient_bottom' => '#BD5B00',
+		),
+		'pink' => array(
+			'label' => 'Pink',
+			'background' => '#FACDE1',
+			'contrast' => '#B3889B',
+			'foreground' => '#27272D',
+			'gradient_top' => '#D081A4',
+			'gradient_bottom' => '#9D667E',
 		),
 	);
 
@@ -222,13 +229,13 @@ final class LGSDN_Service_Styles {
 			$featured = (bool) ( $defaults[ self::FEATURED_META ] ?? false );
 		}
 		$colours = self::colours();
-		$gradient = self::card_gradient( $colour, $colours[ $colour ] );
+		$gradient = self::card_gradient( $colours[ $colour ] );
 
 		return array(
 			'colour' => $colour,
 			'background' => $colours[ $colour ]['background'],
 			'contrast' => $colours[ $colour ]['contrast'],
-			'foreground' => '#FFFFFF',
+			'foreground' => $colours[ $colour ]['foreground'],
 			'gradient' => $gradient,
 			'icon' => $icon,
 			'order' => $order,
@@ -236,21 +243,26 @@ final class LGSDN_Service_Styles {
 		);
 	}
 
-	private static function card_gradient( string $colour, array $palette ): string {
-		$strength = max( 0, min( 100, (int) ( self::CARD_GRADIENT['strength'][ $colour ] ?? 0 ) ) );
-		if ( 0 === $strength ) {
-			return $palette['background'];
-		}
-
+	private static function card_gradient( array $palette ): string {
 		$angle = max( 0, min( 360, (int) ( self::CARD_GRADIENT['angle'] ?? 135 ) ) );
-		$alternate = $strength . '%';
-		return sprintf( 'linear-gradient(%ddeg, %s, color-mix(in srgb, %s %s, transparent))', $angle, $palette['background'], $palette['contrast'], $alternate );
+		return sprintf( 'linear-gradient(%ddeg, %s, %s)', $angle, $palette['gradient_top'], $palette['gradient_bottom'] );
 	}
 
 	/**
 	 * Prefer White when it passes WCAG AA, otherwise use Ink or the stronger pair.
 	 */
 	public static function homepage_terms(): array {
+		return self::service_terms( true );
+	}
+
+	/**
+	 * Return every service area for Playbook browsing, including terms hidden from the homepage.
+	 */
+	public static function playbook_terms(): array {
+		return self::service_terms( false );
+	}
+
+	private static function service_terms( bool $featured_only ): array {
 		$terms = get_terms(
 			array(
 				'taxonomy' => 'lgsdn_service',
@@ -264,20 +276,25 @@ final class LGSDN_Service_Styles {
 			return array();
 		}
 
-		$terms = array_values(
-			array_filter(
-				$terms,
-				static function ( WP_Term $term ): bool {
-					return self::for_term( $term )['featured'];
-				}
-			)
-		);
+		if ( $featured_only ) {
+			$terms = array_values(
+				array_filter(
+					$terms,
+					static function ( WP_Term $term ): bool {
+						return self::for_term( $term )['featured'];
+					}
+				)
+			);
+		}
 
 		usort(
 			$terms,
-			static function ( WP_Term $left, WP_Term $right ): int {
+			static function ( WP_Term $left, WP_Term $right ) use ( $featured_only ): int {
 				$left_style = self::for_term( $left );
 				$right_style = self::for_term( $right );
+				if ( ! $featured_only && $left_style['featured'] !== $right_style['featured'] ) {
+					return $left_style['featured'] ? -1 : 1;
+				}
 				return ( $left_style['order'] <=> $right_style['order'] ) ?: strcasecmp( $left->name, $right->name );
 			}
 		);
@@ -389,7 +406,7 @@ final class LGSDN_Service_Styles {
 		</select></p>
 		<p><label for="<?php echo esc_attr( self::ORDER_META ); ?>">Homepage order</label><br>
 		<input id="<?php echo esc_attr( self::ORDER_META ); ?>" name="<?php echo esc_attr( self::ORDER_META ); ?>" type="number" min="0" step="10" value="<?php echo esc_attr( (string) $style['order'] ); ?>"></p>
-		<p><label><input name="<?php echo esc_attr( self::FEATURED_META ); ?>" type="checkbox" value="1" <?php checked( $style['featured'], true ); ?>> Show in the homepage service-area row</label></p>
+		<p><label><input name="<?php echo esc_attr( self::FEATURED_META ); ?>" type="checkbox" value="1" <?php checked( $style['featured'], true ); ?>> Show as a card on the homepage</label></p>
 		<?php
 	}
 

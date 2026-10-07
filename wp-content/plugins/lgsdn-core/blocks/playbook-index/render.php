@@ -101,7 +101,22 @@ if ( $search_query ) {
 
 		$like = '%' . $wpdb->esc_like( $search_query ) . '%';
 		return $wpdb->prepare(
-			" AND ({$wpdb->posts}.post_title LIKE %s OR {$wpdb->posts}.post_excerpt LIKE %s)",
+			" AND (
+				{$wpdb->posts}.post_title LIKE %s
+				OR {$wpdb->posts}.post_excerpt LIKE %s
+				OR EXISTS (
+					SELECT 1
+					FROM {$wpdb->term_relationships} AS council_relationship
+					INNER JOIN {$wpdb->term_taxonomy} AS council_taxonomy
+						ON council_taxonomy.term_taxonomy_id = council_relationship.term_taxonomy_id
+					INNER JOIN {$wpdb->terms} AS council_term
+						ON council_term.term_id = council_taxonomy.term_id
+					WHERE council_relationship.object_id = {$wpdb->posts}.ID
+						AND council_taxonomy.taxonomy = 'lgsdn_council'
+						AND council_term.name LIKE %s
+				)
+			)",
+			$like,
 			$like,
 			$like
 		);
@@ -148,7 +163,7 @@ if ( $contributor_id ) {
 
 $has_active_criteria = $search_query || $active_filters || $contributor_id;
 
-$service_terms = LGSDN_Service_Styles::homepage_terms();
+$service_terms = LGSDN_Service_Styles::playbook_terms();
 
 ?>
 <div <?php echo get_block_wrapper_attributes( array( 'class' => 'lgsdn-playbook-index alignfull' ) ); ?>>
@@ -209,7 +224,7 @@ $service_terms = LGSDN_Service_Styles::homepage_terms();
 
 		<div class="lgsdn-playbook-browse">
 			<form class="lgsdn-playbook-filters" method="get" action="<?php echo esc_url( get_permalink( $post_id ) ); ?>" data-playbook-filter-form aria-describedby="playbook-filter-hint">
-				<p id="playbook-filter-hint" class="screen-reader-text">Choose one option from each filter, or search case study titles and excerpts. Selections across categories must all match.</p>
+				<p id="playbook-filter-hint" class="screen-reader-text">Choose one option from each filter, or search case study titles, excerpts and council names. Selections across categories must all match.</p>
 
 				<?php foreach ( $filter_taxonomies as $taxonomy => $label ) : ?>
 					<?php
@@ -241,7 +256,7 @@ $service_terms = LGSDN_Service_Styles::homepage_terms();
 				<?php if ( $contributor_id ) : ?><input type="hidden" name="contributor" value="<?php echo esc_attr( (string) $contributor_id ); ?>"><?php endif; ?>
 
 				<label class="lgsdn-playbook-search" for="lgsdn-playbook-search">
-					<span class="screen-reader-text">Search case studies by title or excerpt</span>
+					<span class="screen-reader-text">Search case studies by title, excerpt or council</span>
 					<input id="lgsdn-playbook-search" type="search" name="search" value="<?php echo esc_attr( $search_query ); ?>" placeholder="Search case studies" autocomplete="off" data-playbook-search>
 					<svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
 						<circle cx="10.75" cy="10.75" r="5.75"></circle>

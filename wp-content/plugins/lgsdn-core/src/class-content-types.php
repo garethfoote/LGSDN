@@ -57,6 +57,21 @@ final class LGSDN_Content_Types {
 				'supports' => array( 'title', 'editor', 'thumbnail', 'revisions', 'custom-fields' ),
 			)
 		);
+
+		register_post_type(
+			'lgsdn_council',
+			array(
+				'labels' => self::labels( 'Council', 'Councils' ),
+				'public' => false,
+				'show_ui' => true,
+				'show_in_rest' => true,
+				'exclude_from_search' => true,
+				'menu_icon' => 'dashicons-building',
+				'menu_position' => 23,
+				'supports' => array( 'title', 'thumbnail', 'page-attributes', 'revisions', 'custom-fields' ),
+				'taxonomies' => array( 'lgsdn_council' ),
+			)
+		);
 	}
 
 	/**

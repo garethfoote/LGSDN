@@ -1,0 +1,140 @@
+/* Standalone playbook header spike. These selectors never target the live article template. */
+.playbook-spike {
+	--spike-purple: #6f4b91;
+	--spike-purple-deep: #38234e;
+	--spike-canvas: var(--wp--preset--color--canvas, #f8f8f1);
+	--spike-ink: var(--wp--preset--color--ink, #27272d);
+	background: var(--spike-canvas);
+	color: var(--spike-ink);
+}
+
+.playbook-spike__site-header {
+	display: flex;
+	min-height: 5.5rem;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1.5rem;
+	padding: 1rem var(--lgsdn-gutter, 2rem);
+	background: var(--spike-canvas);
+}
+
+.playbook-spike__site-header img { display: block; width: 5.25rem; height: auto; }
+.playbook-spike__site-header nav { display: flex; flex-wrap: wrap; gap: clamp(1rem, 3vw, 2.5rem); }
+.playbook-spike__site-header a { color: inherit; font-weight: 500; text-decoration: none; }
+.playbook-spike__site-header nav a:hover, .playbook-spike__site-header nav a:focus-visible { text-decoration: underline; }
+
+.playbook-spike__main {
+	width: 100%;
+	max-width: calc(var(--lgsdn-wide-width, 94.5rem) + (2 * var(--lgsdn-gutter, 2rem)));
+	margin-inline: auto;
+	padding-inline: var(--lgsdn-gutter, 2rem);
+}
+
+.playbook-spike__notice { padding-block: clamp(2rem, 5vw, 4rem) 1.5rem; }
+.playbook-spike__notice > span, .playbook-spike__eyebrow, .playbook-spike__body-label {
+	font-size: var(--wp--preset--font-size--body-small, .875rem);
+	font-weight: 500;
+	letter-spacing: .04em;
+	text-transform: uppercase;
+}
+.playbook-spike__notice h1 { margin: .35rem 0; font-family: var(--wp--preset--font-family--heading, sans-serif); font-size: clamp(1.8rem, 4vw, 2.75rem); font-weight: 400; }
+.playbook-spike__notice p { margin: 0; color: #55545b; }
+
+.playbook-spike__article { overflow: clip; border-radius: .875rem; background: var(--spike-canvas); }
+.playbook-spike__hero {
+	position: relative;
+	isolation: isolate;
+	display: grid;
+	min-height: clamp(31rem, 54vw, 46rem);
+	align-items: end;
+	background-color: var(--spike-purple-deep);
+	background-image: var(--spike-image);
+	background-position: center 42%;
+	background-size: cover;
+	color: white;
+}
+.playbook-spike__hero-wash {
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	background:
+		linear-gradient(90deg, rgb(56 35 78 / 94%) 0%, rgb(75 49 104 / 78%) 46%, rgb(83 56 113 / 24%) 100%),
+		linear-gradient(0deg, rgb(39 25 54 / 58%) 0%, transparent 66%);
+}
+.playbook-spike__hero-content {
+	display: grid;
+	grid-template-columns: minmax(13rem, .72fr) minmax(0, 1.7fr);
+	align-items: end;
+	gap: clamp(2rem, 6vw, 6rem);
+	width: 100%;
+	max-width: 83rem;
+	margin-inline: auto;
+	padding: clamp(2rem, 5vw, 5rem);
+}
+.playbook-spike__service {
+	display: grid;
+	min-height: 18rem;
+	grid-template-rows: auto 1fr auto;
+	gap: 1rem;
+	padding: 1.5rem;
+	border-radius: .75rem;
+	background: var(--spike-canvas);
+	color: var(--spike-purple);
+	text-decoration: none;
+}
+.playbook-spike__service:hover .playbook-spike__service-name,
+.playbook-spike__service:focus-visible .playbook-spike__service-name { text-decoration: underline; text-underline-offset: .15em; }
+.playbook-spike__service-label { font-size: .875rem; line-height: 1.2; }
+.playbook-spike__service img { width: 3.25rem; height: 3.25rem; align-self: center; object-fit: contain; }
+.playbook-spike__service-name { font-family: var(--wp--preset--font-family--heading, sans-serif); font-size: clamp(1.5rem, 2.6vw, 2.1rem); line-height: 1.05; }
+.playbook-spike__copy { max-width: 54rem; padding-bottom: .5rem; }
+.playbook-spike__eyebrow { margin: 0 0 1.1rem; color: rgb(255 255 255 / 88%); }
+.playbook-spike__copy h2 { max-width: 17ch; margin: 0; color: white; font-family: var(--wp--preset--font-family--heading, sans-serif); font-size: clamp(2.5rem, 5.1vw, 5.25rem); font-weight: 400; line-height: .99; text-wrap: balance; }
+.playbook-spike__lead { max-width: 52ch; margin: 1.5rem 0 0; color: white; font-size: clamp(1.125rem, 1.65vw, 1.5rem); line-height: 1.45; }
+.playbook-spike__image-credit { position: absolute; right: 1.5rem; bottom: 1rem; margin: 0; color: rgb(255 255 255 / 82%); font-size: .75rem; }
+
+.playbook-spike__article-body { max-width: 65ch; margin-inline: auto; padding: clamp(3rem, 7vw, 6rem) var(--lgsdn-gutter, 2rem); font-size: var(--wp--preset--font-size--article-body, 1.125rem); line-height: 1.55; }
+.playbook-spike__article-body h2 { margin: 0 0 1rem; font-family: var(--wp--preset--font-family--heading, sans-serif); font-size: clamp(1.75rem, 3vw, 2.5rem); font-weight: 400; }
+.playbook-spike__article-body p:last-child { margin-bottom: 0; }
+.playbook-spike__body-label { margin: 0 0 .75rem; color: var(--spike-purple); }
+.playbook-spike__notes { margin: 0 0 clamp(3rem, 7vw, 6rem); padding: clamp(1.5rem, 4vw, 3rem); border: 1px solid #deded6; border-radius: .75rem; background: #fff; }
+.playbook-spike__notes h2 { margin: 0 0 1rem; font-family: var(--wp--preset--font-family--heading, sans-serif); font-size: 1.6rem; font-weight: 400; }
+.playbook-spike__notes ul { max-width: 70ch; margin: 0; padding-left: 1.25rem; }
+.playbook-spike__notes li + li { margin-top: .5rem; }
+.playbook-spike__footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding: 1.5rem var(--lgsdn-gutter, 2rem); border-top: 1px solid #deded6; font-size: .875rem; }
+.playbook-spike__footer a { color: inherit; }
+
+@media (max-width: 63.999rem) {
+	.playbook-spike__hero { min-height: 0; background-position: 58% center; }
+	.playbook-spike__hero-wash { background: linear-gradient(0deg, rgb(56 35 78 / 96%) 0%, rgb(67 44 91 / 89%) 47%, rgb(75 49 104 / 20%) 100%); }
+	.playbook-spike__hero-content { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; max-width: 52rem; padding: clamp(16rem, 36vw, 23rem) clamp(1.5rem, 5vw, 3rem) 3rem; }
+	.playbook-spike__copy { grid-row: 1; }
+	.playbook-spike__copy h2 { max-width: 14ch; font-size: clamp(2.5rem, 7vw, 4.5rem); }
+	.playbook-spike__service { grid-row: 2; min-height: 0; grid-template-columns: auto 1fr; grid-template-rows: auto auto; align-items: center; column-gap: .9rem; padding: 1rem 1.2rem; }
+	.playbook-spike__service-label { grid-column: 1 / -1; }
+	.playbook-spike__service img { grid-column: 1; grid-row: 2; width: 2.5rem; height: 2.5rem; }
+	.playbook-spike__service-name { grid-column: 2; grid-row: 2; font-size: 1.45rem; }
+}
+
+@media (max-width: 47.999rem) {
+	.playbook-spike__site-header { min-height: 4.5rem; }
+	.playbook-spike__site-header nav { gap: .8rem; font-size: .875rem; }
+	.playbook-spike__main { padding-inline: 0; }
+	.playbook-spike__notice { padding: 2rem 1.25rem 1.25rem; }
+	.playbook-spike__article { border-radius: 0; }
+	.playbook-spike__hero { background-position: 58% top; }
+	.playbook-spike__hero-content { gap: 1.25rem; padding: clamp(13rem, 56vw, 20rem) 1.25rem 2rem; }
+	.playbook-spike__copy h2 { font-size: clamp(2.35rem, 12vw, 3.6rem); }
+	.playbook-spike__lead { margin-top: 1rem; font-size: 1.125rem; }
+	.playbook-spike__service { grid-template-columns: auto 1fr; padding: .9rem 1rem; }
+	.playbook-spike__service-label { font-size: .8125rem; }
+	.playbook-spike__service img { width: 2.2rem; height: 2.2rem; }
+	.playbook-spike__service-name { font-size: 1.3rem; }
+	.playbook-spike__image-credit { right: 1rem; bottom: .5rem; max-width: 15rem; text-align: right; font-size: .65rem; }
+	.playbook-spike__article-body { padding: 3rem 1.25rem; }
+	.playbook-spike__notes { margin-inline: 1.25rem; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.playbook-spike__service-name { transition: text-decoration-color .15s ease; }
+}

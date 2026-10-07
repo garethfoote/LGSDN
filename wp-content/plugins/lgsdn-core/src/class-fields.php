@@ -12,14 +12,19 @@ final class LGSDN_Fields {
 		'lgsdn_person' => array(
 			'lgsdn_role' => array( 'Role', 'text' ),
 			'lgsdn_organisation' => array( 'Organisation', 'text' ),
-			'lgsdn_profile_url' => array( 'Profile link', 'url' ),
+			'lgsdn_profile_url' => array( 'LinkedIn profile URL', 'url' ),
+			'lgsdn_network_coordinator' => array( 'Network coordinator', 'checkbox' ),
+			'lgsdn_playbook_coordinator' => array( 'Playbook coordinator', 'checkbox' ),
+		),
+		'lgsdn_council' => array(
+			'lgsdn_council_logo_display' => array( 'Logo display', 'select' ),
 		),
 		'lgsdn_playbook' => array(
 			'lgsdn_contributor_id' => array( 'Case study author', 'person-select' ),
 			'lgsdn_primary_service_id' => array( 'Primary service area', 'service-select' ),
 			'lgsdn_primary_practice_id' => array( 'Primary practice (optional)', 'practice-select' ),
 			'lgsdn_reviewed_on' => array( 'Last reviewed', 'date' ),
-			'lgsdn_resource_url' => array( 'Resource link', 'url' ),
+			'lgsdn_playbook_resources' => array( 'Resources (optional)', 'resource-links' ),
 			'lgsdn_featured_home' => array( 'Feature on the homepage', 'checkbox' ),
 		),
 		'lgsdn_event' => array(
@@ -45,11 +50,11 @@ final class LGSDN_Fields {
 	}
 
 	/**
-	 * Load the repeatable resource-link controls on Event edit screens.
+	 * Load the repeatable resource-link controls on Event and Playbook edit screens.
 	 */
 	public static function enqueue_admin_assets(): void {
 		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-		if ( ! $screen || 'lgsdn_event' !== $screen->post_type ) {
+		if ( ! $screen || ! in_array( $screen->post_type, array( 'lgsdn_event', 'lgsdn_playbook' ), true ) ) {
 			return;
 		}
 
@@ -269,13 +274,21 @@ final class LGSDN_Fields {
 		}
 
 		if ( 'checkbox' === $type ) {
-			echo '<label><input type="checkbox" id="' . esc_attr( $key ) . '" name="' . esc_attr( $key ) . '" value="1" ' . checked( (bool) $value, true, false ) . '> Show this item in the featured homepage position</label>';
+			$label = match ( $key ) {
+				'lgsdn_network_coordinator' => 'Show this person as a network coordinator',
+				'lgsdn_playbook_coordinator' => 'Show this person as a Playbook coordinator',
+				default => 'Show this item in the featured homepage position',
+			};
+			echo '<label><input type="checkbox" id="' . esc_attr( $key ) . '" name="' . esc_attr( $key ) . '" value="1" ' . checked( (bool) $value, true, false ) . '> ' . esc_html( $label ) . '</label>';
 			return;
 		}
 
 		if ( 'select' === $type ) {
 			echo '<select id="' . esc_attr( $key ) . '" name="' . esc_attr( $key ) . '">';
-			foreach ( array( '' => 'Select a format', 'in-person' => 'In person', 'online' => 'Online', 'hybrid' => 'Hybrid' ) as $option => $label ) {
+			$options = 'lgsdn_council_logo_display' === $key
+				? array( '' => 'Use the logo default', 'logo' => 'Logo only', 'title-logo' => 'Title and logo', 'title-only' => 'Title only' )
+				: array( '' => 'Select a format', 'in-person' => 'In person', 'online' => 'Online', 'hybrid' => 'Hybrid' );
+			foreach ( $options as $option => $label ) {
 				echo '<option value="' . esc_attr( $option ) . '" ' . selected( $value, $option, false ) . '>' . esc_html( $label ) . '</option>';
 			}
 			echo '</select>';
@@ -412,6 +425,7 @@ final class LGSDN_Fields {
 			'lgsdn_person' => 'Person details',
 			'lgsdn_playbook' => 'Playbook details',
 			'lgsdn_event' => 'Event details',
+			'lgsdn_council' => 'Council details',
 			default => 'Details',
 		};
 	}

@@ -17,7 +17,7 @@ The browser is the source of truth for the LGSDN visual system. The WordPress ed
 
 ## Colour palette
 
-The five controlled Service area colours mirror the approved selection from the Figma `Brand Colors` collection. The admin selects the Base-mode token by name; it never stores a one-off hexadecimal value. The Contrast-mode values are recorded beside the Base values in `LGSDN_Service_Styles` for components that need the alternate Figma mode.
+The controlled Service area colours are managed by `LGSDN_Service_Styles`. The admin selects a stable token name; it never stores a one-off hexadecimal value.
 
 ## Breakpoints
 
@@ -35,15 +35,20 @@ Use a breakpoint only when the content needs it, rather than targeting particula
 
 Service-area cards take their visual identity from their primary Service area. Administrators assign one of six controlled tokens to each Service area term; arbitrary colours are not accepted. The cards use white text and icons across the homepage, Playbook listing, service archive, and article detail view.
 
-| Token | Base | Contrast | Card text |
+| Service colour | Gradient top | Gradient bottom | White text contrast at bottom |
 |---|---|---|---|
-| Service area mustard | `#B59B00` | `#8A7600` | Ink |
-| Service area blue | `#4B5AFF` | `#3444C7` | White |
-| Service area purple | `#C7AFE1` | `#9B83B8` | Ink |
-| Service area green | `#4B5B37` | `#3A472B` | White |
-| Service area orange | `#EA7200` | `#EA7200` | Ink |
+| Mustard | `#9B8400` | `#897600` | 4.51:1 |
+| Blue | `#5A6CFF` | `#4B5AFF` | 4.99:1 |
+| Purple | `#A183C2` | `#876AA9` | 4.50:1 |
+| Green | `#4C5B37` | `#3A472B` | 9.92:1 |
+| Orange | `#F66F00` | `#BD5B00` | 4.51:1 |
+| Pink | `#D081A4` | `#9D667E` | 4.53:1 |
 
-The palette values and card gradient controls are owned by `LGSDN_Service_Styles`. Edit `CARD_GRADIENT` in `wp-content/plugins/lgsdn-core/src/class-service-styles.php` to tune the angle in degrees (135 gives a slight bottom-left to top-right slope, with the contrast/darker stop at the bottom) and per-colour strength (0–100). Zero strength leaves the base colour flat; other values blend the contrast token into the gradient. Service-area term metadata stores only the stable colour token name rather than a hexadecimal value or asset URL. The legacy `lilac` token is read as `purple` so existing content keeps its appearance. Practice terms no longer expose this palette in their admin screen; their existing token metadata remains available to preserve legacy practice contour fallbacks.
+The palette and card gradient angle are owned by `LGSDN_Service_Styles`. Gradients run vertically from the decorative top stop to the darker bottom stop, behind the white service title. The bottom stop meets WCAG AA's 4.5:1 contrast requirement for normal white text. Service-area term metadata stores only the stable colour token name. The legacy `lilac` token is read as `purple`; older installations that stored `pink` continue to use the restored pink token. Practice terms retain the original palette values for their legacy contour fallbacks.
+
+Small service-area taxonomy tags use Ink on mustard, purple, orange, and pink backgrounds, where white fails the 4.5:1 normal-text threshold. Blue and green retain white tag text because those pairings pass.
+
+Taxonomy tags use Atkinson Hyperlegible Next Regular (400) across homepage case-study cards and Playbook case-study cards, including both service-area and other classification tags.
 
 Playbook taxonomy tags have two roles:
 
@@ -56,7 +61,7 @@ Card typography uses the dedicated 20px Card title role at Medium weight, plus B
 
 The body face is **Atkinson Hyperlegible Next**. Titles and headings use **Srbija Sans** at its regular weight. The font stacks and roles live in `settings.typography.fontFamilies` and `styles.elements.heading` in `theme.json`.
 
-The family names are wired into the theme now. Atkinson Hyperlegible Next is limited to Regular (400) and Medium (500); the site does not synthesize or use Light or Bold. Srbija Sans uses Regular for headings. Before deployment, add any licensed WOFF2 files to `assets/fonts/` and add their `fontFace` entries to the matching family in `theme.json`.
+The family names are wired into the theme now. Atkinson Hyperlegible Next uses Light (300), Regular (400), and Medium (500); the site does not synthesize other weights. Srbija Sans uses Regular for headings. Before deployment, add any licensed WOFF2 files to `assets/fonts/` and add their `fontFace` entries to the matching family in `theme.json`.
 
 Atkinson Hyperlegible Next is available under the SIL Open Font License. Srbija Sans permits website embedding but restricts redistributing its font files, so obtain it from the official Srbija Sans download and do not place it in a public repository without confirming that distribution is permitted.
 

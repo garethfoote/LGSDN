@@ -27,7 +27,7 @@ final class LGSDN_Taxonomies {
 			'lgsdn_council',
 			'Council',
 			'Councils',
-			array( 'lgsdn_playbook', 'lgsdn_person' ),
+			array( 'lgsdn_playbook', 'lgsdn_person', 'lgsdn_council' ),
 			true
 		);
 	}
