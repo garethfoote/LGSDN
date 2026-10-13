@@ -96,6 +96,12 @@ add_action(
 				$asset_version( 'assets/js/hero-graphic.js' ),
 				array( 'strategy' => 'defer', 'in_footer' => true )
 			);
+			wp_enqueue_script_module(
+				'lgsdn/hero-graphic-motion',
+				get_theme_file_uri( 'assets/js/hero-graphic-motion.mjs' ),
+				array(),
+				$asset_version( 'assets/js/hero-graphic-motion.mjs' )
+			);
 		}
 
 		if ( is_page( 'playbook' ) ) {

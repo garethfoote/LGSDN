@@ -17,4 +17,5 @@
 	const selectedColor = colors[ Math.floor( Math.random() * colors.length ) ];
 
 	graphic.style.setProperty( '--lgsdn-hero-graphic-bg', selectedColor );
+	document.documentElement.style.setProperty( '--lgsdn-hero-graphic-accent', selectedColor );
 } )();

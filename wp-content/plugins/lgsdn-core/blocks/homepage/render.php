@@ -74,7 +74,8 @@ $case_studies = new WP_Query(
 					<p class="home-hero__intro"><?php echo esc_html( LGSDN_Homepage_Fields::value( $post_id, 'lgsdn_home_lead' ) ); ?></p>
 				</div>
 				<div class="home-hero__graphic" aria-hidden="true">
-					<div class="home-hero__graphic-disc">
+					<noscript><style>.home-hero__graphic-disc[data-motion-pending]{visibility:visible}</style></noscript>
+					<div class="home-hero__graphic-disc" data-hero-graphic data-motion-pending>
 						<img src="<?php echo esc_url( $image_base . '/hero-graphic-mark.svg' ); ?>" alt="">
 					</div>
 				</div>

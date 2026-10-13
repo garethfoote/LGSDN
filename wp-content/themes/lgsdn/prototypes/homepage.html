@@ -12,6 +12,7 @@
 	<link rel="stylesheet" href="../assets/css/header.css">
 	<script src="../assets/js/navigation.js" defer></script>
 	<script src="../assets/js/hero-graphic.js" defer></script>
+	<script type="module" src="../assets/js/hero-graphic-motion.mjs"></script>
 </head>
 <body>
 	<a class="skip-link" href="#main-content">Skip to main content</a>
@@ -39,7 +40,8 @@
 					<p class="home-hero__intro">A peer network for people improving public services across UK councils. Real examples, real conditions, real practice.</p>
 				</div>
 				<div class="home-hero__graphic" aria-hidden="true">
-					<div class="home-hero__graphic-disc">
+					<noscript><style>.home-hero__graphic-disc[data-motion-pending]{visibility:visible}</style></noscript>
+					<div class="home-hero__graphic-disc" data-hero-graphic data-motion-pending>
 						<img src="../assets/images/hero-graphic-mark.svg" alt="">
 					</div>
 				</div>

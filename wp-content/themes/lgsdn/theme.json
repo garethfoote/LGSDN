@@ -52,7 +52,7 @@
       "customFontSize": false,
       "defaultFontSizes": false,
       "dropCap": false,
-      "fluid": true,
+      "fluid": false,
       "fontFamilies": [
         {
           "slug": "body",
@@ -104,7 +104,7 @@
         { "slug": "card-title", "name": "Card title", "size": "1.25rem", "fluid": false },
         { "slug": "body-x-large", "name": "Body extra large", "size": "1.5rem", "fluid": false },
         { "slug": "article-body", "name": "Article body", "size": "var(--lgsdn-type-article-body-size)" },
-        { "slug": "large", "name": "Event title", "size": "1.375rem" },
+        { "slug": "large", "name": "Event title", "size": "1.375rem", "fluid": false },
         { "slug": "article-lead", "name": "Article lead", "size": "var(--lgsdn-type-article-lead-size)" },
         { "slug": "lead", "name": "Page lead", "size": "var(--lgsdn-type-lead-size)" },
         { "slug": "x-large", "name": "Section title", "size": "36px", "fluid": false },

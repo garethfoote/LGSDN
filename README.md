@@ -18,7 +18,9 @@ The deployed site has no JavaScript package runtime and does not require a page-
 4. Activate **LGSDN Core** and the **LGSDN** theme.
 5. Set permalinks to **Post name**.
 
-The plugin creates the controlled Playbook terms when it is activated. Councils are deliberately managed through WordPress as the network grows.
+Install and activate [Safe SVG](https://wordpress.org/plugins/safe-svg/) to upload SVG council logos. It sanitizes SVG uploads before they enter the Media Library; without it, use PNG or JPEG logos.
+
+The plugin creates the controlled Playbook terms when it is activated. Editors can add Council terms as new councils contribute to the Playbook.
 
 The local WordPress container loads `docker/php/uploads.ini`, allowing individual uploads up to 32 MB with a 40 MB request limit. Production hosting needs equivalent PHP limits configured separately.
 
@@ -53,7 +55,7 @@ Interactive [contour experiments](http://localhost:8080/wp-content/themes/lgsdn/
 - **Events**: description, date range, location, optional map link, format, and an optional booking link with configurable call to action text.
 - **Pages**: Home, Join, Network, Events, Playbook, and ordinary information pages.
 
-Service, Practice, Purpose, and Challenge are controlled vocabularies: editors can assign terms but only administrators can change the vocabulary. Editors may add and manage Council terms.
+Service, Practice, Purpose, and Challenge are controlled vocabularies: editors can assign terms but only administrators can change the vocabulary. Editors may add and manage Council terms. Council terms are shared by People and Playbook items; each can have an optional logo, and the Network page lists only councils assigned to published Playbook items.
 
 Each Playbook item has a public **Case study author** selected from People and may have several Practice terms. Editors select one assigned term as the **Primary practice**; that term controls the card colour and fallback contour. Practice, Service, Challenge, Case study author, and Primary practice must be complete before an item can be published through the block editor.
 
@@ -86,6 +88,12 @@ Add an event photo using **Featured image** in the event editor. Below the wide 
 Manage members under **People**. Add the person's name as the title, their full biography in the main editor, their role in **Person details**, their council in **Councils**, and their portrait using **Featured image**. The optional excerpt is used as the short biography on the Network page; when it is blank, the page creates a short version from the main biography.
 
 The Network page lists every published person in menu order and then alphabetically. Portraits are circular with the shared ink stroke. Profiles without an uploaded portrait use `assets/images/person-fallback.png`. People do not have separate public detail pages. A profile with published case studies has a link to those Playbook items.
+
+## Editing the contribution form
+
+The Contribute page embeds a Forminator form. Edit its questions under **Forminator → Forms → Expression of interest**; the page copy and the sample conversation email are editable under **Pages → Contribute**. The form sends its notification to users with the `manage_options` capability and has **Store submissions in database** disabled. Keep the notification recipients and storage setting in place when revising the form. The visible `contribute@example.org` address is a placeholder to replace once the contact address is agreed.
+
+Forminator and its form configuration are stored in WordPress, not in the theme or LGSDN Core export archives. Install and activate Forminator in each WordPress environment, create or import the form, set its notification recipients and disable database storage, then update the form ID in the Contribute page embed if it differs from that environment's ID.
 
 ## Planned work
 

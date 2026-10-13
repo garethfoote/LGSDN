@@ -23,7 +23,9 @@ $filter_sentence_labels = array(
 	'lgsdn_service' => 'service areas',
 	'lgsdn_practice' => 'practices',
 	'lgsdn_challenge' => 'challenges',
+	'lgsdn_council' => 'councils',
 );
+$filter_labels = $filter_taxonomies + array( 'lgsdn_council' => 'Council' );
 $active_filters = array();
 $submitted_search = isset( $_GET['search'] ) ? wp_unslash( $_GET['search'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 $search_query = is_string( $submitted_search ) ? sanitize_text_field( $submitted_search ) : '';
@@ -43,6 +45,12 @@ foreach ( $filter_taxonomies as $taxonomy => $label ) {
 	if ( $value && term_exists( $value, $taxonomy ) ) {
 		$active_filters[ $taxonomy ] = array( $value );
 	}
+}
+
+$submitted_council = isset( $_GET['council'] ) ? wp_unslash( $_GET['council'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+$council_slug = is_string( $submitted_council ) ? sanitize_title( $submitted_council ) : '';
+if ( $council_slug && term_exists( $council_slug, 'lgsdn_council' ) ) {
+	$active_filters['lgsdn_council'] = array( $council_slug );
 }
 
 $sort = isset( $_GET['sort'] ) ? sanitize_key( wp_unslash( $_GET['sort'] ) ) : 'recent'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -143,7 +151,7 @@ foreach ( $active_filters as $taxonomy => $slugs ) {
 	foreach ( $slugs as $slug ) {
 		$term = get_term_by( 'slug', $slug, $taxonomy );
 		if ( $term instanceof WP_Term ) {
-			$active_filter_labels[] = $filter_taxonomies[ $taxonomy ] . ': ' . $term->name;
+			$active_filter_labels[] = $filter_labels[ $taxonomy ] . ': ' . $term->name;
 		}
 	}
 }
@@ -253,6 +261,7 @@ $service_terms = LGSDN_Service_Styles::playbook_terms();
 						<button class="lgsdn-playbook-facet__clear" type="button" data-clear-facet <?php echo $selected_value ? '' : 'hidden'; ?> aria-label="<?php echo esc_attr( 'Remove ' . strtolower( $label ) . ' filter' ); ?>">×</button>
 					</div>
 				<?php endforeach; ?>
+				<?php if ( $council_slug ) : ?><input type="hidden" name="council" value="<?php echo esc_attr( $council_slug ); ?>"><?php endif; ?>
 				<?php if ( $contributor_id ) : ?><input type="hidden" name="contributor" value="<?php echo esc_attr( (string) $contributor_id ); ?>"><?php endif; ?>
 
 				<label class="lgsdn-playbook-search" for="lgsdn-playbook-search">
@@ -316,6 +325,14 @@ $service_terms = LGSDN_Service_Styles::playbook_terms();
 						<a class="lgsdn-playbook-active-filter" href="<?php echo esc_url( remove_query_arg( 'contributor' ) ); ?>" aria-label="<?php echo esc_attr( 'Remove author filter: ' . get_the_title( $contributor_id ) ); ?>">
 							<span class="lgsdn-playbook-active-filter__type">Author</span>
 							<span class="lgsdn-playbook-active-filter__value"><?php echo esc_html( get_the_title( $contributor_id ) ); ?></span>
+							<span class="lgsdn-playbook-active-filter__remove" aria-hidden="true"></span>
+						</a>
+						<span class="lgsdn-playbook-active-filters__separator" aria-hidden="true"></span>
+					<?php endif; ?>
+					<?php if ( $council_slug && ( $council_term = get_term_by( 'slug', $council_slug, 'lgsdn_council' ) ) instanceof WP_Term ) : ?>
+						<a class="lgsdn-playbook-active-filter" href="<?php echo esc_url( remove_query_arg( 'council' ) . '#case-study-panel' ); ?>" aria-label="<?php echo esc_attr( 'Remove council filter: ' . $council_term->name ); ?>">
+							<span class="lgsdn-playbook-active-filter__type">Council</span>
+							<span class="lgsdn-playbook-active-filter__value"><?php echo esc_html( $council_term->name ); ?></span>
 							<span class="lgsdn-playbook-active-filter__remove" aria-hidden="true"></span>
 						</a>
 						<span class="lgsdn-playbook-active-filters__separator" aria-hidden="true"></span>

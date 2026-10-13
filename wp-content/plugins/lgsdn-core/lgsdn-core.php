@@ -2,7 +2,7 @@
 /**
  * Plugin Name: LGSDN Core
  * Description: Structured content and editorial safeguards for the LGSDN website.
- * Version: 0.1.2
+ * Version: 0.1.3
  * Requires at least: 7.0
  * Requires PHP: 8.3
  * Author: Local Government Service Design Network
@@ -13,12 +13,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'LGSDN_CORE_VERSION', '0.1.2' );
+define( 'LGSDN_CORE_VERSION', '0.1.3' );
 define( 'LGSDN_CORE_FILE', __FILE__ );
 define( 'LGSDN_CORE_DIR', plugin_dir_path( __FILE__ ) );
 
 require_once LGSDN_CORE_DIR . 'src/class-content-types.php';
 require_once LGSDN_CORE_DIR . 'src/class-taxonomies.php';
+require_once LGSDN_CORE_DIR . 'src/class-council-logos.php';
 require_once LGSDN_CORE_DIR . 'src/class-practice-styles.php';
 require_once LGSDN_CORE_DIR . 'src/class-service-styles.php';
 require_once LGSDN_CORE_DIR . 'src/class-service-content.php';
@@ -37,6 +38,7 @@ add_action( 'init', 'lgsdn_register_dynamic_blocks', 8 );
 add_action( 'enqueue_block_editor_assets', 'lgsdn_enqueue_editor_assets' );
 
 LGSDN_Fields::hooks();
+LGSDN_Council_Logos::hooks();
 LGSDN_Practice_Styles::hooks();
 LGSDN_Service_Styles::hooks();
 LGSDN_Service_Content::hooks();

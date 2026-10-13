@@ -16,9 +16,6 @@ final class LGSDN_Fields {
 			'lgsdn_network_coordinator' => array( 'Network coordinator', 'checkbox' ),
 			'lgsdn_playbook_coordinator' => array( 'Playbook coordinator', 'checkbox' ),
 		),
-		'lgsdn_council' => array(
-			'lgsdn_council_logo_display' => array( 'Logo display', 'select' ),
-		),
 		'lgsdn_playbook' => array(
 			'lgsdn_contributor_id' => array( 'Case study author', 'person-select' ),
 			'lgsdn_primary_service_id' => array( 'Primary service area', 'service-select' ),
@@ -425,7 +422,6 @@ final class LGSDN_Fields {
 			'lgsdn_person' => 'Person details',
 			'lgsdn_playbook' => 'Playbook details',
 			'lgsdn_event' => 'Event details',
-			'lgsdn_council' => 'Council details',
 			default => 'Details',
 		};
 	}
