@@ -11,6 +11,20 @@ final class LGSDN_Editor {
 	public static function hooks(): void {
 		add_filter( 'block_editor_settings_all', array( __CLASS__, 'block_editor_settings' ) );
 		add_filter( 'use_block_editor_for_post_type', array( __CLASS__, 'use_block_editor' ), 10, 2 );
+		add_action( 'init', array( __CLASS__, 'register_image_styles' ) );
+	}
+
+	/** Add a reusable window frame option to WordPress image blocks. */
+	public static function register_image_styles(): void {
+		if ( function_exists( 'register_block_style' ) ) {
+			register_block_style(
+				'core/image',
+				array(
+					'name'  => 'window',
+					'label' => 'Window',
+				)
+			);
+		}
 	}
 
 	public static function block_editor_settings( array $settings ): array {

@@ -12,8 +12,7 @@
 	<link rel="stylesheet" href="../../assets/css/header.css">
 	<script src="../../assets/js/navigation.js" defer></script>
 	<script src="../../assets/js/hero-graphic.js" defer></script>
-	<script type="module" src="../../assets/js/hero-graphic-motion.mjs"></script>
-	<link rel="stylesheet" href="engagement-layout.css?v=13">
+	<script type="module" src="../../assets/js/hero-graphic-motion.js"></script>
 </head>
 <body>
 	<a class="skip-link" href="#main-content">Skip to main content</a>
@@ -37,34 +36,29 @@
 		<main id="main-content" tabindex="-1">
 			<section class="home-hero" id="about">
 				<div class="home-hero__copy">
-					<h1 class="home-hero__title">Local Government Service Design Network</h1>
+					<h1 class="home-hero__title">Local Government<br>Service Design Network</h1>
 					<p class="home-hero__intro">A peer network for people improving public services across UK councils. Real examples, real conditions, real practice.</p>
 				</div>
 				<div class="home-hero__graphic" aria-hidden="true">
-					<noscript><style>.home-hero__graphic-disc[data-motion-pending]{visibility:visible}</style></noscript>
-					<div class="home-hero__graphic-disc" data-hero-graphic data-motion-pending>
+					<div class="home-hero__graphic-disc" data-hero-graphic>
 						<img src="../../assets/images/hero-graphic-mark.svg" alt="">
 					</div>
 				</div>
 			</section>
-			<section class="engagement-experiment" id="join" aria-label="Ways to take part">
-	<div class="engagement-experiment__inner">
-		<div class="engagement-experiment__list">
-			<article class="engagement-row engagement-row--join" aria-labelledby="engagement-join-title">
-				<div class="engagement-row__copy"><h3 id="engagement-join-title">Join the network</h3><p>A safe and supportive space for people working in service design in local government. Grow your practice by connecting with others doing similar work, sharing ideas and learning together.</p><a class="button lgsdn-button--arrow" href="/join/"><span class="lgsdn-button__label">Join the network</span></a></div>
-				<svg class="engagement-row__art engagement-row__art--join" viewBox="0 0 226 226" aria-hidden="true" focusable="false"><use href="join-contours.svg#contours"></use></svg>
-			</article>
-			<article class="engagement-row engagement-row--playbook" aria-labelledby="engagement-playbook-title">
-				<div class="engagement-row__copy"><h3 id="engagement-playbook-title">Browse the playbook</h3><p>Discover real examples of service design in local government: what teams tried, what they learned, and how they worked through the challenges.</p><a class="button lgsdn-button--arrow" href="/playbook/"><span class="lgsdn-button__label">Explore the playbook</span></a></div>
-				<svg class="engagement-row__art engagement-row__art--playbook" viewBox="0 0 226 226" aria-hidden="true" focusable="false"><use href="playbook-contours.svg#contours"></use></svg>
-			</article>
-			<article class="engagement-row engagement-row--contribute" aria-labelledby="engagement-contribute-title">
-				<div class="engagement-row__copy"><h3 id="engagement-contribute-title">Contribute an example</h3><p>Share a project, tool or lesson from your work. Your experience can help other councils shape better public services.</p><a class="button lgsdn-button--arrow" href="/contribute/"><span class="lgsdn-button__label">Share an example</span></a></div>
-				<svg class="engagement-row__art engagement-row__art--contribute" viewBox="0 0 226 226" aria-hidden="true" focusable="false"><use href="contribute-contours.svg#contours"></use></svg>
-			</article>
-		</div>
-	</div>
-</section>
+			<section class="homepage-feature-list" id="join" aria-label="Ways to take part">
+				<article class="homepage-feature-row homepage-feature-row--join">
+					<div class="homepage-feature-row__copy"><h2>Join the network</h2><p>A safe and supportive space for people working in service design in local government. Grow your practice by connecting with others doing similar work, sharing ideas and learning together.</p><a class="button lgsdn-button--arrow" href="/join/"><span class="lgsdn-button__label">Join the network</span></a></div>
+					<svg class="homepage-feature-row__art" viewBox="0 0 226 226" aria-hidden="true" focusable="false"><use href="../../assets/images/home-feature-join-contours.svg#contours"></use></svg>
+				</article>
+				<article class="homepage-feature-row homepage-feature-row--playbook">
+					<div class="homepage-feature-row__copy"><h2>Browse the playbook</h2><p>Discover real examples of service design in local government: what teams tried, what they learned, and how they worked through the challenges.</p><a class="button lgsdn-button--arrow" href="/playbook/"><span class="lgsdn-button__label">Explore the playbook</span></a></div>
+					<svg class="homepage-feature-row__art" viewBox="0 0 226 226" aria-hidden="true" focusable="false"><use href="../../assets/images/home-feature-playbook-contours.svg#contours"></use></svg>
+				</article>
+				<article class="homepage-feature-row homepage-feature-row--contribute">
+					<div class="homepage-feature-row__copy"><h2>Contribute an example</h2><p>Share a project, tool or lesson from your work. Your experience can help other councils shape better public services.</p><a class="button lgsdn-button--arrow" href="/contribute/"><span class="lgsdn-button__label">Share an example</span></a></div>
+					<svg class="homepage-feature-row__art" viewBox="0 0 226 226" aria-hidden="true" focusable="false"><use href="../../assets/images/home-feature-contribute-contours.svg#contours"></use></svg>
+				</article>
+			</section>
 		</main>
 	</div>
 </body>

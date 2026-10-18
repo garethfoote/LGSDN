@@ -98,9 +98,9 @@ add_action(
 			);
 			wp_enqueue_script_module(
 				'lgsdn/hero-graphic-motion',
-				get_theme_file_uri( 'assets/js/hero-graphic-motion.mjs' ),
+				get_theme_file_uri( 'assets/js/hero-graphic-motion.js' ),
 				array(),
-				$asset_version( 'assets/js/hero-graphic-motion.mjs' )
+				$asset_version( 'assets/js/hero-graphic-motion.js' )
 			);
 		}
 

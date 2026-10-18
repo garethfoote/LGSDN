@@ -18,9 +18,8 @@ $page_url = static function ( int $selected_id, string $fallback_path ): string 
 };
 
 $feature_fallbacks = array( 'join', 'playbook', 'contribute' );
-$feature_cta_labels = array( 'Join', 'Browse', 'Contribute' );
-$feature_cta_suffixes = array( ' the network', ' the playbook', ' an example' );
-$feature_icon_names = array( 'join', 'browse', 'contribute' );
+$feature_cta_labels = array( 'Join the network', 'Explore the playbook', 'Share an example' );
+$feature_art_names = array( 'join', 'playbook', 'contribute' );
 $features = array();
 for ( $index = 1; $index <= 3; $index++ ) {
 	$features[] = array(
@@ -36,13 +35,39 @@ $join_url = $page_url( 0, 'join' );
 $image_base = get_theme_file_uri( 'assets/images' );
 $service_terms = LGSDN_Service_Styles::homepage_terms();
 
+$featured_case_studies = get_posts(
+	array(
+		'post_type' => 'lgsdn_playbook',
+		'post_status' => 'publish',
+		'numberposts' => 4,
+		'meta_key' => 'lgsdn_featured_home',
+		'meta_value' => '1',
+		'orderby' => 'date',
+		'order' => 'DESC',
+	)
+);
+$featured_case_study_ids = wp_list_pluck( $featured_case_studies, 'ID' );
+$remaining_case_study_slots = 4 - count( $featured_case_study_ids );
+$recent_case_studies = $remaining_case_study_slots > 0
+	? get_posts(
+		array(
+			'post_type' => 'lgsdn_playbook',
+			'post_status' => 'publish',
+			'numberposts' => $remaining_case_study_slots,
+			'post__not_in' => $featured_case_study_ids,
+			'orderby' => 'date',
+			'order' => 'DESC',
+		)
+	)
+	: array();
+$case_study_ids = array_merge( $featured_case_study_ids, wp_list_pluck( $recent_case_studies, 'ID' ) );
 $case_studies = new WP_Query(
 	array(
 		'post_type' => 'lgsdn_playbook',
 		'post_status' => 'publish',
-		'posts_per_page' => 4,
-		'orderby' => 'date',
-		'order' => 'DESC',
+		'posts_per_page' => count( $case_study_ids ),
+		'post__in' => $case_study_ids ? $case_study_ids : array( 0 ),
+		'orderby' => 'post__in',
 	)
 );
 
@@ -74,22 +99,21 @@ $case_studies = new WP_Query(
 					<p class="home-hero__intro"><?php echo esc_html( LGSDN_Homepage_Fields::value( $post_id, 'lgsdn_home_lead' ) ); ?></p>
 				</div>
 				<div class="home-hero__graphic" aria-hidden="true">
-					<noscript><style>.home-hero__graphic-disc[data-motion-pending]{visibility:visible}</style></noscript>
-					<div class="home-hero__graphic-disc" data-hero-graphic data-motion-pending>
+					<div class="home-hero__graphic-disc" data-hero-graphic>
 						<img src="<?php echo esc_url( $image_base . '/hero-graphic-mark.svg' ); ?>" alt="">
 					</div>
 				</div>
 			</section>
 
-			<section class="feature-grid" id="join" aria-label="Ways to take part">
+			<section class="homepage-feature-list" id="join" aria-label="Ways to take part">
 				<?php foreach ( $features as $index => $feature ) : ?>
-					<article class="feature-card">
-						<div class="feature-card__heading">
-							<img class="feature-card__icon" src="<?php echo esc_url( $image_base . '/home-feature-' . $feature_icon_names[ $index ] . '.svg' ); ?>" alt="" aria-hidden="true" width="26" height="26">
+					<article class="homepage-feature-row homepage-feature-row--<?php echo esc_attr( $feature_art_names[ $index ] ); ?>">
+						<div class="homepage-feature-row__copy">
 							<h2><?php echo esc_html( $feature['title'] ); ?></h2>
+							<p><?php echo nl2br( esc_html( $feature['body'] ) ); ?></p>
+							<a class="button lgsdn-button--arrow" href="<?php echo esc_url( $feature['url'] ); ?>"><span class="lgsdn-button__label"><?php echo esc_html( $feature_cta_labels[ $index ] ); ?></span></a>
 						</div>
-						<p><?php echo nl2br( esc_html( $feature['body'] ) ); ?></p>
-						<a class="button lgsdn-button--arrow" href="<?php echo esc_url( $feature['url'] ); ?>"><span class="lgsdn-button__label"><?php echo esc_html( $feature_cta_labels[ $index ] ); ?></span><span class="screen-reader-text"><?php echo esc_html( $feature_cta_suffixes[ $index ] ); ?></span></a>
+						<svg class="homepage-feature-row__art" viewBox="0 0 226 226" aria-hidden="true" focusable="false"><use href="<?php echo esc_url( $image_base . '/home-feature-' . $feature_art_names[ $index ] . '-contours.svg#contours' ); ?>"></use></svg>
 					</article>
 				<?php endforeach; ?>
 			</section>
@@ -100,9 +124,9 @@ $case_studies = new WP_Query(
 				</div>
 				<div class="homepage-service-row" aria-label="Explore by service area">
 					<article class="homepage-service-intro" data-service-intro>
-						<h4 id="homepage-service-areas-title">Explore by service</h4>
-						<p>Find out how service design works with these services within local government.</p>
-						<a class="button button--strong lgsdn-button--arrow" href="<?php echo esc_url( $playbook_url ); ?>"><span class="lgsdn-button__label">All service areas</span></a>
+						<h4 id="homepage-service-areas-title"><?php echo esc_html( LGSDN_Homepage_Fields::value( $post_id, 'lgsdn_home_service_intro_title' ) ); ?></h4>
+						<p><?php echo nl2br( esc_html( LGSDN_Homepage_Fields::value( $post_id, 'lgsdn_home_service_intro_body' ) ) ); ?></p>
+						<a class="button button--strong lgsdn-button--arrow" href="<?php echo esc_url( $playbook_url . '#service-areas' ); ?>"><span class="lgsdn-button__label"><?php echo esc_html( LGSDN_Homepage_Fields::value( $post_id, 'lgsdn_home_service_intro_button' ) ); ?></span></a>
 					</article>
 					<p id="homepage-service-areas-hint" class="screen-reader-text">Use Tab to move through the cards. When this area is focused, use the left and right arrow keys to scroll horizontally.</p>
 					<div class="homepage-service-scroller" data-service-scroller tabindex="0" role="region" aria-labelledby="homepage-service-areas-title" aria-describedby="homepage-service-areas-hint">
@@ -124,9 +148,9 @@ $case_studies = new WP_Query(
 				</div>
 				<div class="homepage-case-study-row">
 					<article class="homepage-service-intro homepage-case-study-intro" data-case-study-intro>
-						<h4 id="homepage-case-studies-title">Read a case study</h4>
-						<p>Find out how service design works with these services within local government.</p>
-						<a class="button button--strong lgsdn-button--arrow" href="<?php echo esc_url( $playbook_url ); ?>"><span class="lgsdn-button__label">All case studies</span></a>
+						<h4 id="homepage-case-studies-title"><?php echo esc_html( LGSDN_Homepage_Fields::value( $post_id, 'lgsdn_home_case_study_intro_title' ) ); ?></h4>
+						<p><?php echo nl2br( esc_html( LGSDN_Homepage_Fields::value( $post_id, 'lgsdn_home_case_study_intro_body' ) ) ); ?></p>
+						<a class="button button--strong lgsdn-button--arrow" href="<?php echo esc_url( $playbook_url . '#case-study-panel' ); ?>"><span class="lgsdn-button__label"><?php echo esc_html( LGSDN_Homepage_Fields::value( $post_id, 'lgsdn_home_case_study_intro_button' ) ); ?></span></a>
 					</article>
 					<p id="homepage-case-studies-hint" class="screen-reader-text">Use Tab to move through the cards. When this area is focused, use the left and right arrow keys to scroll horizontally.</p>
 					<div class="homepage-case-study-scroller" data-case-study-scroller tabindex="0" role="region" aria-labelledby="homepage-case-studies-title" aria-describedby="homepage-case-studies-hint">
@@ -134,14 +158,16 @@ $case_studies = new WP_Query(
 							<?php while ( $case_studies->have_posts() ) : $case_studies->the_post(); ?>
 								<?php
 								$item_id = get_the_ID();
+								$has_card_image = (bool) lgsdn_playbook_image_id( $item_id, 'card' );
+								$has_window_card_image = $has_card_image && (bool) get_post_meta( $item_id, 'lgsdn_card_image_window', true );
 								$item_services = lgsdn_services_for_item( $item_id );
 								$councils = get_the_terms( $item_id, 'lgsdn_council' );
 								$council_label = $councils && ! is_wp_error( $councils ) ? implode( ', ', wp_list_pluck( $councils, 'name' ) ) : '';
 								?>
 								<a class="homepage-case-study-card" href="<?php the_permalink(); ?>">
-									<div class="homepage-case-study-card__media">
-										<?php if ( has_post_thumbnail() ) : ?>
-											<?php the_post_thumbnail( 'large', array( 'class' => 'homepage-case-study-card__image', 'loading' => 'lazy' ) ); ?>
+									<div class="homepage-case-study-card__media<?php echo $has_window_card_image ? ' homepage-case-study-card__media--window' : ''; ?>">
+										<?php if ( $has_card_image ) : ?>
+											<?php echo lgsdn_playbook_card_image_markup( $item_id, 'large', array( 'class' => 'homepage-case-study-card__image', 'loading' => 'lazy' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 											<?php else : ?>
 											<img class="homepage-case-study-card__image" src="<?php echo esc_url( $image_base . '/home-feature-image.png' ); ?>" alt="" loading="lazy">
 										<?php endif; ?>

@@ -2,9 +2,10 @@
 /**
  * Plugin Name: LGSDN Core
  * Description: Structured content and editorial safeguards for the LGSDN website.
- * Version: 0.1.3
+ * Version: 0.1.16
  * Requires at least: 7.0
  * Requires PHP: 8.3
+ * Requires Plugins: forminator
  * Author: Local Government Service Design Network
  * Text Domain: lgsdn
  */
@@ -13,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'LGSDN_CORE_VERSION', '0.1.3' );
+define( 'LGSDN_CORE_VERSION', '0.1.16' );
 define( 'LGSDN_CORE_FILE', __FILE__ );
 define( 'LGSDN_CORE_DIR', plugin_dir_path( __FILE__ ) );
 
@@ -30,12 +31,14 @@ require_once LGSDN_CORE_DIR . 'src/class-homepage-fields.php';
 require_once LGSDN_CORE_DIR . 'src/class-playbook-page-fields.php';
 require_once LGSDN_CORE_DIR . 'src/class-editor.php';
 require_once LGSDN_CORE_DIR . 'src/class-installer.php';
+require_once LGSDN_CORE_DIR . 'src/class-playbook-images.php';
 
 add_action( 'init', array( 'LGSDN_Content_Types', 'register' ), 5 );
 add_action( 'init', array( 'LGSDN_Taxonomies', 'register' ), 6 );
 add_action( 'init', array( 'LGSDN_Fields', 'register_meta' ), 7 );
 add_action( 'init', 'lgsdn_register_dynamic_blocks', 8 );
 add_action( 'enqueue_block_editor_assets', 'lgsdn_enqueue_editor_assets' );
+LGSDN_Playbook_Images::hooks();
 
 LGSDN_Fields::hooks();
 LGSDN_Council_Logos::hooks();

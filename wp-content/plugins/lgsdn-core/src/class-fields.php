@@ -23,6 +23,9 @@ final class LGSDN_Fields {
 			'lgsdn_reviewed_on' => array( 'Last reviewed', 'date' ),
 			'lgsdn_playbook_resources' => array( 'Resources (optional)', 'resource-links' ),
 			'lgsdn_featured_home' => array( 'Feature on the homepage', 'checkbox' ),
+			'lgsdn_card_image_id' => array( 'Card image (required)', 'image-crop' ),
+			'lgsdn_card_image_window' => array( 'Card image presentation', 'checkbox' ),
+			'lgsdn_article_image_id' => array( 'Article header image (optional)', 'image-crop' ),
 		),
 		'lgsdn_event' => array(
 			'lgsdn_start_at' => array( 'Starts', 'datetime-local' ),
@@ -57,6 +60,14 @@ final class LGSDN_Fields {
 
 		$path = LGSDN_CORE_DIR . 'assets/js/event-resources.js';
 		wp_enqueue_media();
+		if ( 'lgsdn_playbook' === $screen->post_type ) {
+			$script_path = LGSDN_CORE_DIR . 'assets/js/playbook-images.js';
+			$style_path = LGSDN_CORE_DIR . 'assets/css/playbook-images.css';
+			wp_enqueue_style( 'imgareaselect' );
+			wp_localize_script( 'media-views', 'lgsdnPlaybookImages', array( 'nonce' => wp_create_nonce( 'lgsdn_playbook_crop' ), 'slots' => LGSDN_Playbook_Images::SLOTS ) );
+			wp_enqueue_script( 'lgsdn-playbook-images', plugins_url( 'assets/js/playbook-images.js', LGSDN_CORE_FILE ), array( 'media-views', 'imgareaselect', 'wp-data' ), file_exists( $script_path ) ? (string) filemtime( $script_path ) : LGSDN_CORE_VERSION, true );
+			wp_enqueue_style( 'lgsdn-playbook-images', plugins_url( 'assets/css/playbook-images.css', LGSDN_CORE_FILE ), array(), file_exists( $style_path ) ? (string) filemtime( $style_path ) : LGSDN_CORE_VERSION );
+		}
 		wp_enqueue_script(
 			'lgsdn-event-resources',
 			plugins_url( 'assets/js/event-resources.js', LGSDN_CORE_FILE ),
@@ -146,7 +157,7 @@ final class LGSDN_Fields {
 		foreach ( self::FIELD_GROUPS as $post_type => $fields ) {
 			foreach ( $fields as $key => $field ) {
 				$is_boolean = 'checkbox' === $field[1];
-				$is_integer = in_array( $field[1], array( 'person-select', 'service-select', 'practice-select' ), true );
+				$is_integer = in_array( $field[1], array( 'person-select', 'service-select', 'practice-select', 'image-crop' ), true );
 				$is_resources = 'resource-links' === $field[1];
 				$show_in_rest = true;
 				if ( $is_resources ) {
@@ -190,22 +201,16 @@ final class LGSDN_Fields {
 		return sanitize_text_field( (string) $value );
 	}
 
-	/**
-	 * Keep only complete, safe event resource links.
-	 *
-	 * @return array<int, array{label:string,url:string,attachment_id:int}>
-	 */
+	/** Keep only complete, safe resource links. */
 	public static function sanitize_resources( mixed $value ): array {
 		if ( ! is_array( $value ) ) {
 			return array();
 		}
-
 		$resources = array();
 		foreach ( array_slice( $value, 0, 20 ) as $resource ) {
 			if ( ! is_array( $resource ) ) {
 				continue;
 			}
-
 			$label = sanitize_text_field( (string) ( $resource['label'] ?? '' ) );
 			$url = esc_url_raw( (string) ( $resource['url'] ?? '' ) );
 			$attachment_id = absint( $resource['attachment_id'] ?? 0 );
@@ -218,12 +223,11 @@ final class LGSDN_Fields {
 			if ( '' === $label || '' === $url ) {
 				continue;
 			}
-
 			$resources[] = array( 'label' => $label, 'url' => $url, 'attachment_id' => $attachment_id );
 		}
-
 		return $resources;
 	}
+
 
 	public static function add_meta_boxes(): void {
 		foreach ( array_keys( self::FIELD_GROUPS ) as $post_type ) {
@@ -246,13 +250,13 @@ final class LGSDN_Fields {
 		foreach ( $fields as $key => $field ) {
 			$value = get_post_meta( $post->ID, $key, true );
 			echo '<tr><th scope="row"><label for="' . esc_attr( $key ) . '">' . esc_html( $field[0] ) . '</label></th><td>';
-			self::render_control( $key, $field[1], $value );
+			self::render_control( $key, $field[1], $value, $post->ID );
 			echo '</td></tr>';
 		}
 		echo '</tbody></table>';
 	}
 
-	private static function render_control( string $key, string $type, mixed $value ): void {
+	private static function render_control( string $key, string $type, mixed $value, int $post_id = 0 ): void {
 		if ( 'resource-links' === $type ) {
 			$resources = self::sanitize_resources( $value );
 			$resources = $resources ?: array( array( 'label' => '', 'url' => '', 'attachment_id' => 0 ) );
@@ -269,11 +273,27 @@ final class LGSDN_Fields {
 			echo '</template></div>';
 			return;
 		}
+		if ( 'image-crop' === $type ) {
+			$slot = str_contains( $key, 'card' ) ? 'card' : 'article';
+			$image_id = lgsdn_playbook_image_id( $post_id, $slot );
+			$source_id = absint( get_post_meta( $image_id, '_lgsdn_crop_source_id', true ) ) ?: $image_id;
+			$dimensions = LGSDN_Playbook_Images::SLOTS[ $slot ];
+			echo '<div class="lgsdn-image-picker" data-playbook-image data-slot="' . esc_attr( $slot ) . '" data-post-id="' . esc_attr( (string) $post_id ) . '" data-source-id="' . esc_attr( (string) $source_id ) . '">';
+			echo '<input type="hidden" id="' . esc_attr( $key ) . '" name="' . esc_attr( $key ) . '" value="' . esc_attr( (string) $image_id ) . '" data-image-id>';
+			echo '<div data-image-preview>' . ( $image_id ? wp_get_attachment_image( $image_id, 'medium' ) : '' ) . '</div>';
+			echo '<p><button type="button" class="button" data-image-choose>Choose ' . ( 'card' === $slot ? 'card' : 'header' ) . ' image</button> <button type="button" class="button" data-image-recrop ' . ( $image_id ? '' : 'hidden' ) . '>Adjust crop</button> <button type="button" class="button-link-delete" data-image-remove ' . ( $image_id ? '' : 'hidden' ) . '>Remove image</button></p>';
+			echo '<p class="description">' . ( 'card' === $slot
+				? 'Required to publish. Crop shape: ' . esc_html( $dimensions['ratio_label'] ) . '. Recommended size: ' . esc_html( $dimensions['width'] . ' × ' . $dimensions['height'] ) . ' px. Cropping saves a separate copy.'
+				: 'Leave empty to show no article header image. Crop shape: ' . esc_html( $dimensions['ratio_label'] ) . '. Recommended size: ' . esc_html( $dimensions['width'] . ' × ' . $dimensions['height'] ) . ' px. Cropping saves a separate copy and leaves the source image unchanged.' ) . '</p>';
+			echo '<p data-image-message role="status"></p></div>';
+			return;
+		}
 
 		if ( 'checkbox' === $type ) {
 			$label = match ( $key ) {
 				'lgsdn_network_coordinator' => 'Show this person as a network coordinator',
 				'lgsdn_playbook_coordinator' => 'Show this person as a Playbook coordinator',
+				'lgsdn_card_image_window' => 'Show the card image in a window frame',
 				default => 'Show this item in the featured homepage position',
 			};
 			echo '<label><input type="checkbox" id="' . esc_attr( $key ) . '" name="' . esc_attr( $key ) . '" value="1" ' . checked( (bool) $value, true, false ) . '> ' . esc_html( $label ) . '</label>';
@@ -403,8 +423,11 @@ final class LGSDN_Fields {
 			}
 
 			$value = isset( $_POST[ $key ] ) ? wp_unslash( $_POST[ $key ] ) : '';
-			if ( in_array( $field[1], array( 'person-select', 'service-select', 'practice-select' ), true ) ) {
+			if ( in_array( $field[1], array( 'person-select', 'service-select', 'practice-select', 'image-crop' ), true ) ) {
 				$value = absint( $value );
+				if ( 'image-crop' === $field[1] && $value && ( 'attachment' !== get_post_type( $value ) || ! wp_attachment_is_image( $value ) ) ) {
+					$value = 0;
+				}
 			} else {
 				$value = 'url' === $field[1] ? esc_url_raw( $value ) : sanitize_text_field( $value );
 			}
@@ -413,6 +436,13 @@ final class LGSDN_Fields {
 				delete_post_meta( $post_id, $key );
 			} else {
 				update_post_meta( $post_id, $key, $value );
+			}
+			if ( 'lgsdn_card_image_id' === $key ) {
+				if ( $value ) {
+					set_post_thumbnail( $post_id, $value );
+				} else {
+					delete_post_thumbnail( $post_id );
+				}
 			}
 		}
 	}

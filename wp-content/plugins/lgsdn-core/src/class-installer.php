@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 final class LGSDN_Installer {
-	private const SCHEMA_VERSION = '23';
+	private const SCHEMA_VERSION = '28';
 	private const OPTION_NAME = 'lgsdn_content_schema_version';
 
 	private const TERMS = array(
@@ -19,7 +19,7 @@ final class LGSDN_Installer {
 			'Planning and place',
 			'Waste and environment',
 			'Libraries and culture',
-			'Customer services/contact centres',
+			'Customer services',
 			'Digital and online services',
 			'Revenues and benefits',
 			'Public health',
@@ -77,8 +77,10 @@ final class LGSDN_Installer {
 		LGSDN_Content_Types::register();
 		LGSDN_Taxonomies::register();
 		self::seed_terms();
+		self::migrate_customer_services_term();
 		self::seed_practice_styles();
 		self::seed_service_styles();
+		self::seed_playbook_service_order();
 		self::migrate_primary_services();
 		self::seed_about_page();
 		self::migrate_about_title();
@@ -107,8 +109,10 @@ final class LGSDN_Installer {
 		}
 
 		self::seed_terms();
+		self::migrate_customer_services_term();
 		self::seed_practice_styles();
 		self::seed_service_styles();
+		self::seed_playbook_service_order();
 		self::migrate_primary_services();
 		self::seed_about_page();
 		self::migrate_about_title();
@@ -135,6 +139,67 @@ final class LGSDN_Installer {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Replace the legacy Customer services term and merge its data when needed.
+	 */
+	private static function migrate_customer_services_term(): void {
+		$taxonomy = 'lgsdn_service';
+		$legacy = get_term_by( 'slug', 'customer-services-contact-centres', $taxonomy );
+		if ( ! $legacy ) {
+			$legacy = get_term_by( 'name', 'Customer services/contact centres', $taxonomy );
+		}
+
+		$canonical = get_term_by( 'slug', 'customer-services', $taxonomy );
+		if ( ! $canonical ) {
+			$canonical = get_term_by( 'name', 'Customer services', $taxonomy );
+		}
+
+		if ( ! $legacy || ! $canonical ) {
+			return;
+		}
+
+		if ( (int) $legacy->term_id === (int) $canonical->term_id ) {
+			wp_update_term(
+				$canonical->term_id,
+				$taxonomy,
+				array(
+					'name' => 'Customer services',
+					'slug' => 'customer-services',
+				)
+			);
+			return;
+		}
+
+		$object_ids = get_objects_in_term( $legacy->term_id, $taxonomy );
+		if ( is_wp_error( $object_ids ) ) {
+			return;
+		}
+
+		foreach ( $object_ids as $object_id ) {
+			$result = wp_set_object_terms( (int) $object_id, array( (int) $canonical->term_id ), $taxonomy, true );
+			if ( is_wp_error( $result ) ) {
+				return;
+			}
+
+			if ( (string) get_post_meta( (int) $object_id, 'lgsdn_primary_service_id', true ) === (string) $legacy->term_id ) {
+				update_post_meta( (int) $object_id, 'lgsdn_primary_service_id', (int) $canonical->term_id );
+			}
+		}
+
+		$legacy_meta = get_term_meta( $legacy->term_id );
+		foreach ( $legacy_meta as $meta_key => $values ) {
+			if ( metadata_exists( 'term', $canonical->term_id, $meta_key ) ) {
+				continue;
+			}
+
+			foreach ( $values as $value ) {
+				add_term_meta( $canonical->term_id, $meta_key, maybe_unserialize( $value ) );
+			}
+		}
+
+		wp_delete_term( $legacy->term_id, $taxonomy );
 	}
 
 	private static function seed_practice_styles(): void {
@@ -209,6 +274,49 @@ final class LGSDN_Installer {
 						update_term_meta( $service->term_id, $key, $defaults[ $key ] );
 					}
 				}
+			}
+
+			// Replace the generic illustration on these established terms when it
+			// has not already been changed to a different icon by an administrator.
+			if ( in_array( strtolower( $service->name ), array( 'digital and online services', 'libraries and culture', 'children and families', 'transport, streets and neighbourhoods', 'waste and environment', 'public health' ), true ) ) {
+				$current_icon = sanitize_key( (string) get_term_meta( $service->term_id, LGSDN_Service_Styles::ICON_META, true ) );
+				if ( 'service' === $current_icon ) {
+					update_term_meta( $service->term_id, LGSDN_Service_Styles::ICON_META, $defaults[ LGSDN_Service_Styles::ICON_META ] );
+				}
+			}
+		}
+	}
+
+	private static function seed_playbook_service_order(): void {
+		$services = get_terms(
+			array(
+				'taxonomy' => 'lgsdn_service',
+				'hide_empty' => false,
+				'orderby' => 'name',
+				'order' => 'ASC',
+			)
+		);
+
+		if ( is_wp_error( $services ) ) {
+			return;
+		}
+
+		// Preserve the current Playbook order once, then keep the two orders separate.
+		usort(
+			$services,
+			static function ( WP_Term $left, WP_Term $right ): int {
+				$left_style = LGSDN_Service_Styles::for_term( $left );
+				$right_style = LGSDN_Service_Styles::for_term( $right );
+				if ( $left_style['featured'] !== $right_style['featured'] ) {
+					return $left_style['featured'] ? -1 : 1;
+				}
+				return ( $left_style['order'] <=> $right_style['order'] ) ?: strcasecmp( $left->name, $right->name );
+			}
+		);
+
+		foreach ( $services as $index => $service ) {
+			if ( ! metadata_exists( 'term', $service->term_id, LGSDN_Service_Styles::PLAYBOOK_ORDER_META ) ) {
+				update_term_meta( $service->term_id, LGSDN_Service_Styles::PLAYBOOK_ORDER_META, ( $index + 1 ) * 10 );
 			}
 		}
 	}

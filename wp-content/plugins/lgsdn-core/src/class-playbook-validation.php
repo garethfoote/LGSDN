@@ -15,6 +15,27 @@ final class LGSDN_Playbook_Validation {
 
 	public static function hooks(): void {
 		add_filter( 'rest_pre_insert_lgsdn_playbook', array( __CLASS__, 'validate_rest_publish' ), 10, 2 );
+		add_filter( 'wp_insert_post_data', array( __CLASS__, 'require_card_image' ), 10, 2 );
+	}
+
+	/** Keep classic editor and programmatic publishing from bypassing the card requirement. */
+	public static function require_card_image( array $data, array $postarr ): array {
+		if ( 'lgsdn_playbook' !== ( $data['post_type'] ?? '' ) || 'publish' !== ( $data['post_status'] ?? '' ) ) {
+			return $data;
+		}
+		// REST validates the submitted metadata before the post is inserted.
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+			return $data;
+		}
+		$id = absint( $postarr['ID'] ?? 0 );
+		$card_id = isset( $postarr['meta_input']['lgsdn_card_image_id'] ) ? absint( $postarr['meta_input']['lgsdn_card_image_id'] ) : lgsdn_playbook_image_id( $id, 'card' );
+		if ( isset( $_POST['lgsdn_fields_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['lgsdn_fields_nonce'] ) ), 'lgsdn_save_fields' ) ) {
+			$card_id = absint( $_POST['lgsdn_card_image_id'] ?? 0 );
+		}
+		if ( ! $card_id || ! wp_attachment_is_image( $card_id ) ) {
+			$data['post_status'] = 'draft';
+		}
+		return $data;
 	}
 
 	/**
@@ -59,6 +80,10 @@ final class LGSDN_Playbook_Validation {
 
 		$meta = $request->get_param( 'meta' );
 		$meta = is_array( $meta ) ? $meta : array();
+		$card_id = array_key_exists( 'lgsdn_card_image_id', $meta ) ? absint( $meta['lgsdn_card_image_id'] ) : ( $post_id ? lgsdn_playbook_image_id( $post_id, 'card' ) : 0 );
+		if ( ! $card_id || ! wp_attachment_is_image( $card_id ) ) {
+			$errors[] = 'Card image';
+		}
 		$contributor_id = isset( $meta['lgsdn_contributor_id'] )
 			? absint( $meta['lgsdn_contributor_id'] )
 			: ( $post_id ? absint( get_post_meta( $post_id, 'lgsdn_contributor_id', true ) ) : 0 );

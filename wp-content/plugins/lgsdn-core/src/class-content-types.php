@@ -22,7 +22,7 @@ final class LGSDN_Content_Types {
 				'rewrite' => array( 'slug' => 'playbook' ),
 				'menu_icon' => 'dashicons-lightbulb',
 				'menu_position' => 20,
-				'supports' => array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'custom-fields' ),
+				'supports' => array( 'title', 'editor', 'excerpt', 'revisions', 'custom-fields' ),
 				'template_lock' => false,
 			)
 		);

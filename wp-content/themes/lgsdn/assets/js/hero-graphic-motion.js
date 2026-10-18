@@ -1,4 +1,4 @@
-import { reference } from './hero-contour-reference.mjs';
+import { reference } from './hero-contour-reference.js';
 
 const namespace = 'http://www.w3.org/2000/svg';
 const tau = Math.PI * 2;
@@ -100,13 +100,10 @@ function startMotion(disc, tracks) {
 }
 
 async function enhanceGraphic(disc) {
-	if (reducedMotion.matches) {
-		disc.removeAttribute('data-motion-pending');
-		return;
-	}
+	const image = disc.querySelector('img');
+	if (!image || reducedMotion.matches) return;
 
 	try {
-		const image = disc.querySelector('img');
 		const response = await fetch(image.currentSrc || image.src);
 		if (!response.ok) throw new Error('Homepage contour artwork could not be loaded');
 		const parsed = new DOMParser().parseFromString(await response.text(), 'image/svg+xml');
@@ -132,10 +129,9 @@ async function enhanceGraphic(disc) {
 
 		disc.replaceChildren(source, overlay);
 		startMotion(disc, tracks);
-		disc.removeAttribute('data-motion-pending');
 	} catch {
-		// Keep the original static mark visible if enhancement cannot be prepared.
-		disc.removeAttribute('data-motion-pending');
+		// Restore the static SVG if enhancement fails after replacing the image.
+		if (!disc.contains(image)) disc.replaceChildren(image);
 	}
 }
 

@@ -11,6 +11,7 @@ final class LGSDN_Service_Styles {
 	public const COLOUR_META = 'lgsdn_service_colour';
 	public const ICON_META = 'lgsdn_service_icon';
 	public const ORDER_META = 'lgsdn_service_home_order';
+	public const PLAYBOOK_ORDER_META = 'lgsdn_service_playbook_order';
 	public const FEATURED_META = 'lgsdn_service_featured';
 
 	private const DEFAULT_COLOUR = 'orange';
@@ -31,6 +32,12 @@ final class LGSDN_Service_Styles {
 		'phone' => 'Customer services and contact centres',
 		'housing' => 'Housing and homelessness',
 		'democracy' => 'Democracy and participation',
+		'digital' => 'Digital and online services',
+		'libraries' => 'Libraries and culture',
+		'children' => 'Children and families',
+		'transport' => 'Transport, streets and neighbourhoods',
+		'waste' => 'Waste and environment',
+		'public-health' => 'Public health',
 	);
 
 	/**
@@ -44,7 +51,8 @@ final class LGSDN_Service_Styles {
 			'background' => '#B59B00',
 			'contrast' => '#8A7600',
 			'foreground' => '#27272D',
-			'gradient_top' => '#9B8400',
+			'gradient_top' => '#B59B00',
+			'gradient_hold_until' => 45,
 			'gradient_bottom' => '#897600',
 		),
 		'blue' => array(
@@ -61,6 +69,7 @@ final class LGSDN_Service_Styles {
 			'contrast' => '#9B83B8',
 			'foreground' => '#27272D',
 			'gradient_top' => '#A183C2',
+			'gradient_hold_until' => 45,
 			'gradient_bottom' => '#876AA9',
 		),
 		'green' => array(
@@ -77,6 +86,7 @@ final class LGSDN_Service_Styles {
 			'contrast' => '#EA7200',
 			'foreground' => '#27272D',
 			'gradient_top' => '#F66F00',
+			'gradient_hold_until' => 45,
 			'gradient_bottom' => '#BD5B00',
 		),
 		'pink' => array(
@@ -85,6 +95,7 @@ final class LGSDN_Service_Styles {
 			'contrast' => '#B3889B',
 			'foreground' => '#27272D',
 			'gradient_top' => '#D081A4',
+			'gradient_hold_until' => 45,
 			'gradient_bottom' => '#9D667E',
 		),
 	);
@@ -103,6 +114,9 @@ final class LGSDN_Service_Styles {
 		add_action( 'edited_lgsdn_service', array( __CLASS__, 'save' ) );
 		add_filter( 'manage_edit-lgsdn_service_columns', array( __CLASS__, 'add_admin_columns' ) );
 		add_filter( 'manage_lgsdn_service_custom_column', array( __CLASS__, 'render_admin_column' ), 10, 3 );
+		add_filter( 'get_terms_args', array( __CLASS__, 'order_admin_service_terms' ), 10, 2 );
+		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_order_admin_assets' ) );
+		add_action( 'wp_ajax_lgsdn_reorder_service_areas', array( __CLASS__, 'ajax_reorder_service_areas' ) );
 	}
 
 	public static function register_meta(): void {
@@ -142,6 +156,17 @@ final class LGSDN_Service_Styles {
 				'single' => true,
 				'show_in_rest' => true,
 				'default' => 0,
+				'sanitize_callback' => 'absint',
+				'auth_callback' => $auth_callback,
+			)
+		);
+		register_term_meta(
+			'lgsdn_service',
+			self::PLAYBOOK_ORDER_META,
+			array(
+				'type' => 'integer',
+				'single' => true,
+				'show_in_rest' => true,
 				'sanitize_callback' => 'absint',
 				'auth_callback' => $auth_callback,
 			)
@@ -213,6 +238,18 @@ final class LGSDN_Service_Styles {
 			$defaults[ self::ICON_META ] = 'democracy';
 			$defaults[ self::ORDER_META ] = 50;
 			$defaults[ self::FEATURED_META ] = true;
+		} elseif ( str_contains( $name, 'digital' ) && str_contains( $name, 'online' ) ) {
+			$defaults[ self::ICON_META ] = 'digital';
+		} elseif ( str_contains( $name, 'libraries' ) && str_contains( $name, 'culture' ) ) {
+			$defaults[ self::ICON_META ] = 'libraries';
+		} elseif ( str_contains( $name, 'children' ) && str_contains( $name, 'famil' ) ) {
+			$defaults[ self::ICON_META ] = 'children';
+		} elseif ( str_contains( $name, 'transport' ) && str_contains( $name, 'neighbourhoods' ) ) {
+			$defaults[ self::ICON_META ] = 'transport';
+		} elseif ( str_contains( $name, 'waste' ) && str_contains( $name, 'environment' ) ) {
+			$defaults[ self::ICON_META ] = 'waste';
+		} elseif ( str_contains( $name, 'public health' ) ) {
+			$defaults[ self::ICON_META ] = 'public-health';
 		}
 
 		return $defaults;
@@ -224,6 +261,7 @@ final class LGSDN_Service_Styles {
 		$colour = self::sanitize_colour( get_term_meta( $term_object->term_id ?? 0, self::COLOUR_META, true ) ?: ( $defaults[ self::COLOUR_META ] ?? self::DEFAULT_COLOUR ) );
 		$icon = self::sanitize_icon( get_term_meta( $term_object->term_id ?? 0, self::ICON_META, true ) ?: ( $defaults[ self::ICON_META ] ?? self::DEFAULT_ICON ) );
 		$order = absint( get_term_meta( $term_object->term_id ?? 0, self::ORDER_META, true ) ?: ( $defaults[ self::ORDER_META ] ?? 0 ) );
+		$playbook_order = absint( get_term_meta( $term_object->term_id ?? 0, self::PLAYBOOK_ORDER_META, true ) );
 		$featured = (bool) get_term_meta( $term_object->term_id ?? 0, self::FEATURED_META, true );
 		if ( ! metadata_exists( 'term', $term_object->term_id ?? 0, self::FEATURED_META ) ) {
 			$featured = (bool) ( $defaults[ self::FEATURED_META ] ?? false );
@@ -239,12 +277,18 @@ final class LGSDN_Service_Styles {
 			'gradient' => $gradient,
 			'icon' => $icon,
 			'order' => $order,
+			'playbook_order' => $playbook_order,
 			'featured' => $featured,
 		);
 	}
 
 	private static function card_gradient( array $palette ): string {
 		$angle = max( 0, min( 360, (int) ( self::CARD_GRADIENT['angle'] ?? 135 ) ) );
+		if ( isset( $palette['gradient_hold_until'] ) ) {
+			$hold_until = max( 0, min( 99, (int) $palette['gradient_hold_until'] ) );
+			return sprintf( 'linear-gradient(%ddeg, %s 0%%, %s %d%%, %s 100%%)', $angle, $palette['gradient_top'], $palette['gradient_top'], $hold_until, $palette['gradient_bottom'] );
+		}
+
 		return sprintf( 'linear-gradient(%ddeg, %s, %s)', $angle, $palette['gradient_top'], $palette['gradient_bottom'] );
 	}
 
@@ -290,11 +334,13 @@ final class LGSDN_Service_Styles {
 		usort(
 			$terms,
 			static function ( WP_Term $left, WP_Term $right ) use ( $featured_only ): int {
+				if ( ! $featured_only ) {
+					$left_order = self::for_term( $left )['playbook_order'];
+					$right_order = self::for_term( $right )['playbook_order'];
+					return ( $left_order <=> $right_order ) ?: strcasecmp( $left->name, $right->name );
+				}
 				$left_style = self::for_term( $left );
 				$right_style = self::for_term( $right );
-				if ( ! $featured_only && $left_style['featured'] !== $right_style['featured'] ) {
-					return $left_style['featured'] ? -1 : 1;
-				}
 				return ( $left_style['order'] <=> $right_style['order'] ) ?: strcasecmp( $left->name, $right->name );
 			}
 		);
@@ -348,10 +394,31 @@ final class LGSDN_Service_Styles {
 		update_term_meta( $term_id, self::ICON_META, $icon );
 		update_term_meta( $term_id, self::ORDER_META, $order );
 		update_term_meta( $term_id, self::FEATURED_META, $featured );
+		if ( ! metadata_exists( 'term', $term_id, self::PLAYBOOK_ORDER_META ) ) {
+			self::append_playbook_order( $term_id );
+		}
+	}
+
+	private static function append_playbook_order( int $term_id ): void {
+		$orders = get_terms(
+			array(
+				'taxonomy' => 'lgsdn_service',
+				'hide_empty' => false,
+				'fields' => 'ids',
+				'meta_key' => self::PLAYBOOK_ORDER_META,
+				'orderby' => 'meta_value_num',
+				'order' => 'DESC',
+				'number' => 1,
+			)
+		);
+		$last_id = is_array( $orders ) && ! empty( $orders ) ? absint( $orders[0] ) : 0;
+		$last_order = $last_id ? absint( get_term_meta( $last_id, self::PLAYBOOK_ORDER_META, true ) ) : 0;
+		update_term_meta( $term_id, self::PLAYBOOK_ORDER_META, $last_order + 10 );
 	}
 
 	public static function add_admin_columns( array $columns ): array {
 		$service_columns = array(
+			'lgsdn_service_playbook_order' => 'Playbook order',
 			'lgsdn_service_colour' => 'Colour',
 			'lgsdn_service_featured' => 'Homepage card',
 		);
@@ -370,6 +437,19 @@ final class LGSDN_Service_Styles {
 
 	public static function render_admin_column( string $content, string $column_name, int $term_id ): string {
 		$style = self::for_term( $term_id );
+		if ( 'lgsdn_service_playbook_order' === $column_name ) {
+			$term = get_term( $term_id, 'lgsdn_service' );
+			if ( ! $term instanceof WP_Term ) {
+				return $content;
+			}
+
+			$name = esc_attr( $term->name );
+			return sprintf(
+				'<span class="lgsdn-service-order-controls"><button type="button" class="button-link lgsdn-service-order-handle" title="Drag to reorder" aria-label="Drag %1$s to change its Playbook order"><span class="dashicons dashicons-menu" aria-hidden="true"></span></button><button type="button" class="button-link lgsdn-service-order-up" aria-label="Move %1$s up in Playbook order"><span class="dashicons dashicons-arrow-up-alt2" aria-hidden="true"></span></button><button type="button" class="button-link lgsdn-service-order-down" aria-label="Move %1$s down in Playbook order"><span class="dashicons dashicons-arrow-down-alt2" aria-hidden="true"></span></button></span>',
+				$name
+			);
+		}
+
 		if ( 'lgsdn_service_colour' === $column_name ) {
 			$colour = self::COLOURS[ $style['colour'] ];
 
@@ -385,6 +465,88 @@ final class LGSDN_Service_Styles {
 		}
 
 		return $style['featured'] ? 'Yes · ' . esc_html( (string) $style['order'] ) : 'No';
+	}
+
+	public static function order_admin_service_terms( array $args, mixed $taxonomies ): array {
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		if (
+			! is_admin() ||
+			! $screen ||
+			'edit-tags' !== $screen->base ||
+			'lgsdn_service' !== $screen->taxonomy ||
+			! is_array( $taxonomies ) ||
+			! in_array( 'lgsdn_service', $taxonomies, true ) ||
+			! empty( $_GET['orderby'] )
+		) {
+			return $args;
+		}
+
+		$args['meta_key'] = self::PLAYBOOK_ORDER_META;
+		$args['orderby'] = 'meta_value_num';
+		$args['order'] = 'ASC';
+		return $args;
+	}
+
+	public static function enqueue_order_admin_assets(): void {
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		if ( ! $screen || 'edit-tags' !== $screen->base || 'lgsdn_service' !== $screen->taxonomy || ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$script_path = LGSDN_CORE_DIR . 'assets/js/service-area-order.js';
+		$style_path = LGSDN_CORE_DIR . 'assets/css/service-area-order.css';
+		wp_enqueue_script( 'jquery-ui-sortable' );
+		wp_enqueue_script(
+			'lgsdn-service-area-order',
+			plugins_url( 'assets/js/service-area-order.js', LGSDN_CORE_FILE ),
+			array( 'jquery', 'jquery-ui-sortable' ),
+			file_exists( $script_path ) ? (string) filemtime( $script_path ) : LGSDN_CORE_VERSION,
+			true
+		);
+		wp_localize_script(
+			'lgsdn-service-area-order',
+			'LGSDNServiceAreaOrder',
+			array(
+				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+				'nonce' => wp_create_nonce( 'lgsdn_reorder_service_areas' ),
+				'termCount' => (int) wp_count_terms( array( 'taxonomy' => 'lgsdn_service', 'hide_empty' => false ) ),
+				'enabled' => empty( $_GET['s'] ) && empty( $_GET['orderby'] ) && 1 >= max( 1, absint( $_GET['paged'] ?? 1 ) ),
+			)
+		);
+		wp_enqueue_style(
+			'lgsdn-service-area-order',
+			plugins_url( 'assets/css/service-area-order.css', LGSDN_CORE_FILE ),
+			array( 'dashicons' ),
+			file_exists( $style_path ) ? (string) filemtime( $style_path ) : LGSDN_CORE_VERSION
+		);
+	}
+
+	public static function ajax_reorder_service_areas(): void {
+		check_ajax_referer( 'lgsdn_reorder_service_areas', 'nonce' );
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => 'You are not allowed to reorder service areas.' ), 403 );
+		}
+
+		$submitted_ids = isset( $_POST['term_ids'] ) && is_array( $_POST['term_ids'] ) ? array_map( 'absint', wp_unslash( $_POST['term_ids'] ) ) : array();
+		$submitted_ids = array_values( array_unique( array_filter( $submitted_ids ) ) );
+		$all_ids = get_terms(
+			array(
+				'taxonomy' => 'lgsdn_service',
+				'hide_empty' => false,
+				'fields' => 'ids',
+				'orderby' => 'term_id',
+				'order' => 'ASC',
+				'number' => 0,
+			)
+		);
+		if ( is_wp_error( $all_ids ) || count( $submitted_ids ) !== count( $all_ids ) || array_diff( $all_ids, $submitted_ids ) || array_diff( $submitted_ids, $all_ids ) ) {
+			wp_send_json_error( array( 'message' => 'The service area list changed. Reload the page before trying again.' ), 400 );
+		}
+
+		foreach ( $submitted_ids as $index => $id ) {
+			update_term_meta( $id, self::PLAYBOOK_ORDER_META, ( $index + 1 ) * 10 );
+		}
+		wp_send_json_success( array( 'message' => 'Playbook order saved.' ) );
 	}
 
 	private static function render_fields( ?WP_Term $term ): void {

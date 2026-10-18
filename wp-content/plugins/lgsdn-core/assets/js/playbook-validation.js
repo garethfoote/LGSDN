@@ -11,7 +11,11 @@
 	const structuredMetaFields = new Set( [
 		'lgsdn_contributor_id',
 		'lgsdn_primary_service_id',
+		'lgsdn_card_image_id',
+		'lgsdn_article_image_id',
+		'lgsdn_card_image_window',
 	] );
+	const structuredBooleanFields = new Set( [ 'lgsdn_card_image_window' ] );
 	let lastNoticeKey = '';
 
 	const syncStructuredMetaField = ( field, allowEmpty = false ) => {
@@ -24,12 +28,14 @@
 		}
 
 		const editorSelect = select( 'core/editor' );
-		if ( ! editorSelect || ! editorSelect.getEditedPostAttribute ) {
+		if ( ! editorSelect || ! editorSelect.getEditedPostAttribute || ! editorSelect.getCurrentPostType || ! editorSelect.getCurrentPostType() ) {
 			return;
 		}
 
 		const currentMeta = editorSelect.getEditedPostAttribute( 'meta' ) || {};
-		const value = field.value ? Number.parseInt( field.value, 10 ) : 0;
+		const value = structuredBooleanFields.has( field.name )
+			? Boolean( field.checked )
+			: ( field.value ? Number.parseInt( field.value, 10 ) : 0 );
 
 		if ( currentMeta[ field.name ] === value ) {
 			return;
@@ -38,7 +44,7 @@
 		editorDispatch.editPost( {
 			meta: {
 				...currentMeta,
-				[ field.name ]: Number.isNaN( value ) ? 0 : value,
+				[ field.name ]: structuredBooleanFields.has( field.name ) ? value : ( Number.isNaN( value ) ? 0 : value ),
 			},
 		} );
 	};
@@ -48,7 +54,7 @@
 			return;
 		}
 
-		document.querySelectorAll( '[name="lgsdn_contributor_id"], [name="lgsdn_primary_service_id"]' ).forEach( ( field ) => {
+		document.querySelectorAll( '[name="lgsdn_contributor_id"], [name="lgsdn_primary_service_id"], [name="lgsdn_card_image_id"], [name="lgsdn_article_image_id"], [name="lgsdn_card_image_window"]' ).forEach( ( field ) => {
 			syncStructuredMetaField( field );
 		} );
 

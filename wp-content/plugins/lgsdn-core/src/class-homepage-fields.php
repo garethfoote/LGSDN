@@ -19,6 +19,12 @@ final class LGSDN_Homepage_Fields {
 		'lgsdn_home_feature_2_body' => 'This network is a safe and supportive space for people working in service design in local government. It’s here to help you grow your service design practice by.',
 		'lgsdn_home_feature_3_title' => 'Contribute an example',
 		'lgsdn_home_feature_3_body' => '',
+		'lgsdn_home_service_intro_title' => 'Explore by service',
+		'lgsdn_home_service_intro_body' => 'Find out how service design works with these services within local government.',
+		'lgsdn_home_service_intro_button' => 'All service areas',
+		'lgsdn_home_case_study_intro_title' => 'Read a case study',
+		'lgsdn_home_case_study_intro_body' => 'Find out how service design works with these services within local government.',
+		'lgsdn_home_case_study_intro_button' => 'All case studies',
 	);
 
 	public static function hooks(): void {
@@ -126,7 +132,7 @@ final class LGSDN_Homepage_Fields {
 	public static function render( WP_Post $post ): void {
 		wp_nonce_field( self::NONCE_ACTION, self::NONCE_NAME );
 		?>
-		<p>Edit the homepage introduction and its three feature cards. Feature links are limited to pages on this site.</p>
+		<p>Edit the homepage introduction, feature sections and Playbook intro cards. Feature links are limited to pages on this site.</p>
 		<table class="form-table" role="presentation"><tbody>
 			<tr>
 				<th scope="row"><label for="lgsdn_home_lead">Lead copy</label></th>

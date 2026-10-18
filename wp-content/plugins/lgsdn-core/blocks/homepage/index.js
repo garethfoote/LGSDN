@@ -62,27 +62,60 @@
 			var titleKey = 'lgsdn_home_feature_' + index + '_title';
 			var bodyKey = 'lgsdn_home_feature_' + index + '_body';
 			var title = value( titleKey );
-			var ctaLabels = [ 'Join', 'Browse', 'Contribute' ];
-			var ctaSuffixes = [ ' the network', ' the playbook', ' an example' ];
-			var iconNames = [ 'join', 'browse', 'contribute' ];
+			var ctaLabels = [ 'Join the network', 'Explore the playbook', 'Share an example' ];
+			var artNames = [ 'join', 'playbook', 'contribute' ];
 
 			return el(
 				'article',
-				{ className: 'feature-card', key: index },
+				{ className: 'homepage-feature-row homepage-feature-row--' + artNames[ index - 1 ], key: index },
 				el(
 					'div',
-					{ className: 'feature-card__heading' },
-					el( 'img', { className: 'feature-card__icon', src: imageBase + '/home-feature-' + iconNames[ index - 1 ] + '.svg', alt: '', 'aria-hidden': true, width: 26, height: 26 } ),
+					{ className: 'homepage-feature-row__copy' },
 					editableText( 'h2', '', title, function ( nextValue ) {
 						updateMeta( titleKey, nextValue );
-					}, 'Feature title' )
+					}, 'Feature title' ),
+					editableText( 'p', '', value( bodyKey ), function ( nextValue ) {
+						updateMeta( bodyKey, nextValue );
+					}, 'Feature description' ),
+					el( 'a', { className: 'button lgsdn-button--arrow', href: '#', onClick: stopLink }, el( 'span', { className: 'lgsdn-button__label' }, ctaLabels[ index - 1 ] ) )
 				),
-				editableText( 'p', '', value( bodyKey ), function ( nextValue ) {
-					updateMeta( bodyKey, nextValue );
-				}, 'Feature description' ),
-				el( 'a', { className: 'button lgsdn-button--arrow', href: '#', onClick: stopLink }, el( 'span', { className: 'lgsdn-button__label' }, ctaLabels[ index - 1 ] ), el( 'span', { className: 'screen-reader-text' }, ctaSuffixes[ index - 1 ] ) )
+				el( 'svg', { className: 'homepage-feature-row__art', viewBox: '0 0 226 226', 'aria-hidden': true, focusable: false },
+					el( 'use', { href: imageBase + '/home-feature-' + artNames[ index - 1 ] + '-contours.svg#contours' } )
+				)
 			);
 		} );
+
+		function editIntroCard( className, titleKey, bodyKey, buttonKey ) {
+			return el(
+				'article',
+				{ className: className },
+				editableText( 'h4', '', value( titleKey ), function ( nextValue ) {
+					updateMeta( titleKey, nextValue );
+				}, 'Intro card title' ),
+				editableText( 'p', '', value( bodyKey ), function ( nextValue ) {
+					updateMeta( bodyKey, nextValue );
+				}, 'Intro card description' ),
+				el(
+					'a',
+					{ className: 'button button--strong lgsdn-button--arrow', href: '#', onClick: stopLink },
+					editableText( 'span', 'lgsdn-button__label', value( buttonKey ), function ( nextValue ) {
+						updateMeta( buttonKey, nextValue );
+					}, 'Button label' )
+				)
+			);
+		}
+
+		var homepagePlaybook = el(
+			'section',
+			{ className: 'homepage-playbook', id: 'playbook', 'aria-labelledby': 'homepage-playbook-title' },
+			el( 'div', { className: 'homepage-playbook__intro' }, el( 'h2', { id: 'homepage-playbook-title' }, 'From the playbook' ) ),
+			el( 'div', { className: 'homepage-service-row', 'aria-label': 'Explore by service area' },
+				editIntroCard( 'homepage-service-intro', 'lgsdn_home_service_intro_title', 'lgsdn_home_service_intro_body', 'lgsdn_home_service_intro_button' )
+			),
+			el( 'div', { className: 'homepage-case-study-row' },
+				editIntroCard( 'homepage-service-intro homepage-case-study-intro', 'lgsdn_home_case_study_intro_title', 'lgsdn_home_case_study_intro_body', 'lgsdn_home_case_study_intro_button' )
+			)
+		);
 
 		var linkControls = [ 1, 2, 3 ].map( function ( index ) {
 			var pageKey = 'lgsdn_home_feature_' + index + '_page_id';
@@ -106,6 +139,7 @@
 				el(
 					PanelBody,
 					{ title: 'Homepage links', initialOpen: true },
+					el( 'p', { className: 'components-base-control__help' }, 'Optional overrides. Leave a destination unselected to keep its built-in page, or select a page to send visitors elsewhere.' ),
 					linkControls
 				)
 			),
@@ -166,7 +200,8 @@
 								)
 							)
 						),
-						el( 'section', { className: 'feature-grid', id: 'join', 'aria-label': 'Ways to take part' }, features ),
+						el( 'section', { className: 'homepage-feature-list', id: 'join', 'aria-label': 'Ways to take part' }, features ),
+						homepagePlaybook,
 						el(
 							'div',
 							{ id: 'events' },

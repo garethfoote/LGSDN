@@ -45,9 +45,6 @@
 
 		const minimap = document.createElement( 'div' );
 		minimap.className = 'lgsdn-horizontal-scroll-map';
-		const viewportFrame = document.createElement( 'span' );
-		viewportFrame.className = 'lgsdn-horizontal-scroll-map__viewport';
-		viewportFrame.setAttribute( 'aria-hidden', 'true' );
 		scrollIndicators.appendChild( minimap );
 
 		const dots = cards.map( ( card, index ) => {
@@ -67,7 +64,6 @@
 			minimap.appendChild( dot );
 			return dot;
 		} );
-		minimap.appendChild( viewportFrame );
 		scrollIndicators.append( nextButton );
 
 		scrollIndicators.className = 'lgsdn-horizontal-scroll-indicators';
@@ -94,44 +90,11 @@
 			cardRects.forEach( ( rect, index ) => {
 				dots[ index ].classList.toggle( 'is-visible', rect.right > viewportLeft && rect.left < viewportRight );
 			} );
-			// Map cards and the gaps between them separately, preserving exact
-			// fractions even though the miniature gaps use a different scale.
-			const mapPosition = ( position ) => {
-				for ( let index = 0; index < cards.length; index++ ) {
-					const rect = cardRects[ index ];
-					const dot = dots[ index ];
-					if ( position <= rect.left ) {
-						if ( index === 0 ) {
-							// Represent only real empty space before the first card.
-							// Cap its miniature width at two pixels, without a state switch.
-							const clearance = rect.width > 0 ? Math.min( 2, ( rect.left - position ) / rect.width * dot.offsetWidth ) : 0;
-							return dot.offsetLeft - clearance;
-						}
-						const previousRect = cardRects[ index - 1 ];
-						const previousDot = dots[ index - 1 ];
-						const gapStart = previousDot.offsetLeft + previousDot.offsetWidth;
-						const fraction = ( position - previousRect.right ) / ( rect.left - previousRect.right );
-						return gapStart + fraction * ( dot.offsetLeft - gapStart );
-					}
-					if ( position <= rect.right ) {
-						return dot.offsetLeft + ( position - rect.left ) / rect.width * dot.offsetWidth;
-					}
-				}
-				const lastDot = dots[ dots.length - 1 ];
-				const lastRect = cardRects[ cardRects.length - 1 ];
-				const clearance = lastRect.width > 0 ? Math.min( 2, ( position - lastRect.right ) / lastRect.width * lastDot.offsetWidth ) : 0;
-				return lastDot.offsetLeft + lastDot.offsetWidth + clearance;
-			};
-			const frameLeft = mapPosition( viewportLeft );
-			const frameRight = mapPosition( viewportRight );
-			viewportFrame.style.left = `${ frameLeft }px`;
-			viewportFrame.style.width = `${ Math.max( 0, frameRight - frameLeft ) }px`;
 		};
 
 		if ( 'ResizeObserver' in window ) {
 			const resizeObserver = new ResizeObserver( updateScrollIndicators );
 			resizeObserver.observe( scroller );
-			resizeObserver.observe( minimap );
 		}
 
 		let introWasHidden = false;

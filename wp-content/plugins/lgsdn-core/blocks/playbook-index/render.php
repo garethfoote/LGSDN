@@ -198,7 +198,7 @@ $service_terms = LGSDN_Service_Styles::playbook_terms();
 	</section>
 
 	<section class="lgsdn-playbook-listing lgsdn-playbook-shell" aria-labelledby="case-studies-title">
-		<section class="lgsdn-playbook-services" aria-labelledby="service-areas-title">
+		<section class="lgsdn-playbook-services" id="service-areas" aria-labelledby="service-areas-title">
 			<header class="lgsdn-playbook-section-header">
 				<h2 id="service-areas-title">Explore by service area</h2>
 			</header>
@@ -322,7 +322,7 @@ $service_terms = LGSDN_Service_Styles::playbook_terms();
 				</div>
 				<div class="lgsdn-playbook-active-filters__controls">
 					<?php if ( $contributor_id ) : ?>
-						<a class="lgsdn-playbook-active-filter" href="<?php echo esc_url( remove_query_arg( 'contributor' ) ); ?>" aria-label="<?php echo esc_attr( 'Remove author filter: ' . get_the_title( $contributor_id ) ); ?>">
+						<a class="lgsdn-playbook-active-filter" href="<?php echo esc_url( remove_query_arg( 'contributor' ) . '#case-study-panel' ); ?>" aria-label="<?php echo esc_attr( 'Remove author filter: ' . get_the_title( $contributor_id ) ); ?>">
 							<span class="lgsdn-playbook-active-filter__type">Author</span>
 							<span class="lgsdn-playbook-active-filter__value"><?php echo esc_html( get_the_title( $contributor_id ) ); ?></span>
 							<span class="lgsdn-playbook-active-filter__remove" aria-hidden="true"></span>
@@ -337,7 +337,7 @@ $service_terms = LGSDN_Service_Styles::playbook_terms();
 						</a>
 						<span class="lgsdn-playbook-active-filters__separator" aria-hidden="true"></span>
 					<?php endif; ?>
-					<a class="lgsdn-playbook-clear-filters" href="<?php echo esc_url( add_query_arg( array( 'sort' => $sort ), get_permalink( $post_id ) ) ); ?>" data-clear-filters><span class="lgsdn-playbook-clear-filters__icon" aria-hidden="true">×</span><span class="lgsdn-playbook-clear-filters__label">Reset all filters</span></a>
+					<a class="lgsdn-playbook-clear-filters" href="<?php echo esc_url( add_query_arg( array( 'sort' => $sort ), get_permalink( $post_id ) ) . '#case-study-panel' ); ?>" data-clear-filters><span class="lgsdn-playbook-clear-filters__icon" aria-hidden="true">×</span><span class="lgsdn-playbook-clear-filters__label">Reset all filters</span></a>
 				</div>
 			</div>
 

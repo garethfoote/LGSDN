@@ -33,6 +33,8 @@ if ( ! $featured->have_posts() ) {
 
 $featured->the_post();
 $item_id = get_the_ID();
+$has_card_image = (bool) lgsdn_playbook_image_id( $item_id, 'card' );
+$has_window_card_image = $has_card_image && (bool) get_post_meta( $item_id, 'lgsdn_card_image_window', true );
 $practices = get_the_terms( $item_id, 'lgsdn_practice' );
 $practices = $practices && ! is_wp_error( $practices ) ? array_values( $practices ) : array();
 $primary_id = absint( get_post_meta( $item_id, 'lgsdn_primary_practice_id', true ) );
@@ -84,9 +86,9 @@ foreach ( array( 'lgsdn_service', 'lgsdn_purpose', 'lgsdn_challenge', 'lgsdn_cou
 $classes = 'lgsdn-featured-playbook alignfull has-practice-' . $style['colour'];
 ?>
 <article <?php echo get_block_wrapper_attributes( array( 'class' => $classes ) ); ?>>
-	<div class="lgsdn-featured-playbook__media">
-		<?php if ( has_post_thumbnail() ) : ?>
-			<?php the_post_thumbnail( 'large' ); ?>
+	<div class="lgsdn-featured-playbook__media<?php echo $has_window_card_image ? ' lgsdn-featured-playbook__media--window' : ''; ?>">
+		<?php if ( $has_card_image ) : ?>
+			<?php echo lgsdn_playbook_card_image_markup( $item_id, 'large' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		<?php endif; ?>
 		<?php if ( $primary || $secondary_labels ) : ?>
 			<div class="lgsdn-featured-playbook__tags" aria-label="Case study classifications">
