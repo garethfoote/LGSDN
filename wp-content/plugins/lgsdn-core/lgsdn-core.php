@@ -2,7 +2,7 @@
 /**
  * Plugin Name: LGSDN Core
  * Description: Structured content and editorial safeguards for the LGSDN website.
- * Version: 0.1.16
+ * Version: 0.1.17
  * Requires at least: 7.0
  * Requires PHP: 8.3
  * Requires Plugins: forminator
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'LGSDN_CORE_VERSION', '0.1.16' );
+define( 'LGSDN_CORE_VERSION', '0.1.17' );
 define( 'LGSDN_CORE_FILE', __FILE__ );
 define( 'LGSDN_CORE_DIR', plugin_dir_path( __FILE__ ) );
 
