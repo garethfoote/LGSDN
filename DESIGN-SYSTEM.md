@@ -37,16 +37,33 @@ Service-area cards take their visual identity from their primary Service area. A
 
 | Service colour | Gradient top | Gradient bottom | White text contrast at bottom |
 |---|---|---|---|
-| Mustard | `#B59B00` (0–45%) | `#897600` (100%) | 4.51:1 |
+| Mustard | `#B59B00` (0–20%) | `#897600` (100%) | 4.51:1 |
 | Blue | `#5A6CFF` | `#4B5AFF` | 4.99:1 |
-| Purple | `#A183C2` | `#876AA9` | 4.50:1 |
+| Purple | `#C6AFE3` (0–20%) | `#876AA9` | 4.50:1 |
 | Green | `#4C5B37` | `#3A472B` | 9.92:1 |
-| Orange | `#F66F00` | `#BD5B00` | 4.51:1 |
-| Pink | `#D081A4` | `#9D667E` | 4.53:1 |
+| Orange | `#F66F00` (0–20%) | `#BD5B00` | 4.51:1 |
+| Pink | `#F7ACCD` (0–20%) | `#9D667E` | 4.53:1 |
 
-The palette and card gradient angle are owned by `LGSDN_Service_Styles`. Gradients run vertically from the decorative top stop to the darker bottom stop, behind the white service title. Mustard, pink, orange, and purple hold their lighter colour through 45% of the card before transitioning to their darker bottom stop. The bottom stop meets WCAG AA's 4.5:1 contrast requirement for normal white text. Service-area term metadata stores only the stable colour token name. The legacy `lilac` token is read as `purple`; older installations that stored `pink` continue to use the restored pink token. Practice terms retain the original palette values for their legacy contour fallbacks.
+The palette and card gradient angle are owned by `LGSDN_Service_Styles`. Gradients run at 190 degrees, almost vertically downwards with a subtle lean towards the lower left, behind the white service title. Mustard, pink, orange, and purple hold their lighter colour through 20% of the gradient axis, then blend gently to 75% light colour / 25% dark colour at 60%, reaching the darker bottom stop at 100%. The bottom stop meets WCAG AA's 4.5:1 contrast requirement for normal white text; this measures the endpoint, not every point in the transition. Service-area term metadata stores only the stable colour token name. The legacy `lilac` token is read as `purple`; older installations that stored `pink` continue to use the restored pink token. Practice terms retain the original palette values for their legacy contour fallbacks.
+
+### Palette experiment baseline — 21 October 2026
+
+Saved before the lighter-top experiment. These are service-card gradient values, separate from the shared Practice and taxonomy-tag background colours.
+
+| Service colour | Original top | Original hold | Original bottom |
+|---|---|---|---|
+| Mustard | `#B59B00` | 45% | `#897600` |
+| Blue | `#5A6CFF` | None | `#4B5AFF` |
+| Purple | `#A183C2` | 45% | `#876AA9` |
+| Green | `#4C5B37` | None | `#3A472B` |
+| Orange | `#F66F00` | 45% | `#BD5B00` |
+| Pink | `#D081A4` | 45% | `#9D667E` |
+
+The experiment initially set pink to `#FACDE1`; its lightest card stop is now `#F7ACCD`, reducing HSL lightness from approximately 89.2% to 82% while preserving hue and saturation (subject to hex rounding). It sets purple to `#C6AFE3`; requested yellow/gold `#B59B00` already matches mustard. All four transitioning colours now hold until 20% along a 190-degree gradient, then transition over the remaining 80%. A predominantly light blend at 60% keeps the stronger darkening lower down the card. Orange has no replacement hex supplied, so its top stays unchanged. Blue and green retain their colour stops and use the shared gradient angle; all bottom colours stay unchanged.
 
 Small service-area taxonomy tags use Ink on mustard, purple, orange, and pink backgrounds, where white fails the 4.5:1 normal-text threshold. Blue and green retain white tag text because those pairings pass.
+
+Service icons share square SVG viewBoxes centred on the visible artwork, with the longest visible dimension occupying 90% of the frame. Apply this framing to new icons too, rather than compensating for export whitespace with individual CSS scales or offsets. Homepage and Playbook cards share the same resting and interaction scales; article and archive icons use the same source framing. The shared `--lgsdn-service-icon-size-multiplier: 1.2` increases icon width and height by 20% across all these views and their existing responsive sizes, subject to container limits.
 
 Taxonomy tags use Atkinson Hyperlegible Next Regular (400) across homepage case-study cards and Playbook case-study cards, including both service-area and other classification tags.
 

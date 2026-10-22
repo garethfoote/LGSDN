@@ -2,7 +2,7 @@
 /**
  * Plugin Name: LGSDN Core
  * Description: Structured content and editorial safeguards for the LGSDN website.
- * Version: 0.1.17
+ * Version: 0.1.29
  * Requires at least: 7.0
  * Requires PHP: 8.3
  * Requires Plugins: forminator
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'LGSDN_CORE_VERSION', '0.1.17' );
+define( 'LGSDN_CORE_VERSION', '0.1.29' );
 define( 'LGSDN_CORE_FILE', __FILE__ );
 define( 'LGSDN_CORE_DIR', plugin_dir_path( __FILE__ ) );
 
@@ -32,6 +32,7 @@ require_once LGSDN_CORE_DIR . 'src/class-playbook-page-fields.php';
 require_once LGSDN_CORE_DIR . 'src/class-editor.php';
 require_once LGSDN_CORE_DIR . 'src/class-installer.php';
 require_once LGSDN_CORE_DIR . 'src/class-playbook-images.php';
+require_once LGSDN_CORE_DIR . 'src/class-playbook-meta-repair.php';
 
 add_action( 'init', array( 'LGSDN_Content_Types', 'register' ), 5 );
 add_action( 'init', array( 'LGSDN_Taxonomies', 'register' ), 6 );
@@ -39,6 +40,7 @@ add_action( 'init', array( 'LGSDN_Fields', 'register_meta' ), 7 );
 add_action( 'init', 'lgsdn_register_dynamic_blocks', 8 );
 add_action( 'enqueue_block_editor_assets', 'lgsdn_enqueue_editor_assets' );
 LGSDN_Playbook_Images::hooks();
+LGSDN_Playbook_Meta_Repair::hooks();
 
 LGSDN_Fields::hooks();
 LGSDN_Council_Logos::hooks();

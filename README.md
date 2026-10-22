@@ -59,6 +59,8 @@ Service, Practice, Purpose, and Challenge are controlled vocabularies: editors c
 
 Each Playbook item has a public **Case study author** selected from People and may have several Practice terms. Editors select one assigned term as the **Primary practice**; that term controls the card colour and fallback contour. Practice, Service, Challenge, Case study author, and Primary practice must be complete before an item can be published through the block editor.
 
+If the block editor reports that it could not update a Playbook metadata value, an administrator can open **Tools → Repair Playbook metadata**. The repair keeps the value WordPress currently reads and removes duplicate rows from single-value fields registered for Playbook items, including WordPress core fields such as footnotes.
+
 Administrators manage the approved colour for each term under **Playbook items → Practices**. The colour control is intentionally limited to the design-system palette rather than accepting arbitrary values. Each colour’s fallback contour is a theme asset named `practice-contour-{colour}.svg`; WordPress displays an administrator notice if a palette colour does not have a matching file.
 
 ## Editing service area pages

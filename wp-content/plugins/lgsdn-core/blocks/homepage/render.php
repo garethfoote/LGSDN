@@ -18,7 +18,8 @@ $page_url = static function ( int $selected_id, string $fallback_path ): string 
 };
 
 $feature_fallbacks = array( 'join', 'playbook', 'contribute' );
-$feature_cta_labels = array( 'Join the network', 'Explore the playbook', 'Share an example' );
+$feature_cta_labels = array( 'Join', 'Browse', 'Contribute' );
+$feature_cta_context = array( ' the network', ' the playbook', ' an example' );
 $feature_art_names = array( 'join', 'playbook', 'contribute' );
 $features = array();
 for ( $index = 1; $index <= 3; $index++ ) {
@@ -111,7 +112,7 @@ $case_studies = new WP_Query(
 						<div class="homepage-feature-row__copy">
 							<h2><?php echo esc_html( $feature['title'] ); ?></h2>
 							<p><?php echo nl2br( esc_html( $feature['body'] ) ); ?></p>
-							<a class="button lgsdn-button--arrow" href="<?php echo esc_url( $feature['url'] ); ?>"><span class="lgsdn-button__label"><?php echo esc_html( $feature_cta_labels[ $index ] ); ?></span></a>
+							<a class="button lgsdn-button--arrow" href="<?php echo esc_url( $feature['url'] ); ?>"><span class="lgsdn-button__label"><?php echo esc_html( $feature_cta_labels[ $index ] ); ?></span><span class="screen-reader-text"><?php echo esc_html( $feature_cta_context[ $index ] ); ?></span></a>
 						</div>
 						<svg class="homepage-feature-row__art" viewBox="0 0 226 226" aria-hidden="true" focusable="false"><use href="<?php echo esc_url( $image_base . '/home-feature-' . $feature_art_names[ $index ] . '-contours.svg#contours' ); ?>"></use></svg>
 					</article>

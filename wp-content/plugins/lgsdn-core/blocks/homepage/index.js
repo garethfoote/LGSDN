@@ -62,7 +62,8 @@
 			var titleKey = 'lgsdn_home_feature_' + index + '_title';
 			var bodyKey = 'lgsdn_home_feature_' + index + '_body';
 			var title = value( titleKey );
-			var ctaLabels = [ 'Join the network', 'Explore the playbook', 'Share an example' ];
+			var ctaLabels = [ 'Join', 'Browse', 'Contribute' ];
+			var ctaContext = [ ' the network', ' the playbook', ' an example' ];
 			var artNames = [ 'join', 'playbook', 'contribute' ];
 
 			return el(
@@ -77,7 +78,7 @@
 					editableText( 'p', '', value( bodyKey ), function ( nextValue ) {
 						updateMeta( bodyKey, nextValue );
 					}, 'Feature description' ),
-					el( 'a', { className: 'button lgsdn-button--arrow', href: '#', onClick: stopLink }, el( 'span', { className: 'lgsdn-button__label' }, ctaLabels[ index - 1 ] ) )
+					el( 'a', { className: 'button lgsdn-button--arrow', href: '#', onClick: stopLink }, el( 'span', { className: 'lgsdn-button__label' }, ctaLabels[ index - 1 ] ), el( 'span', { className: 'screen-reader-text' }, ctaContext[ index - 1 ] ) )
 				),
 				el( 'svg', { className: 'homepage-feature-row__art', viewBox: '0 0 226 226', 'aria-hidden': true, focusable: false },
 					el( 'use', { href: imageBase + '/home-feature-' + artNames[ index - 1 ] + '-contours.svg#contours' } )

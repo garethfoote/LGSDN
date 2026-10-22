@@ -225,13 +225,14 @@ foreach ( $related_taxonomies as $related_taxonomy ) {
 					<section class="lgsdn-playbook-article__service-area" aria-labelledby="lgsdn-playbook-service-area-title-<?php echo esc_attr( (string) $post_id ); ?>">
 						<a class="lgsdn-playbook-article__service-card" href="<?php echo esc_url( get_term_link( $primary_service ) ); ?>" style="--lgsdn-service-card-bg:<?php echo esc_attr( $service_style['gradient'] ); ?>;--lgsdn-service-card-fg:#FFFFFF;">
 							<span class="lgsdn-playbook-article__service-label">Service</span>
-							<img src="<?php echo esc_url( LGSDN_Service_Styles::icon_url( $service_style['icon'] ) ); ?>" alt="" class="lgsdn-playbook-article__service-icon">
+							<img src="<?php echo esc_url( LGSDN_Service_Styles::icon_url( $service_style['icon'] ) ); ?>" alt="" class="lgsdn-playbook-article__service-icon lgsdn-playbook-article__service-icon--<?php echo esc_attr( $service_style['icon'] ); ?>">
 							<span class="lgsdn-playbook-article__service-name">
 								<span class="lgsdn-service-card__title"><?php echo esc_html( $primary_service->name ); ?></span>
 							</span>
 						</a>
 						<div class="lgsdn-playbook-article__service-area-copy">
-							<h2 id="lgsdn-playbook-service-area-title-<?php echo esc_attr( (string) $post_id ); ?>">Part of this service area</h2>
+							<span class="lgsdn-playbook-article__service-eyebrow">This case study is part of</span>
+							<h2 id="lgsdn-playbook-service-area-title-<?php echo esc_attr( (string) $post_id ); ?>"><?php echo esc_html( $primary_service->name ); ?></h2>
 							<?php if ( $service_excerpt ) : ?>
 								<p><?php echo esc_html( $service_excerpt ); ?></p>
 							<?php endif; ?>
@@ -244,7 +245,7 @@ foreach ( $related_taxonomies as $related_taxonomy ) {
 	<?php if ( $related_items ) : ?>
 		<section class="lgsdn-playbook-related" aria-labelledby="lgsdn-playbook-related-title-<?php echo esc_attr( (string) $post_id ); ?>">
 			<header class="lgsdn-playbook-section-header">
-				<h2 id="lgsdn-playbook-related-title-<?php echo esc_attr( (string) $post_id ); ?>">Other related Playbook case studies</h2>
+				<h2 id="lgsdn-playbook-related-title-<?php echo esc_attr( (string) $post_id ); ?>">More from the Playbook</h2>
 			</header>
 			<div class="lgsdn-playbook-grid">
 				<?php foreach ( array_keys( $related_items ) as $related_item_id ) : ?>

@@ -63,7 +63,7 @@ function startMotion(disc, tracks) {
 
 	function render() {
 		for (const track of tracks) {
-			const distance = track.phase + phaseTime * (track.total / 300) * track.rate * track.direction;
+			const distance = track.phase + phaseTime * (track.total / 240) * track.rate * track.direction;
 			const [x, y] = pointAt(track, distance);
 			track.circle.setAttribute('cx', x.toFixed(3));
 			track.circle.setAttribute('cy', y.toFixed(3));

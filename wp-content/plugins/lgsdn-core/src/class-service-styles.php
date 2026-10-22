@@ -22,22 +22,25 @@ final class LGSDN_Service_Styles {
 	 * bottom colour. Bottom stops are selected to meet WCAG AA for white card text.
 	 */
 	private const CARD_GRADIENT = array(
-		'angle' => 180,
+		'angle' => 190,
 	);
 
 	private const ICONS = array(
-		'service' => 'Service',
-		'bricks' => 'Community safety',
-		'care' => 'Adult social care',
-		'phone' => 'Customer services and contact centres',
-		'housing' => 'Housing and homelessness',
-		'democracy' => 'Democracy and participation',
-		'digital' => 'Digital and online services',
-		'libraries' => 'Libraries and culture',
-		'children' => 'Children and families',
-		'transport' => 'Transport, streets and neighbourhoods',
-		'waste' => 'Waste and environment',
-		'public-health' => 'Public health',
+		'service' => 'Spoked circle icon',
+		'blueprint' => 'Blueprint icon',
+		'bricks' => 'Brick wall icon',
+		'clipboard' => 'Clipboard icon',
+		'money-growing' => 'Money growing icon',
+		'care' => 'Helping hands icon',
+		'phone' => 'Telephone icon',
+		'housing' => 'House icon',
+		'democracy' => 'Ballot box icon',
+		'digital' => 'Laptop and pointer icon',
+		'libraries' => 'Books icon',
+		'children' => 'Children icon',
+		'transport' => 'Bus icon',
+		'waste' => 'Wheelie bin icon',
+		'public-health' => 'Stethoscope icon',
 	);
 
 	/**
@@ -52,7 +55,7 @@ final class LGSDN_Service_Styles {
 			'contrast' => '#8A7600',
 			'foreground' => '#27272D',
 			'gradient_top' => '#B59B00',
-			'gradient_hold_until' => 45,
+			'gradient_hold_until' => 20,
 			'gradient_bottom' => '#897600',
 		),
 		'blue' => array(
@@ -68,8 +71,8 @@ final class LGSDN_Service_Styles {
 			'background' => '#C7AFE1',
 			'contrast' => '#9B83B8',
 			'foreground' => '#27272D',
-			'gradient_top' => '#A183C2',
-			'gradient_hold_until' => 45,
+			'gradient_top' => '#C6AFE3',
+			'gradient_hold_until' => 20,
 			'gradient_bottom' => '#876AA9',
 		),
 		'green' => array(
@@ -86,7 +89,7 @@ final class LGSDN_Service_Styles {
 			'contrast' => '#EA7200',
 			'foreground' => '#27272D',
 			'gradient_top' => '#F66F00',
-			'gradient_hold_until' => 45,
+			'gradient_hold_until' => 20,
 			'gradient_bottom' => '#BD5B00',
 		),
 		'pink' => array(
@@ -94,8 +97,8 @@ final class LGSDN_Service_Styles {
 			'background' => '#FACDE1',
 			'contrast' => '#B3889B',
 			'foreground' => '#27272D',
-			'gradient_top' => '#D081A4',
-			'gradient_hold_until' => 45,
+			'gradient_top' => '#F7ACCD',
+			'gradient_hold_until' => 20,
 			'gradient_bottom' => '#9D667E',
 		),
 	);
@@ -115,6 +118,7 @@ final class LGSDN_Service_Styles {
 		add_filter( 'manage_edit-lgsdn_service_columns', array( __CLASS__, 'add_admin_columns' ) );
 		add_filter( 'manage_lgsdn_service_custom_column', array( __CLASS__, 'render_admin_column' ), 10, 3 );
 		add_filter( 'get_terms_args', array( __CLASS__, 'order_admin_service_terms' ), 10, 2 );
+		add_filter( 'terms_clauses', array( __CLASS__, 'order_admin_service_term_clauses' ), 10, 3 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_order_admin_assets' ) );
 		add_action( 'wp_ajax_lgsdn_reorder_service_areas', array( __CLASS__, 'ajax_reorder_service_areas' ) );
 	}
@@ -248,6 +252,8 @@ final class LGSDN_Service_Styles {
 			$defaults[ self::ICON_META ] = 'transport';
 		} elseif ( str_contains( $name, 'waste' ) && str_contains( $name, 'environment' ) ) {
 			$defaults[ self::ICON_META ] = 'waste';
+		} elseif ( str_contains( $name, 'benefits' ) || str_contains( $name, 'financial support' ) ) {
+			$defaults[ self::ICON_META ] = 'money-growing';
 		} elseif ( str_contains( $name, 'public health' ) ) {
 			$defaults[ self::ICON_META ] = 'public-health';
 		}
@@ -286,7 +292,14 @@ final class LGSDN_Service_Styles {
 		$angle = max( 0, min( 360, (int) ( self::CARD_GRADIENT['angle'] ?? 135 ) ) );
 		if ( isset( $palette['gradient_hold_until'] ) ) {
 			$hold_until = max( 0, min( 99, (int) $palette['gradient_hold_until'] ) );
-			return sprintf( 'linear-gradient(%ddeg, %s 0%%, %s %d%%, %s 100%%)', $angle, $palette['gradient_top'], $palette['gradient_top'], $hold_until, $palette['gradient_bottom'] );
+			// Begin gently, retaining mostly the top colour until lower down the card.
+			return sprintf(
+				'linear-gradient(%1$ddeg, %2$s 0%%, %2$s %3$d%%, color-mix(in srgb, %2$s 75%%, %4$s) 60%%, %4$s 100%%)',
+				$angle,
+				$palette['gradient_top'],
+				$hold_until,
+				$palette['gradient_bottom']
+			);
 		}
 
 		return sprintf( 'linear-gradient(%ddeg, %s, %s)', $angle, $palette['gradient_top'], $palette['gradient_bottom'] );
@@ -417,6 +430,8 @@ final class LGSDN_Service_Styles {
 	}
 
 	public static function add_admin_columns( array $columns ): array {
+		unset( $columns['description'] );
+
 		$service_columns = array(
 			'lgsdn_service_playbook_order' => 'Playbook order',
 			'lgsdn_service_colour' => 'Colour',
@@ -481,10 +496,36 @@ final class LGSDN_Service_Styles {
 			return $args;
 		}
 
-		$args['meta_key'] = self::PLAYBOOK_ORDER_META;
-		$args['orderby'] = 'meta_value_num';
+		unset( $args['meta_key'], $args['meta_value'] );
+		$args['orderby'] = 'name';
 		$args['order'] = 'ASC';
 		return $args;
+	}
+
+	/**
+	 * Keep service areas without a Playbook order visible and place them last.
+	 */
+	public static function order_admin_service_term_clauses( array $clauses, array $taxonomies, array $args ): array {
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		if (
+			! is_admin() ||
+			! $screen ||
+			'edit-tags' !== $screen->base ||
+			'lgsdn_service' !== $screen->taxonomy ||
+			! in_array( 'lgsdn_service', $taxonomies, true ) ||
+			! empty( $_GET['orderby'] )
+		) {
+			return $clauses;
+		}
+
+		global $wpdb;
+		$meta_value = $wpdb->prepare(
+			"(SELECT order_meta.meta_value FROM {$wpdb->termmeta} AS order_meta WHERE order_meta.term_id = t.term_id AND order_meta.meta_key = %s ORDER BY order_meta.meta_id ASC LIMIT 1)",
+			self::PLAYBOOK_ORDER_META
+		);
+
+		$clauses['orderby'] = "ORDER BY CASE WHEN {$meta_value} IS NULL OR {$meta_value} = '' THEN 1 ELSE 0 END, CAST(NULLIF({$meta_value}, '') AS UNSIGNED), t.name";
+		return $clauses;
 	}
 
 	public static function enqueue_order_admin_assets(): void {

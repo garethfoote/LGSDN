@@ -10,7 +10,6 @@
 <!-- wp:group {"align":"wide","className":"lgsdn-content-page__hero","layout":{"type":"constrained"}} -->
 <div class="wp-block-group alignwide lgsdn-content-page__hero">
 	<!-- wp:paragraph {"className":"lgsdn-type-lead"} --><p class="lgsdn-type-lead">Share useful knowledge from service design work in local government, so another team can build on what you learned.</p><!-- /wp:paragraph -->
-	<!-- wp:buttons --><div class="wp-block-buttons"><!-- wp:button --><div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="#how-to-contribute"><span class="lgsdn-button__label">Get in touch</span></a></div><!-- /wp:button --></div><!-- /wp:buttons -->
 </div>
 <!-- /wp:group -->
 <!-- wp:group {"align":"wide","className":"lgsdn-content-page__body","layout":{"type":"constrained"}} -->
