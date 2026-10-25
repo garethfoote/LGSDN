@@ -86,7 +86,7 @@ The scale follows the semantic roles visible in Figma. Change the `settings.typo
 
 | Token | Typeface | Size / line height |
 |---|---|---|
-| Display | Srbija Sans | 40px compact, 48px laptop, 56px extra large / 110% |
+| Display | Srbija Sans | 32px compact, 40px medium, 48px laptop, 56px extra large / 110% |
 | Page title | Srbija Sans | 36px / 115% |
 | Section title / H2 | Srbija Sans | 36px / 120% |
 | Page lead | Atkinson Hyperlegible Next | 24px compact, 28px medium and laptop, 32px extra large / 150% |
@@ -124,3 +124,19 @@ Event photos use the native WordPress featured image at medium resolution. Below
 WordPress image blocks have an optional **Window** style for interface screenshots. It adds decorative window chrome and a shadow around the image without changing the uploaded file or its alternative text. Playbook card images can use the same frame through the **Show the card image in a window frame** option; the image sits at a contained size on the existing mist background across Playbook listings, homepage case-study cards, related cards, and the featured Playbook presentation. Card-frame corner radius, title bar, and dots scale with the media width, while the article-body style keeps its larger treatment.
 
 Custom LGSDN actions use `.button` with `.lgsdn-button--arrow` for internal onward journeys or `.lgsdn-button--external` for off-site links. The external-link variant uses `↗` to indicate a different site or domain; it does not imply that the link opens a new tab. Text links do not animate the icon, while button-style external actions retain the short diagonal movement. Their shared sizing and interaction rules live in `assets/css/buttons.css`, loaded on the frontend, in the editor, and by button specimens. Native WordPress blocks retain their generated `.wp-block-button__link` markup. Event timeline buttons inherit the shared padding and responsive type size, always say **Details**, and lead to the event page. An upcoming event page with a booking link uses the external-link variant and its editor-configured call to action text, defaulting to **Register** when that text is blank. Event and Playbook resources use the same link presentation whether the destination is a Media Library file or an external service, with `↗` retained as a subtle off-site cue. Resource links use the browser's normal navigation behavior and do not force a new tab. The subordinate **View on Google Maps** location link intentionally omits the icon to preserve its relationship with the location and avoid competing with the primary registration action.
+
+### Compact Playbook article rhythm
+
+Below 48rem, article headers use 16px above the backlink and 32px below it. Display titles keep their 32px compact size with a 1.15 line height. The title, optional hero image, and metadata use a 32px grid gap. Metadata labels and values use 16px type, with 8px between labels and values and 24px between groups. The narrative begins 48px after metadata (32px grid gap plus 16px on the copy container), with no additional top margin on the lead. These rules cover articles with and without images or excerpts; medium and desktop layouts retain their existing styles.
+
+### Two-column Playbook article rhythm
+
+From 48rem, the backlink uses spacing token 30 above and token 60 below. Article rows use a single token 60 gap, without additional bottom padding on the title. Metadata and narrative start on the same grid row; the lead has no top margin. Metadata uses token 20 between labels and values or wrapped tags, and token 40 between groups. Spacing follows the active theme token values. Filter icons match the tag text size. These rules cover articles with and without featured images and retain the existing desktop type sizes and column widths.
+
+### Playbook header images and resources
+
+Article header images are optional, selected without a crop step, and displayed full-width at their saved natural proportions. Around 16:9 is an editorial recommendation, not a forced ratio. Existing cropped attachments remain as saved; select the original image again to recover its full composition. Card images retain their required 3:2 crop.
+
+Resources sit beneath the metadata in the same sidebar grid area. On compact views that sidebar precedes the narrative in DOM and visual order. Resources use a quiet Mist callout with spacing token 30 padding, token 20 corners, and token 60 separation above. The heading is medium weight; underlined links use regular interface body type with wrapping for long labels. The narrative flows directly from the excerpt into authored blocks, without a resources panel or generated divider between them.
+
+The optional **Show the header image in a window frame** checkbox is independent of the card setting. It centres shared browser chrome on a Mist 16:9 stage. Window width is constrained by both stage dimensions using the uploaded image ratio, leaving at least 9% breathing room on each axis. The image remains uncropped; the stage, window, and chrome scale with the available width. With the option off, the normal natural-proportion header remains in use. With no header image, neither treatment renders.

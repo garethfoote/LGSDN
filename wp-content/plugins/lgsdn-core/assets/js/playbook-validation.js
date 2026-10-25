@@ -14,8 +14,9 @@
 		'lgsdn_card_image_id',
 		'lgsdn_article_image_id',
 		'lgsdn_card_image_window',
+		'lgsdn_article_image_window',
 	] );
-	const structuredBooleanFields = new Set( [ 'lgsdn_card_image_window' ] );
+	const structuredBooleanFields = new Set( [ 'lgsdn_card_image_window', 'lgsdn_article_image_window' ] );
 	let lastNoticeKey = '';
 
 	const syncStructuredMetaField = ( field, allowEmpty = false ) => {
@@ -54,7 +55,7 @@
 			return;
 		}
 
-		document.querySelectorAll( '[name="lgsdn_contributor_id"], [name="lgsdn_primary_service_id"], [name="lgsdn_card_image_id"], [name="lgsdn_article_image_id"], [name="lgsdn_card_image_window"]' ).forEach( ( field ) => {
+		document.querySelectorAll( '[name="lgsdn_contributor_id"], [name="lgsdn_primary_service_id"], [name="lgsdn_card_image_id"], [name="lgsdn_article_image_id"], [name="lgsdn_card_image_window"], [name="lgsdn_article_image_window"]' ).forEach( ( field ) => {
 			syncStructuredMetaField( field );
 		} );
 

@@ -16,6 +16,7 @@ final class LGSDN_Playbook_Meta_Repair {
 		'lgsdn_card_image_id',
 		'lgsdn_card_image_window',
 		'lgsdn_article_image_id',
+		'lgsdn_article_image_window',
 	);
 
 	public static function hooks(): void {

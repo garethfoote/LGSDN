@@ -384,7 +384,7 @@ a {
 .homepage-playbook {
 	position: relative;
 	isolation: isolate;
-	padding-block: 50px 100px;
+	padding-block: clamp(3rem, 6vw, 5rem) 100px;
 }
 
 .homepage-playbook::after {
@@ -399,10 +399,12 @@ a {
 }
 
 .homepage-playbook__intro {
+	margin-bottom: var(--wp--preset--spacing--40);
 	padding-inline: var(--lgsdn-gutter);
 }
 
 .homepage-playbook__intro h2 {
+	margin: 0;
 	color: var(--off-black);
 	font-family: var(--heading-font);
 	font-size: var(--wp--preset--font-size--x-large, 36px);
@@ -433,7 +435,7 @@ a {
 	--homepage-card-gap: var(--lgsdn-service-card-gap);
 	min-height: calc(var(--homepage-card-height) + 0.5rem);
 	position: relative;
-	margin-top: 25px;
+	margin-top: 0;
 	width: 100%;
 	overflow: visible;
 }
@@ -1130,6 +1132,7 @@ a {
 
 @media (max-width: 47.999rem) {
 	:root {
+		--lgsdn-type-display-size: 2rem;
 		--lgsdn-type-nav-size: 1.875rem;
 	}
 

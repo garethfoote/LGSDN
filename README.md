@@ -40,6 +40,19 @@ Each export also increments the shared patch version (for example, `0.1.0` becom
 
 The WordPress admin **Tools → Export** screen remains useful when you only need a portable XML export of selected content for importing into another WordPress installation. It does not include the complete database, users, settings, or all plugin data.
 
+## Updating the live site
+
+GitHub stores the source history; pushing a commit does not deploy WordPress.
+
+1. Run `python scripts/export-wordpress.py` to build fresh theme and plugin ZIPs and increment their versions.
+2. Commit the source and generated ZIPs, then push to GitHub.
+3. Take a backup in Hostinger before updating the live installation.
+4. In live WordPress admin, open **Appearance → Themes → Add theme → Upload theme**, select `wp-content/themes/lgsdn-theme.zip`, and choose **Replace current with uploaded**.
+5. Open **Plugins → Add plugin → Upload plugin**, select `wp-content/plugins/lgsdn-core.zip`, and choose **Replace current with uploaded**.
+6. Clear any hosting/page cache and check the homepage, Playbook listing, and case studies on desktop and mobile.
+
+These updates replace code only. Local images, article edits, and per-case-study settings (including the header window checkbox) live in the database and must be set or transferred separately on the live site. Do not repeat the starter-content import for routine updates.
+
 ## Design system
 
 The theme includes a responsive specimen template for reviewing typography, colour, spacing, layout, interface elements, and contour artwork. In the local development database it is available at <http://localhost:8080/design-system/>.

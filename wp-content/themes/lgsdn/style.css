@@ -3,7 +3,7 @@ Theme Name: LGSDN
 Theme URI: https://github.com/lgsdn/lgsdn-wordpress
 Author: Local Government Service Design Network
 Description: A focused block theme for the Local Government Service Design Network.
-Version: 0.1.27
+Version: 0.1.31
 Requires at least: 7.0
 Requires PHP: 8.3
 Text Domain: lgsdn
@@ -21,6 +21,8 @@ Text Domain: lgsdn
 		--lgsdn-service-card-radius: var(--lgsdn-card-radius);
 		--lgsdn-service-card-gap: var(--wp--preset--spacing--40, 1.5rem);
 		--lgsdn-service-icon-size-multiplier: 1.2;
+		--lgsdn-service-icon-width: calc(5.1667rem * var(--lgsdn-service-icon-size-multiplier));
+		--lgsdn-service-icon-height: calc(5.5rem * var(--lgsdn-service-icon-size-multiplier));
 		--lgsdn-content-width: 68rem;
 		--lgsdn-wide-width: 94.5rem;
 		--lgsdn-breakpoint-medium: 48rem;
@@ -367,16 +369,16 @@ Text Domain: lgsdn
 	}
 
 	.lgsdn-playbook-article__back-nav {
-		margin-bottom: var(--wp--preset--spacing--40);
-		padding-top: 1.5rem;
+		margin-block: 0;
+		padding-block: var(--wp--preset--spacing--30);
 	}
 
 	.lgsdn-playbook-article__back-link {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.75rem;
+		gap: var(--wp--preset--spacing--20);
 		color: var(--wp--preset--color--ink);
-		font-size: var(--wp--preset--font-size--body-x-large);
+		font-size: var(--wp--preset--font-size--card-title);
 		line-height: 1.2;
 		text-decoration: none;
 	}
@@ -400,8 +402,8 @@ Text Domain: lgsdn
 
 	.lgsdn-playbook-article__back-arrow {
 		flex: 0 0 auto;
-		font-size: 1.75rem;
-		line-height: 1;
+		width: 1em;
+		height: 1em;
 	}
 
 	.lgsdn-playbook-article-layout {
@@ -452,17 +454,19 @@ Text Domain: lgsdn
 		display: block;
 		font-family: var(--wp--preset--font-family--body);
 		font-size: var(--wp--preset--font-size--small);
-		font-weight: 400;
+		font-weight: 300;
 		line-height: 1.2;
 		text-transform: uppercase;
 	}
 
 	.lgsdn-playbook-article__service-name {
 		display: block;
+		grid-row: 3;
+		align-self: end;
 	}
 
-	.lgsdn-playbook-article__service-card:hover .lgsdn-service-card__title,
-	.lgsdn-playbook-article__service-card:focus-visible .lgsdn-service-card__title {
+	.lgsdn-service-card:is(:hover, :focus-visible) .lgsdn-service-card__title,
+	.lgsdn-playbook-article__service-card:is(:hover, :focus-visible) .lgsdn-service-card__title {
 		text-decoration: underline;
 		text-decoration-thickness: var(--lgsdn-underline-thickness);
 		text-underline-offset: 0.15em;
@@ -482,8 +486,8 @@ Text Domain: lgsdn
 	.lgsdn-playbook-article__service-icon {
 		display: block;
 		align-self: center;
-		width: min(100%, calc(6rem * var(--lgsdn-service-icon-size-multiplier)));
-		height: calc(6.5rem * var(--lgsdn-service-icon-size-multiplier));
+		width: min(100%, var(--lgsdn-service-icon-width));
+		height: var(--lgsdn-service-icon-height);
 		margin: 0 auto;
 		object-fit: contain;
 	}
@@ -546,21 +550,6 @@ Text Domain: lgsdn
 		margin: 0;
 	}
 
-	.lgsdn-playbook-article__lead-rule {
-		margin: 0 0 var(--wp--preset--spacing--40);
-		border: 0;
-		border-top: 1px solid var(--wp--preset--color--light-grey);
-	}
-
-	.lgsdn-playbook-article__copy > .lgsdn-event__resources {
-		max-width: 100%;
-		margin: 0 0 var(--wp--preset--spacing--30);
-	}
-
-	.lgsdn-playbook-article__lead + .lgsdn-event__resources {
-		margin-top: var(--wp--preset--spacing--60);
-	}
-
 	.lgsdn-playbook-article__copy .lgsdn-article {
 		max-width: 100%;
 		font-size: inherit;
@@ -596,7 +585,7 @@ Text Domain: lgsdn
 		margin-bottom: 0.125rem;
 		font-family: var(--wp--preset--font-family--body);
 		font-size: var(--wp--preset--font-size--small);
-		font-weight: 400;
+		font-weight: 300;
 		line-height: 1.2;
 		text-transform: uppercase;
 	}
@@ -612,11 +601,6 @@ Text Domain: lgsdn
 
 	.lgsdn-playbook-article__service-area-copy p {
 		margin: var(--wp--preset--spacing--30) 0 0;
-	}
-
-	.lgsdn-playbook-article__service-area .lgsdn-playbook-article__service-icon {
-		width: min(100%, calc(5.1667rem * var(--lgsdn-service-icon-size-multiplier)));
-		height: calc(5.5rem * var(--lgsdn-service-icon-size-multiplier));
 	}
 
 	.lgsdn-playbook-article__featured-image {
@@ -1272,7 +1256,7 @@ Text Domain: lgsdn
 	}
 
 	.lgsdn-playbook-section-header {
-		margin-bottom: 1.5rem;
+		margin-bottom: var(--wp--preset--spacing--40);
 	}
 
 	.lgsdn-playbook-section-header h2 {
@@ -1513,26 +1497,45 @@ Text Domain: lgsdn
 
 	.lgsdn-service-card__title { color: var(--wp--preset--color--white); }
 
-	.lgsdn-service-card__icon {
+	.lgsdn-service-card__icon,
+	.lgsdn-playbook-article__service-card[href] .lgsdn-playbook-article__service-icon {
+		/* Anchor to the card, independently of the title's line count. */
+		position: absolute;
+		top: 45%;
+		left: 50%;
+		translate: -50% calc(-50% + var(--lgsdn-service-icon-optical-offset, 0rem));
 		display: block;
-		width: min(100%, calc(6rem * var(--lgsdn-service-icon-size-multiplier)));
-		height: calc(6.5rem * var(--lgsdn-service-icon-size-multiplier));
+		width: min(100%, var(--lgsdn-service-icon-width));
+		height: var(--lgsdn-service-icon-height);
 		align-self: center;
 		margin: 0 auto;
 		object-fit: contain;
-		transition: transform 180ms ease;
-		transform-origin: center;
+		transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+		transform-origin: center bottom;
 		transform: scale(1.15);
 		-webkit-user-drag: none;
 	}
 
-	.lgsdn-service-card:is(:hover, :focus-visible) .lgsdn-service-card__icon {
-		transform: scale(1.23);
+	.lgsdn-service-card__icon--care,
+	.lgsdn-playbook-article__service-icon--care {
+		--lgsdn-service-icon-optical-offset: var(--wp--preset--spacing--10, 0.25rem);
+	}
+
+	.lgsdn-service-card__icon--democracy,
+	.lgsdn-playbook-article__service-icon--democracy {
+		--lgsdn-service-icon-optical-offset: calc(-1 * var(--wp--preset--spacing--10, 0.25rem));
+	}
+
+	.lgsdn-service-card:is(:hover, :focus-visible) .lgsdn-service-card__icon,
+	.lgsdn-playbook-article__service-card[href]:is(:hover, :focus-visible) .lgsdn-playbook-article__service-icon {
+		transform: translate(0.25rem, -0.25rem) rotate(-2deg) scale(1.25);
+		transition-delay: 60ms;
 	}
 
 	.lgsdn-service-card__title {
 		max-width: 17ch;
 		margin: 0;
+		grid-row: 3;
 		align-self: end;
 		font-size: var(--wp--preset--font-size--card-title);
 	}
@@ -2485,10 +2488,16 @@ textarea {
 .lgsdn-service-card__title {
 	color: var(--wp--preset--color--white);
 	font-family: var(--wp--preset--font-family--heading);
-	font-size: 1.125rem;
+	font-size: 1.5rem;
 	font-weight: 400;
 	letter-spacing: 0.5px;
 	line-height: 1.2;
+}
+
+.lgsdn-service-card__title,
+.lgsdn-service-card__label,
+.lgsdn-playbook-article__service-label {
+	opacity: 0.9;
 }
 
 .lgsdn-playbook-service-row .lgsdn-service-card {
@@ -2505,25 +2514,6 @@ textarea {
 	font-size: var(--wp--preset--font-size--feature);
 	font-weight: 500;
 	line-height: 1.2;
-}
-
-.lgsdn-playbook-article__filter-hint {
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
-	margin: 0 0 1rem;
-	padding-bottom: 0.75rem;
-	border-bottom: 1px solid var(--wp--preset--color--soft-grey);
-	color: var(--wp--preset--color--muted);
-	font-size: var(--wp--preset--font-size--body-small);
-	line-height: 1.35;
-}
-
-.lgsdn-playbook-article__filter-hint .lgsdn-playbook-tag__filter-icon {
-	width: 1.5rem;
-	height: 1.5rem;
-	flex-basis: 1.5rem;
-	background: var(--wp--preset--color--light-grey);
 }
 
 .lgsdn-playbook-article__featured-image {
@@ -2717,6 +2707,8 @@ a.lgsdn-playbook-tag[href]:focus-visible,
 		--lgsdn-gutter: clamp(0.875rem, calc(0.375rem + 1.5vw), 1.125rem);
 		--lgsdn-type-lead-size: var(--wp--preset--font-size--body-x-large);
 		--lgsdn-case-study-card-body-padding: var(--wp--preset--spacing--30);
+		--lgsdn-type-display-size: 2rem;
+		--lgsdn-heading-h1-size: 2rem;
 	}
 
 	.lgsdn-horizontal-scroll-arrow--previous {
@@ -2907,10 +2899,6 @@ a.lgsdn-playbook-tag[href]:focus-visible,
 		padding: 1rem;
 	}
 
-	.lgsdn-service-card__icon {
-		width: min(100%, calc(5.1667rem * var(--lgsdn-service-icon-size-multiplier)));
-		height: calc(5.5rem * var(--lgsdn-service-icon-size-multiplier));
-	}
 }
 
 @media (min-width: 64rem) {
@@ -2947,8 +2935,14 @@ a.lgsdn-playbook-tag[href]:focus-visible,
 	.wp-block-button__link,
 	.lgsdn-skip-link,
 	.lgsdn-service-card__icon,
+	.lgsdn-playbook-article__service-card[href] .lgsdn-playbook-article__service-icon,
 	.lgsdn-playbook-filter-value__remove {
 		transition: none;
+	}
+
+	.lgsdn-service-card:is(:hover, :focus-visible) .lgsdn-service-card__icon,
+	.lgsdn-playbook-article__service-card[href]:is(:hover, :focus-visible) .lgsdn-playbook-article__service-icon {
+		transform: scale(1.15);
 	}
 }
 
@@ -3004,9 +2998,13 @@ a.lgsdn-playbook-tag[href]:focus-visible,
 
 	.lgsdn-service-archive__header .lgsdn-playbook-article__service-icon {
 		align-self: auto;
-		width: min(100%, calc(6rem * var(--lgsdn-service-icon-size-multiplier)));
-		height: min(100%, calc(6rem * var(--lgsdn-service-icon-size-multiplier)));
+		width: min(100%, calc(5rem * var(--lgsdn-service-icon-size-multiplier)));
+		height: min(100%, calc(5rem * var(--lgsdn-service-icon-size-multiplier)));
 		margin: 0;
+	}
+
+	.lgsdn-service-archive__header .lgsdn-playbook-article__service-icon--democracy {
+		translate: 0 var(--lgsdn-service-icon-optical-offset, 0rem);
 	}
 }
 
@@ -3021,6 +3019,7 @@ a.lgsdn-playbook-tag[href]:focus-visible,
 /* This must remain unlayered to override the responsive shared-card dimensions. */
 .lgsdn-service-archive__header .lgsdn-playbook-article__service-card {
 	--lgsdn-service-archive-circle-size: min(13rem, 25vw);
+	border-radius: 50%;
 	box-sizing: border-box;
 	width: var(--lgsdn-service-archive-circle-size);
 	min-height: 0;
@@ -3177,8 +3176,7 @@ a.lgsdn-playbook-tag[href]:focus-visible,
 		margin-top: var(--wp--preset--spacing--80);
 	}
 
-	.lgsdn-event__resources,
-	.lgsdn-playbook-article__copy > .lgsdn-event__resources {
+	.lgsdn-event__resources {
 		max-width: 65ch;
 		margin-bottom: var(--wp--preset--spacing--60);
 		border-radius: 0.875rem;
@@ -4264,4 +4262,173 @@ a.lgsdn-playbook-tag[href]:focus-visible,
 	height: auto;
 	min-height: 0;
 	object-fit: initial;
+}
+
+/* The backlink owns the spacing before the article title. */
+.lgsdn-playbook-article__back-nav + .lgsdn-playbook-article-shell .lgsdn-playbook-article-layout,
+.lgsdn-playbook-article__back-nav + .lgsdn-playbook-article-shell .lgsdn-playbook-article__title {
+	padding-top: 0;
+}
+
+/* Compact article rhythm: 8px within groups, then 24px / 32px / 48px. */
+@media (max-width: 47.999rem) {
+	.lgsdn-playbook-article__back-nav {
+		display: flex;
+		padding-block: var(--wp--preset--spacing--30) var(--wp--preset--spacing--50);
+	}
+
+	.lgsdn-playbook-article-layout {
+		row-gap: var(--wp--preset--spacing--50);
+	}
+
+	.lgsdn-playbook-article__hero .lgsdn-playbook-article__title {
+		padding-bottom: 0;
+	}
+
+	.lgsdn-playbook-article__title h1 {
+		font-size: var(--lgsdn-type-display-size);
+		line-height: 1.15;
+	}
+
+	.lgsdn-playbook-article__taxonomy-group h2 {
+		margin-bottom: var(--wp--preset--spacing--20);
+		font-size: var(--wp--preset--font-size--medium);
+	}
+
+	.lgsdn-playbook-article__taxonomy-group + .lgsdn-playbook-article__taxonomy-group {
+		margin-top: var(--wp--preset--spacing--40);
+	}
+
+	.lgsdn-playbook-article__taxonomy .lgsdn-playbook-card__tags--article {
+		gap: var(--wp--preset--spacing--20);
+	}
+
+	.lgsdn-playbook-article__taxonomy .lgsdn-playbook-tag__filter-icon {
+		width: 1em;
+		height: 1em;
+		flex-basis: 1em;
+		padding: 0;
+	}
+
+	/* Add 16px to the 32px grid gap, including articles without an excerpt. */
+	.lgsdn-playbook-article__copy {
+		margin-top: var(--wp--preset--spacing--30);
+	}
+
+	.lgsdn-playbook-article__lead {
+		margin-top: 0;
+	}
+}
+
+/* Two-column article rhythm shares one top edge for metadata and narrative. */
+@media (min-width: 48rem) {
+	.lgsdn-playbook-article__back-nav {
+		display: flex;
+		padding-block: var(--wp--preset--spacing--30) var(--wp--preset--spacing--60);
+	}
+
+	.lgsdn-playbook-article-layout {
+		row-gap: var(--wp--preset--spacing--60);
+	}
+
+	.lgsdn-playbook-article__hero .lgsdn-playbook-article__title {
+		padding-bottom: 0;
+	}
+
+	.lgsdn-playbook-article__lead {
+		margin-top: 0;
+	}
+
+	.lgsdn-playbook-article__taxonomy-group h2 {
+		margin-bottom: var(--wp--preset--spacing--20);
+	}
+
+	.lgsdn-playbook-article__taxonomy-group + .lgsdn-playbook-article__taxonomy-group {
+		margin-top: var(--wp--preset--spacing--40);
+	}
+
+	.lgsdn-playbook-article__taxonomy .lgsdn-playbook-card__tags--article {
+		gap: var(--wp--preset--spacing--20);
+	}
+
+	.lgsdn-playbook-article__taxonomy .lgsdn-playbook-tag__filter-icon {
+		width: 1em;
+		height: 1em;
+		flex-basis: 1em;
+		padding: 0;
+	}
+}
+
+/* Resources belong to the metadata column, before the narrative on compact views. */
+.lgsdn-playbook-article__sidebar {
+	display: block;
+	grid-area: taxonomy;
+	min-width: 0;
+}
+
+.lgsdn-playbook-article__resources {
+	max-width: 100%;
+	margin: var(--wp--preset--spacing--60) 0 0;
+	padding: var(--wp--preset--spacing--30);
+	border-radius: var(--wp--preset--spacing--20);
+	background: var(--wp--preset--color--mist);
+	font-family: var(--wp--preset--font-family--body);
+	font-size: var(--wp--preset--font-size--medium);
+	line-height: 1.5;
+}
+
+.lgsdn-playbook-article__resources h2 {
+	margin: 0 0 var(--wp--preset--spacing--20);
+	font: inherit;
+	font-weight: 500;
+}
+
+.lgsdn-playbook-article__resources ul {
+	display: grid;
+	gap: var(--wp--preset--spacing--20);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.lgsdn-playbook-article__resources a {
+	max-width: 100%;
+	font: inherit;
+	font-weight: 400;
+	text-decoration: underline;
+	text-decoration-thickness: var(--lgsdn-underline-thickness);
+	text-underline-offset: 0.18em;
+	overflow-wrap: anywhere;
+}
+
+.lgsdn-playbook-article__resources a:is(:hover, :focus-visible) {
+	text-decoration-thickness: 0.15em;
+}
+
+.lgsdn-playbook-article__resources .lgsdn-button__label {
+	min-width: 0;
+}
+.lgsdn-playbook-article__featured-image img {
+	width: 100%;
+	height: auto;
+	aspect-ratio: auto;
+	object-fit: contain;
+}
+
+/* Optional 16:9 stage; the window and its image keep their natural proportions. */
+.lgsdn-playbook-article__featured-image--window {
+	aspect-ratio: 16 / 9;
+	background: var(--wp--preset--color--mist);
+	container-type: inline-size;
+}
+
+.lgsdn-window-frame--header {
+	--lgsdn-window-bar-height: clamp(0.5rem, 1.5cqi, 1.4rem);
+	--lgsdn-window-dot-size: clamp(0.16rem, 0.5cqi, 0.56rem);
+	--lgsdn-window-dot-offset: clamp(0.25rem, 0.75cqi, 0.82rem);
+	--lgsdn-window-dot-step: clamp(0.3rem, 0.9cqi, 1rem);
+	display: block;
+	box-sizing: border-box;
+	width: min(82%, calc((46.125cqi - var(--lgsdn-window-bar-height)) * var(--lgsdn-header-image-ratio, 1.777778)));
+	border-radius: clamp(0.25rem, 0.8cqi, 0.875rem);
 }

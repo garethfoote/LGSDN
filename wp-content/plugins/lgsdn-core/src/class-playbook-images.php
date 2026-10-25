@@ -7,7 +7,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class LGSDN_Playbook_Images {
 	public const SLOTS = array(
 		'card' => array( 'width' => 1200, 'height' => 800, 'ratio_label' => '3:2' ),
-		'article' => array( 'width' => 1500, 'height' => 400, 'ratio_label' => '15:4' ),
 	);
 
 	public static function hooks(): void {

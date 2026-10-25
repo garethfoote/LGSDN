@@ -39,18 +39,31 @@
 				element.alt = image.alt || '';
 				preview.appendChild( element );
 			}
-			picker.querySelector( '[data-image-recrop]' ).hidden = ! image;
+			picker.querySelector( '[data-image-recrop]' ).hidden = slot !== 'card' || ! image;
 			picker.querySelector( '[data-image-remove]' ).hidden = ! image;
 			field.dispatchEvent( new Event( 'change', { bubbles: true } ) );
 			if ( wp.data ) {
 				const editor = wp.data.dispatch( 'core/editor' );
 				if ( editor && editor.editPost ) editor.editPost( { meta: { [ field.name ]: Number( field.value ) } } );
 			}
-			message.textContent = image ? 'Cropped copy selected. Save the case study to apply it.' : ( slot === 'article' ? 'No article header image will be shown.' : 'Choose a card image before publishing.' );
+			message.textContent = image ? ( slot === 'card' ? 'Cropped copy selected. Save the case study to apply it.' : 'Header image selected. Save the case study to apply it.' ) : ( slot === 'article' ? 'No article header image will be shown.' : 'Choose a card image before publishing.' );
 		}
 
 		function openPicker( adjust ) {
 			message.textContent = '';
+			if ( slot === 'article' ) {
+				const headerFrame = wp.media( {
+					title: 'Choose article header image',
+					button: { text: 'Use header image' },
+					library: { type: 'image' },
+					multiple: false,
+				} );
+				headerFrame.on( 'select', function () {
+					setImage( headerFrame.state().get( 'selection' ).first().toJSON() );
+				} );
+				headerFrame.open();
+				return;
+			}
 			const frame = wp.media( {
 				button: { text: 'Select and crop', close: false },
 				states: [

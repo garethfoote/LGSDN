@@ -60,18 +60,15 @@ foreach ( $taxonomy_groups as $taxonomy => $label ) {
 	$terms = 'lgsdn_service' === $taxonomy ? $service_terms : get_the_terms( $post_id, $taxonomy );
 	$taxonomy_terms[ $taxonomy ] = $terms && ! is_wp_error( $terms ) ? array_values( $terms ) : array();
 }
-$has_filterable_taxonomy_terms = (bool) array_filter(
-	$taxonomy_terms,
-	static function ( array $terms, string $taxonomy ): bool {
-		return 'lgsdn_council' !== $taxonomy && ! empty( $terms );
-	},
-	ARRAY_FILTER_USE_BOTH
-);
-
 $title_id = 'lgsdn-playbook-article-title-' . $post_id;
 $playbook_url = home_url( '/playbook/' );
 $excerpt = get_the_excerpt( $post_id );
 $has_featured_image = (bool) lgsdn_playbook_image_id( $post_id, 'article' );
+$has_window_header = $has_featured_image && (bool) get_post_meta( $post_id, 'lgsdn_article_image_window', true );
+$header_metadata = $has_window_header ? wp_get_attachment_metadata( lgsdn_playbook_image_id( $post_id, 'article' ) ) : array();
+$header_ratio = ! empty( $header_metadata['width'] ) && ! empty( $header_metadata['height'] )
+	? (float) $header_metadata['width'] / (float) $header_metadata['height']
+	: 16 / 9;
 $contributor_id = absint( get_post_meta( $post_id, 'lgsdn_contributor_id', true ) );
 $contributor = $contributor_id && 'lgsdn_person' === get_post_type( $contributor_id ) ? get_post( $contributor_id ) : null;
 $resources = LGSDN_Fields::sanitize_resources( get_post_meta( $post_id, 'lgsdn_playbook_resources', true ) );
@@ -125,7 +122,7 @@ foreach ( $related_taxonomies as $related_taxonomy ) {
 ?>
 <nav class="lgsdn-playbook-article__back-nav lgsdn-playbook-article-shell" aria-label="Back navigation">
 	<a class="lgsdn-playbook-article__back-link" href="<?php echo esc_url( home_url( '/playbook/' ) ); ?>">
-		<span class="lgsdn-playbook-article__back-arrow" aria-hidden="true">←</span>
+		<svg class="lgsdn-playbook-article__back-arrow" aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path d="m10 5-7 7 7 7M3 12h18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
 		<span class="lgsdn-playbook-article__back-label">Playbook</span>
 	</a>
 </nav>
@@ -137,8 +134,14 @@ foreach ( $related_taxonomies as $related_taxonomy ) {
 			</header>
 
 			<?php if ( $has_featured_image ) : ?>
-				<figure class="lgsdn-playbook-article__featured-image" data-lgsdn-article-image-stage>
+				<figure class="lgsdn-playbook-article__featured-image<?php echo $has_window_header ? ' lgsdn-playbook-article__featured-image--window' : ''; ?>" data-lgsdn-article-image-stage>
+					<?php if ( $has_window_header ) : ?>
+						<div class="lgsdn-window-frame lgsdn-window-frame--header" style="--lgsdn-header-image-ratio: <?php echo esc_attr( (string) $header_ratio ); ?>">
+					<?php endif; ?>
 					<?php echo lgsdn_playbook_image( $post_id, 'article', 'full', array( 'class' => 'lgsdn-playbook-article__primary-image', 'loading' => 'eager', 'sizes' => '100vw' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					<?php if ( $has_window_header ) : ?>
+						</div>
+					<?php endif; ?>
 				</figure>
 			<?php endif; ?>
 
@@ -147,14 +150,6 @@ foreach ( $related_taxonomies as $related_taxonomy ) {
 		<div class="lgsdn-playbook-article__body">
 			<div class="lgsdn-playbook-article__sidebar">
 				<aside class="lgsdn-playbook-article__taxonomy" aria-label="Case study classifications">
-					<?php if ( $has_filterable_taxonomy_terms ) : ?>
-						<p class="lgsdn-playbook-article__filter-hint">
-							<svg class="lgsdn-playbook-tag__filter-icon" aria-hidden="true" viewBox="0 0 24 24" focusable="false">
-								<path d="M4 5h16l-6 7v6l-4 2v-8L4 5Z"></path>
-							</svg>
-							<span>Filter Playbook case studies</span>
-						</p>
-					<?php endif; ?>
 					<?php foreach ( $taxonomy_groups as $taxonomy => $label ) : ?>
 						<?php if ( empty( $taxonomy_terms[ $taxonomy ] ) ) : ?>
 							<?php continue; ?>
@@ -195,14 +190,8 @@ foreach ( $related_taxonomies as $related_taxonomy ) {
 						<p class="lgsdn-playbook-article__author"><time datetime="<?php echo esc_attr( gmdate( 'c', $published_timestamp ) ); ?>"><?php echo esc_html( wp_date( get_option( 'date_format' ), $published_timestamp ) ); ?></time></p>
 					</section>
 				</aside>
-			</div>
-
-			<div class="lgsdn-playbook-article__copy">
-				<?php if ( $excerpt ) : ?>
-					<div class="lgsdn-playbook-article__lead"><?php echo wp_kses_post( wpautop( $excerpt ) ); ?></div>
-				<?php endif; ?>
 				<?php if ( $resources ) : ?>
-					<aside class="lgsdn-event__resources" aria-labelledby="lgsdn-playbook-resources-title-<?php echo esc_attr( (string) $post_id ); ?>">
+					<aside class="lgsdn-playbook-article__resources" aria-labelledby="lgsdn-playbook-resources-title-<?php echo esc_attr( (string) $post_id ); ?>">
 						<h2 id="lgsdn-playbook-resources-title-<?php echo esc_attr( (string) $post_id ); ?>">Resources</h2>
 						<ul role="list">
 							<?php foreach ( $resources as $resource ) : ?>
@@ -214,9 +203,13 @@ foreach ( $related_taxonomies as $related_taxonomy ) {
 							<?php endforeach; ?>
 						</ul>
 					</aside>
-					<?php if ( $excerpt ) : ?>
-						<hr class="lgsdn-playbook-article__lead-rule">
-					<?php endif; ?>
+				<?php endif; ?>
+
+			</div>
+
+			<div class="lgsdn-playbook-article__copy">
+				<?php if ( $excerpt ) : ?>
+					<div class="lgsdn-playbook-article__lead"><?php echo wp_kses_post( wpautop( $excerpt ) ); ?></div>
 				<?php endif; ?>
 				<div class="lgsdn-article">
 					<?php echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
@@ -231,7 +224,7 @@ foreach ( $related_taxonomies as $related_taxonomy ) {
 							</span>
 						</a>
 						<div class="lgsdn-playbook-article__service-area-copy">
-							<span class="lgsdn-playbook-article__service-eyebrow">This case study is part of</span>
+							<span class="lgsdn-playbook-article__service-eyebrow">Learn more about</span>
 							<h2 id="lgsdn-playbook-service-area-title-<?php echo esc_attr( (string) $post_id ); ?>"><?php echo esc_html( $primary_service->name ); ?></h2>
 							<?php if ( $service_excerpt ) : ?>
 								<p><?php echo esc_html( $service_excerpt ); ?></p>

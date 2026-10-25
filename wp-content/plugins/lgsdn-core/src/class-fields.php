@@ -26,6 +26,7 @@ final class LGSDN_Fields {
 			'lgsdn_card_image_id' => array( 'Card image (required)', 'image-crop' ),
 			'lgsdn_card_image_window' => array( 'Card image presentation', 'checkbox' ),
 			'lgsdn_article_image_id' => array( 'Article header image (optional)', 'image-crop' ),
+			'lgsdn_article_image_window' => array( 'Header image presentation', 'checkbox' ),
 		),
 		'lgsdn_event' => array(
 			'lgsdn_start_at' => array( 'Starts', 'datetime-local' ),
@@ -277,14 +278,14 @@ final class LGSDN_Fields {
 			$slot = str_contains( $key, 'card' ) ? 'card' : 'article';
 			$image_id = lgsdn_playbook_image_id( $post_id, $slot );
 			$source_id = absint( get_post_meta( $image_id, '_lgsdn_crop_source_id', true ) ) ?: $image_id;
-			$dimensions = LGSDN_Playbook_Images::SLOTS[ $slot ];
+			$dimensions = LGSDN_Playbook_Images::SLOTS[ $slot ] ?? array();
 			echo '<div class="lgsdn-image-picker" data-playbook-image data-slot="' . esc_attr( $slot ) . '" data-post-id="' . esc_attr( (string) $post_id ) . '" data-source-id="' . esc_attr( (string) $source_id ) . '">';
 			echo '<input type="hidden" id="' . esc_attr( $key ) . '" name="' . esc_attr( $key ) . '" value="' . esc_attr( (string) $image_id ) . '" data-image-id>';
 			echo '<div data-image-preview>' . ( $image_id ? wp_get_attachment_image( $image_id, 'medium' ) : '' ) . '</div>';
-			echo '<p><button type="button" class="button" data-image-choose>Choose ' . ( 'card' === $slot ? 'card' : 'header' ) . ' image</button> <button type="button" class="button" data-image-recrop ' . ( $image_id ? '' : 'hidden' ) . '>Adjust crop</button> <button type="button" class="button-link-delete" data-image-remove ' . ( $image_id ? '' : 'hidden' ) . '>Remove image</button></p>';
+			echo '<p><button type="button" class="button" data-image-choose>Choose ' . ( 'card' === $slot ? 'card' : 'header' ) . ' image</button> <button type="button" class="button" data-image-recrop ' . ( 'card' === $slot && $image_id ? '' : 'hidden' ) . '>Adjust crop</button> <button type="button" class="button-link-delete" data-image-remove ' . ( $image_id ? '' : 'hidden' ) . '>Remove image</button></p>';
 			echo '<p class="description">' . ( 'card' === $slot
 				? 'Required to publish. Crop shape: ' . esc_html( $dimensions['ratio_label'] ) . '. Recommended size: ' . esc_html( $dimensions['width'] . ' × ' . $dimensions['height'] ) . ' px. Cropping saves a separate copy.'
-				: 'Leave empty to show no article header image. Crop shape: ' . esc_html( $dimensions['ratio_label'] ) . '. Recommended size: ' . esc_html( $dimensions['width'] . ' × ' . $dimensions['height'] ) . ' px. Cropping saves a separate copy and leaves the source image unchanged.' ) . '</p>';
+				: 'Optional. Shown at its original proportions without cropping. A landscape image around 16:9 works well; leave empty when no suitable image is available.' ) . '</p>';
 			echo '<p data-image-message role="status"></p></div>';
 			return;
 		}
@@ -294,6 +295,7 @@ final class LGSDN_Fields {
 				'lgsdn_network_coordinator' => 'Show this person as a network coordinator',
 				'lgsdn_playbook_coordinator' => 'Show this person as a Playbook coordinator',
 				'lgsdn_card_image_window' => 'Show the card image in a window frame',
+				'lgsdn_article_image_window' => 'Show the header image in a window frame',
 				default => 'Show this item in the featured homepage position',
 			};
 			echo '<label><input type="checkbox" id="' . esc_attr( $key ) . '" name="' . esc_attr( $key ) . '" value="1" ' . checked( (bool) $value, true, false ) . '> ' . esc_html( $label ) . '</label>';
