@@ -115,6 +115,13 @@ add_action(
 
 		if ( is_front_page() ) {
 			wp_enqueue_script(
+				'lgsdn-homepage-spotlight',
+				get_theme_file_uri( 'assets/js/homepage-spotlight.js' ),
+				array(),
+				$asset_version( 'assets/js/homepage-spotlight.js' ),
+				array( 'strategy' => 'defer', 'in_footer' => true )
+			);
+			wp_enqueue_script(
 				'lgsdn-hero-graphic',
 				get_theme_file_uri( 'assets/js/hero-graphic.js' ),
 				array(),
@@ -157,3 +164,6 @@ add_action(
 		add_editor_style( array( 'assets/css/reset.css', 'style.css', 'assets/css/buttons.css', 'assets/css/footer.css' ) );
 	}
 );
+
+// Home's featured image supplies the experimental join panel.
+add_action( 'after_setup_theme', static function (): void { add_theme_support( 'post-thumbnails' ); } );

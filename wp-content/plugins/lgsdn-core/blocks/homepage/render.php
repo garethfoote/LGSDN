@@ -20,7 +20,7 @@ $page_url = static function ( int $selected_id, string $fallback_path ): string 
 $feature_fallbacks = array( 'join', 'library', 'contribute' );
 $feature_cta_labels = array( 'Join', 'Browse', 'Contribute' );
 $feature_cta_context = array( ' the network', ' the library', ' an example' );
-$feature_art_names = array( 'join', 'library', 'contribute' );
+$feature_art_names = array( 'join', 'playbook', 'contribute' );
 $features = array();
 for ( $index = 1; $index <= 3; $index++ ) {
 	$features[] = array(
@@ -116,8 +116,9 @@ $case_studies = new WP_Query(
 				</div>
 			</section>
 
-			<section class="homepage-feature-list" id="join" aria-label="Ways to take part">
-				<?php foreach ( $features as $index => $feature ) : ?>
+			<?php require __DIR__ . '/spotlight.php'; ?>
+			<section class="homepage-feature-list" aria-label="More ways to take part">
+				<?php foreach ( array_slice( $features, 1, null, true ) as $index => $feature ) : ?>
 					<article class="homepage-feature-row homepage-feature-row--<?php echo esc_attr( $feature_art_names[ $index ] ); ?>">
 						<div class="homepage-feature-row__copy">
 							<h2><?php echo esc_html( $feature['title'] ); ?></h2>
@@ -127,7 +128,11 @@ $case_studies = new WP_Query(
 						<svg class="homepage-feature-row__art" viewBox="0 0 226 226" aria-hidden="true" focusable="false"><use href="<?php echo esc_url( $image_base . '/home-feature-' . $feature_art_names[ $index ] . '-contours.svg#contours' ); ?>"></use></svg>
 					</article>
 				<?php endforeach; ?>
-			</section>
+ <article class="homepage-feature-row homepage-feature-row--event"><div class="homepage-feature-row__copy">
+ <h2>Join us at an event</h2><p>Meet others in the network, share your work and learn together.</p>
+ <a class="button lgsdn-button--arrow" href="<?php echo esc_url( $page_url( 0, 'events' ) ); ?>"><span class="lgsdn-button__label">View events</span></a>
+ </div><svg class="homepage-feature-row__art" viewBox="0 0 226 226" aria-hidden="true" focusable="false"><use href="<?php echo esc_url( $image_base . '/home-feature-join-contours.svg#contours' ); ?>"></use></svg></article>
+ </section>
 
 			<section class="homepage-playbook" id="playbook" aria-labelledby="homepage-playbook-title">
 				<div class="homepage-playbook__intro">

@@ -1,4 +1,4 @@
-( function ( blocks, element, blockEditor, components, data, ServerSideRender, config ) {
+( function ( blocks, element, blockEditor, components, data, config ) {
 	'use strict';
 
 	var el = element.createElement;
@@ -58,6 +58,8 @@
 			return { label: page.title.rendered, value: page.id };
 		} ) );
 
+		var featuredImageId = data.useSelect( function ( select ) { return select( 'core/editor' ).getEditedPostAttribute( 'featured_media' ); }, [] );
+		var featuredImage = data.useSelect( function ( select ) { return featuredImageId ? select( 'core' ).getMedia( featuredImageId ) : null; }, [ featuredImageId ] );
 		var features = [ 1, 2, 3 ].map( function ( index ) {
 			var titleKey = 'lgsdn_home_feature_' + index + '_title';
 			var bodyKey = 'lgsdn_home_feature_' + index + '_body';
@@ -68,10 +70,11 @@
 
 			return el(
 				'article',
-				{ className: 'homepage-feature-row homepage-feature-row--' + artNames[ index - 1 ], key: index },
+				{ className: index === 1 ? 'homepage-join' : 'homepage-feature-row homepage-feature-row--' + artNames[ index - 1 ], key: index },
+ index === 1 ? el( 'div', { className: 'homepage-join__media' }, featuredImage ? el( 'img', { className: 'homepage-join__image', src: featuredImage.source_url, alt: featuredImage.alt_text || '' } ) : el( 'p', null, 'Choose Home’s featured image for this panel.' ) ) : null,
 				el(
 					'div',
-					{ className: 'homepage-feature-row__copy' },
+					{ className: index === 1 ? 'homepage-participation__copy' : 'homepage-feature-row__copy' },
 					editableText( 'h2', '', title, function ( nextValue ) {
 						updateMeta( titleKey, nextValue );
 					}, 'Feature title' ),
@@ -80,9 +83,7 @@
 					}, 'Feature description' ),
 					el( 'a', { className: 'button lgsdn-button--arrow', href: '#', onClick: stopLink }, el( 'span', { className: 'lgsdn-button__label' }, ctaLabels[ index - 1 ] ), el( 'span', { className: 'screen-reader-text' }, ctaContext[ index - 1 ] ) )
 				),
-				el( 'svg', { className: 'homepage-feature-row__art', viewBox: '0 0 226 226', 'aria-hidden': true, focusable: false },
-					el( 'use', { href: imageBase + '/home-feature-' + artNames[ index - 1 ] + '-contours.svg#contours' } )
-				)
+ index > 1 ? el( 'svg', { className: 'homepage-feature-row__art', viewBox: '0 0 226 226', 'aria-hidden': true, focusable: false }, el( 'use', { href: imageBase + '/home-feature-' + artNames[ index - 1 ] + '-contours.svg#contours' } ) ) : null
 			);
 		} );
 
@@ -140,7 +141,7 @@
 				el(
 					PanelBody,
 					{ title: 'Homepage links', initialOpen: true },
-					el( 'p', { className: 'components-base-control__help' }, 'Optional overrides. Leave a destination unselected to keep its built-in page, or select a page to send visitors elsewhere.' ),
+					el( 'p', { className: 'components-base-control__help' }, 'Events starting in the next seven days appear soonest first in a carousel on the homepage. This canvas edits the join slide. Optional overrides. Leave a destination unselected to keep its built-in page, or select a page to send visitors elsewhere.' ),
 					linkControls
 				)
 			),
@@ -201,13 +202,12 @@
 								)
 							)
 						),
-						el( 'section', { className: 'homepage-feature-list', id: 'join', 'aria-label': 'Ways to take part' }, features ),
-						homepagePlaybook,
-						el(
-							'div',
-							{ id: 'events' },
-							el( ServerSideRender, { block: 'lgsdn/events-list' } )
-						)
+						el( 'section', { className: 'homepage-participation', id: 'join', 'aria-label': 'Ways to take part' }, features[0] ),
+							el( 'div', { className: 'homepage-feature-list' }, features.slice( 1 ),
+								el( 'article', { className: 'homepage-feature-row homepage-feature-row--event' }, el( 'div', { className: 'homepage-feature-row__copy' },
+									el( 'h2', null, 'Join us at an event' ), el( 'p', null, 'Meet others in the network, share your work and learn together.' ),
+									el( 'a', { className: 'button lgsdn-button--arrow', href: '#', onClick: stopLink }, el( 'span', { className: 'lgsdn-button__label' }, 'View events' ) ) ), el( 'svg', { className: 'homepage-feature-row__art', viewBox: '0 0 226 226', 'aria-hidden': true }, el( 'use', { href: imageBase + '/home-feature-join-contours.svg#contours' } ) ) ) ),
+						homepagePlaybook
 					)
 				),
 				el(
@@ -247,4 +247,4 @@
 			return null;
 		},
 	} );
-}( window.wp.blocks, window.wp.element, window.wp.blockEditor, window.wp.components, window.wp.data, window.wp.serverSideRender, window.lgsdnHomepageEditor || {} ) );
+}( window.wp.blocks, window.wp.element, window.wp.blockEditor, window.wp.components, window.wp.data, window.lgsdnHomepageEditor || {} ) );

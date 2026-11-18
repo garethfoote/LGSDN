@@ -3561,7 +3561,7 @@ a.lgsdn-playbook-tag[href]:focus-visible,
 .lgsdn-events__footer {
 	display: flex;
 	justify-content: center;
-	margin-block-start: var(--wp--preset--spacing--50, 2rem);
+	margin-block-start: var(--wp--preset--spacing--60, 3rem);
 }
 
 /* The archive uses the shared timeline at a more generous editorial scale. */

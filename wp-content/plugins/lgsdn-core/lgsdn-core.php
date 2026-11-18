@@ -106,7 +106,7 @@ function lgsdn_register_dynamic_blocks(): void {
 	wp_register_script(
 		'lgsdn-homepage-editor',
 		plugins_url( 'blocks/homepage/index.js', LGSDN_CORE_FILE ),
-		array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-data', 'wp-core-data', 'wp-server-side-render' ),
+		array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-data', 'wp-core-data' ),
 		file_exists( $homepage_editor_path ) ? (string) filemtime( $homepage_editor_path ) : LGSDN_CORE_VERSION,
 		true
 	);

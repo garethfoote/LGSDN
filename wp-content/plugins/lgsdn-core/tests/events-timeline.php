@@ -46,6 +46,10 @@ function get_permalink( object $event ): string {
 	return '/events/event-' . $event->ID . '/';
 }
 
+function home_url( string $path ): string {
+	return $path;
+}
+
 function get_the_title( object $event ): string {
 	return $event->post_title;
 }
@@ -159,7 +163,7 @@ $html = render_timeline();
 check( array( 1, 2 ) === event_ids( $html ) && 1 === substr_count( $html, 'lgsdn-events__item--past' ), 'An event starting exactly now is upcoming.' );
 $clock = '2026-10-20T12:00:01';
 $html = render_timeline();
-check( array( 1 ) === event_ids( $html ) && 1 === substr_count( $html, 'lgsdn-events__item--past' ), 'An event becomes past one second after its start; past-only lists render.' );
+check( array( 1, 2 ) === event_ids( $html ) && 2 === substr_count( $html, 'lgsdn-events__item--past' ), 'An event becomes past one second after its start; past-only lists retain the recent-event fallback.' );
 check( strpos( $html, 'class="lgsdn-events__badge"' ) < strpos( $html, 'class="lgsdn-events__date"' ), 'The Past badge appears before the date in reading order.' );
 
 $fixtures = array();
