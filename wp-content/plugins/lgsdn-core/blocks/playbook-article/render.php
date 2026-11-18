@@ -26,7 +26,16 @@ $service_excerpt = '';
 if ( $primary_service ) {
 	$service_introduction = (string) get_term_meta( $primary_service->term_id, LGSDN_Service_Content::INTRO_META, true );
 	$service_introduction = trim( wp_strip_all_tags( $service_introduction ) ) ? $service_introduction : term_description( $primary_service->term_id, $primary_service->taxonomy );
-	$service_excerpt = wp_trim_words( $service_introduction, 70 );
+	// Aim for a short preview, then finish the sentence rather than adding an ellipsis.
+	$service_text = html_entity_decode( wp_strip_all_tags( $service_introduction ), ENT_QUOTES, 'UTF-8' );
+	$service_text = trim( preg_replace( '/\s+/u', ' ', $service_text ) );
+	$service_sentences = preg_split( '/(?<=[.!?])\s+/u', $service_text );
+	foreach ( $service_sentences as $service_sentence ) {
+		$service_excerpt .= ( '' === $service_excerpt ? '' : ' ' ) . $service_sentence;
+		if ( mb_strlen( $service_excerpt ) >= 180 ) {
+			break;
+		}
+	}
 }
 $service_terms = array_values(
 	array_filter(
@@ -165,8 +174,12 @@ foreach ( $related_taxonomies as $related_taxonomy ) {
 							<h2><?php echo esc_html( $label ); ?></h2>
 							<div class="lgsdn-playbook-card__tags lgsdn-playbook-card__tags--article">
 								<?php foreach ( $taxonomy_terms[ $taxonomy ] as $term ) : ?>
-								<?php $filter_taxonomy = str_replace( 'lgsdn_', '', $taxonomy ); ?>
-									<a class="lgsdn-playbook-tag lgsdn-playbook-tag--secondary" href="<?php echo esc_url( add_query_arg( $filter_taxonomy, $term->slug, $playbook_url ) . '#case-study-panel' ); ?>" aria-label="<?php echo esc_attr( 'Filter library by ' . $term->name ); ?>">
+								<?php
+								$filter_taxonomy = str_replace( 'lgsdn_', '', $taxonomy );
+								$is_service = 'lgsdn_service' === $taxonomy;
+								$tag_style = $is_service ? LGSDN_Service_Styles::for_term( $term ) : array();
+								?>
+									<a class="lgsdn-playbook-tag <?php echo $is_service ? 'lgsdn-playbook-tag--service' : 'lgsdn-playbook-tag--secondary'; ?>" <?php echo $is_service ? 'style="--lgsdn-service-tag-bg:' . esc_attr( $tag_style['background'] ) . ';--lgsdn-service-tag-fg:' . esc_attr( $tag_style['foreground'] ) . ';"' : ''; ?> href="<?php echo esc_url( add_query_arg( $filter_taxonomy, $term->slug, $playbook_url ) . '#case-study-panel' ); ?>" aria-label="<?php echo esc_attr( 'Filter library by ' . $term->name ); ?>">
 										<?php echo esc_html( $term->name ); ?>
 										<svg class="lgsdn-playbook-tag__filter-icon" aria-hidden="true" viewBox="0 0 24 24" focusable="false">
 											<path d="M4 5h16l-6 7v6l-4 2v-8L4 5Z"></path>
@@ -191,7 +204,7 @@ foreach ( $related_taxonomies as $related_taxonomy ) {
 					</section>
 				</aside>
 				<?php if ( $resources ) : ?>
-					<aside class="lgsdn-playbook-article__resources" aria-labelledby="lgsdn-playbook-resources-title-<?php echo esc_attr( (string) $post_id ); ?>">
+					<aside class="lgsdn-playbook-article__resources lgsdn-resources" aria-labelledby="lgsdn-playbook-resources-title-<?php echo esc_attr( (string) $post_id ); ?>">
 						<h2 id="lgsdn-playbook-resources-title-<?php echo esc_attr( (string) $post_id ); ?>">Resources</h2>
 						<ul role="list">
 							<?php foreach ( $resources as $resource ) : ?>
@@ -216,9 +229,9 @@ foreach ( $related_taxonomies as $related_taxonomy ) {
 				</div>
 				<?php if ( $primary_service ) : ?>
 					<section class="lgsdn-playbook-article__service-area" aria-labelledby="lgsdn-playbook-service-area-title-<?php echo esc_attr( (string) $post_id ); ?>">
-						<a class="lgsdn-playbook-article__service-card" href="<?php echo esc_url( get_term_link( $primary_service ) ); ?>" style="--lgsdn-service-card-bg:<?php echo esc_attr( $service_style['gradient'] ); ?>;--lgsdn-service-card-fg:#FFFFFF;">
-							<span class="lgsdn-playbook-article__service-label">Service</span>
+						<a class="lgsdn-playbook-article__service-card" href="<?php echo esc_url( get_term_link( $primary_service ) ); ?>" style="--lgsdn-service-card-bg:<?php echo esc_attr( $service_style['gradient'] ); ?>;--lgsdn-service-card-bottom:<?php echo esc_attr( $service_style['contrast'] ); ?>;">
 							<img src="<?php echo esc_url( LGSDN_Service_Styles::icon_url( $service_style['icon'] ) ); ?>" alt="" class="lgsdn-playbook-article__service-icon lgsdn-playbook-article__service-icon--<?php echo esc_attr( $service_style['icon'] ); ?>">
+							<span class="lgsdn-playbook-article__service-label">Service</span>
 							<span class="lgsdn-playbook-article__service-name">
 								<span class="lgsdn-service-card__title"><?php echo esc_html( $primary_service->name ); ?></span>
 							</span>
@@ -229,6 +242,9 @@ foreach ( $related_taxonomies as $related_taxonomy ) {
 							<?php if ( $service_excerpt ) : ?>
 								<p><?php echo esc_html( $service_excerpt ); ?></p>
 							<?php endif; ?>
+							<a class="button lgsdn-button--arrow lgsdn-playbook-article__service-action" href="<?php echo esc_url( get_term_link( $primary_service ) ); ?>">
+								<span class="lgsdn-button__label">View case studies</span><span class="screen-reader-text"> about <?php echo esc_html( $primary_service->name ); ?></span>
+							</a>
 						</div>
 					</section>
 				<?php endif; ?>

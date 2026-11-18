@@ -23,6 +23,8 @@
 }
 
 :root {
+	--lgsdn-hero-graphic-accent: #b881ef;
+	--lgsdn-feature-ring-color: #955bce;
 	--canvas: var(--wp--preset--color--canvas, #f8f8f1);
 	--off-black: #27272d;
 	--text: #27272d;
@@ -299,7 +301,7 @@ a {
 	justify-content: center;
 	border-radius: 50%;
 	overflow: hidden;
-	background-color: var(--lgsdn-hero-graphic-bg, #c7afe1);
+	background-color: var(--lgsdn-hero-graphic-accent);
 }
 
 .home-hero__graphic img {
@@ -378,13 +380,14 @@ a {
 	height: auto;
 	grid-area: art;
 	justify-self: center;
-	color: var(--lgsdn-hero-graphic-accent, var(--wp--preset--color--practice-purple, #c7afe1));
+	color: var(--lgsdn-hero-graphic-accent);
 }
 
 .homepage-playbook {
+	--homepage-playbook-heading-space: calc(clamp(3rem, 6vw, 5rem) * var(--lgsdn-heading-space-scale));
 	position: relative;
 	isolation: isolate;
-	padding-block: clamp(3rem, 6vw, 5rem) 100px;
+	padding-block: var(--homepage-playbook-heading-space) 100px;
 }
 
 .homepage-playbook::after {
@@ -399,7 +402,7 @@ a {
 }
 
 .homepage-playbook__intro {
-	margin-bottom: var(--wp--preset--spacing--40);
+	margin-bottom: var(--lgsdn-section-heading-gap);
 	padding-inline: var(--lgsdn-gutter);
 }
 
@@ -462,6 +465,7 @@ a {
 
 .homepage-service-intro.is-hidden {
 	opacity: 0;
+	transform: translateX(calc(-1 * var(--wp--preset--spacing--40)));
 	pointer-events: none;
 }
 
@@ -544,11 +548,11 @@ a {
 }
 
 .homepage-render #events .lgsdn-events {
-	padding-block: 50px;
+	padding-block: calc(50px * var(--lgsdn-heading-space-scale));
 }
 
 .homepage-render #events .lgsdn-events__heading {
-	margin-bottom: 50px;
+	margin-bottom: var(--lgsdn-section-heading-gap);
 }
 
 .homepage-service-intro h4 {
@@ -576,7 +580,7 @@ a {
 .homepage-case-study-card h4 {
 	margin: 0;
 	font-family: var(--heading-font);
-	font-size: 22px;
+	font-size: var(--lgsdn-case-study-card-title-size, 22px);
 	font-weight: 500;
 	line-height: 1.2;
 }
@@ -584,6 +588,13 @@ a {
 .homepage-service-intro .button {
 	margin-top: auto;
 	align-self: flex-start;
+}
+
+/* Editor rows contain only the intro card, without the public card scrollers. */
+.block-editor-block-list__block.wp-block-lgsdn-homepage .homepage-service-intro {
+	position: relative;
+	inset: auto;
+	margin-inline: var(--lgsdn-gutter);
 }
 
 .homepage-case-study-card {
@@ -1147,6 +1158,10 @@ a {
 
 	.homepage-feature-list {
 		padding-inline: var(--lgsdn-gutter);
+	}
+
+	.homepage-playbook__intro h2 {
+		font-size: 2rem;
 	}
 
 	.homepage-feature-row,

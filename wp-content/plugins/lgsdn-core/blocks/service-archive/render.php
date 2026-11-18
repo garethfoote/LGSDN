@@ -14,7 +14,7 @@ $items = new WP_Query( array(
 ?>
 <nav class="lgsdn-playbook-article__back-nav lgsdn-playbook-article-shell" aria-label="Back navigation">
 	<a class="lgsdn-playbook-article__back-link" href="<?php echo esc_url( home_url( '/library/' ) ); ?>">
-		<span class="lgsdn-playbook-article__back-arrow" aria-hidden="true">←</span>
+		<svg class="lgsdn-playbook-article__back-arrow" aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path d="m10 5-7 7 7 7M3 12h18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
 		<span class="lgsdn-playbook-article__back-label">Library</span>
 	</a>
 </nav>
@@ -40,6 +40,12 @@ $items = new WP_Query( array(
 			</div>
 		<?php else : ?>
 			<p class="lgsdn-playbook-empty">No case studies have been published for this service area yet.</p>
+			<div class="lgsdn-playbook-contribute lgsdn-playbook-contribute--service-empty">
+				<h3 class="lgsdn-playbook-contribute__prompt">Do you have a service design case study about <?php echo esc_html( strtolower( $term->name ) ); ?>?</h3>
+				<a class="button button--strong button--large lgsdn-button--arrow" href="<?php echo esc_url( home_url( '/contribute/' ) ); ?>">
+					<span class="lgsdn-button__label">Learn how to contribute</span>
+				</a>
+			</div>
 		<?php endif; ?>
 	</section>
 </div>

@@ -1,21 +1,12 @@
 ( () => {
 	const graphic = document.querySelector( '.home-hero__graphic-disc' );
 
-	if ( ! graphic ) {
+	if ( ! graphic?.dataset.heroPalette ) {
 		return;
 	}
 
-	const palette = [
-		[ '--wp--preset--color--practice-mustard', '#b59b00' ],
-		[ '--wp--preset--color--practice-blue', '#4b5aff' ],
-		[ '--wp--preset--color--practice-purple', '#c7afe1' ],
-		[ '--wp--preset--color--practice-green', '#4b5b37' ],
-		[ '--wp--preset--color--practice-orange', '#ea7200' ],
-	];
-	const rootStyles = getComputedStyle( document.documentElement );
-	const colors = palette.map( ( [ variable, fallback ] ) => rootStyles.getPropertyValue( variable ).trim() || fallback );
-	const selectedColor = colors[ Math.floor( Math.random() * colors.length ) ];
-
-	graphic.style.setProperty( '--lgsdn-hero-graphic-bg', selectedColor );
-	document.documentElement.style.setProperty( '--lgsdn-hero-graphic-accent', selectedColor );
+	const palette = JSON.parse( graphic.dataset.heroPalette );
+	const { base, ring } = palette[ Math.floor( Math.random() * palette.length ) ];
+	document.documentElement.style.setProperty( '--lgsdn-hero-graphic-accent', base );
+	document.documentElement.style.setProperty( '--lgsdn-feature-ring-color', ring );
 } )();

@@ -214,9 +214,9 @@ $service_terms = LGSDN_Service_Styles::playbook_terms();
 								$service_url = get_permalink( $post_id );
 							}
 							?>
-							<a class="lgsdn-service-card lgsdn-service-card--<?php echo esc_attr( $service_style['colour'] ); ?>" style="--lgsdn-service-card-bg:<?php echo esc_attr( $service_style['gradient'] ); ?>" href="<?php echo esc_url( $service_url ); ?>">
-								<span class="lgsdn-service-card__label">Service</span>
+							<a class="lgsdn-service-card lgsdn-service-card--<?php echo esc_attr( $service_style['colour'] ); ?>" style="--lgsdn-service-card-bg:<?php echo esc_attr( $service_style['gradient'] ); ?>;--lgsdn-service-card-bottom:<?php echo esc_attr( $service_style['contrast'] ); ?>" href="<?php echo esc_url( $service_url ); ?>">
 								<img class="lgsdn-service-card__icon lgsdn-service-card__icon--<?php echo esc_attr( $service_style['icon'] ); ?>" src="<?php echo esc_url( LGSDN_Service_Styles::icon_url( $service_style['icon'] ) ); ?>" alt="">
+								<span class="lgsdn-service-card__label">Service</span>
 								<h3 class="lgsdn-service-card__title"><?php echo esc_html( $service_term->name ); ?></h3>
 							</a>
 						<?php endforeach; ?>

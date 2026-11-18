@@ -71,7 +71,7 @@ if ( $starts ) {
 ?>
 <nav class="lgsdn-playbook-article__back-nav lgsdn-playbook-article-shell" aria-label="Back navigation">
 	<a class="lgsdn-playbook-article__back-link" href="<?php echo esc_url( home_url( '/events/' ) ); ?>">
-		<span class="lgsdn-playbook-article__back-arrow" aria-hidden="true">&larr;</span>
+		<svg class="lgsdn-playbook-article__back-arrow" aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path d="m10 5-7 7 7 7M3 12h18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
 		<span class="lgsdn-playbook-article__back-label">Events</span>
 	</a>
 </nav>
@@ -119,6 +119,31 @@ if ( $starts ) {
 					<span class="lgsdn-button__label"><?php echo esc_html( $booking_label ); ?></span>
 				</a>
 			<?php endif; ?>
+
+			<?php if ( $resources ) : ?>
+			<div class="lgsdn-event__resource-section">
+			<aside class="lgsdn-event__resources lgsdn-resources" aria-labelledby="lgsdn-event-resources-title-<?php echo esc_attr( (string) $post_id ); ?>">
+				<h2 id="lgsdn-event-resources-title-<?php echo esc_attr( (string) $post_id ); ?>">Resources</h2>
+				<ul role="list">
+					<?php foreach ( $resources as $resource ) : ?>
+						<li>
+							<a<?php echo $is_external_url( $resource['url'] ) ? ' class="lgsdn-button--external"' : ''; ?> href="<?php echo esc_url( $resource['url'] ); ?>">
+								<span class="lgsdn-button__label"><?php echo esc_html( $resource['label'] ); ?></span>
+							</a>
+						</li>
+					<?php endforeach; ?>
+				</ul>
+			</aside>
+			</div>
+			<?php endif; ?>
+
+			<?php if ( trim( wp_strip_all_tags( $content ) ) ) : ?>
+				<div class="lgsdn-event__body lgsdn-playbook-article__copy">
+					<div class="lgsdn-article">
+						<?php echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					</div>
+				</div>
+			<?php endif; ?>
 		</div>
 
 		<?php if ( $has_featured_image ) : ?>
@@ -129,27 +154,4 @@ if ( $starts ) {
 		<?php endif; ?>
 	</header>
 
-	<?php if ( $resources || trim( wp_strip_all_tags( $content ) ) ) : ?>
-		<div class="lgsdn-event__body lgsdn-playbook-article__copy">
-			<?php if ( $resources ) : ?>
-				<aside class="lgsdn-event__resources" aria-labelledby="lgsdn-event-resources-title-<?php echo esc_attr( (string) $post_id ); ?>">
-					<h2 id="lgsdn-event-resources-title-<?php echo esc_attr( (string) $post_id ); ?>">Resources</h2>
-					<ul role="list">
-						<?php foreach ( $resources as $resource ) : ?>
-							<li>
-								<a<?php echo $is_external_url( $resource['url'] ) ? ' class="lgsdn-button--external"' : ''; ?> href="<?php echo esc_url( $resource['url'] ); ?>">
-									<span class="lgsdn-button__label"><?php echo esc_html( $resource['label'] ); ?></span>
-								</a>
-							</li>
-						<?php endforeach; ?>
-					</ul>
-				</aside>
-			<?php endif; ?>
-			<?php if ( trim( wp_strip_all_tags( $content ) ) ) : ?>
-				<div class="lgsdn-article">
-					<?php echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-				</div>
-			<?php endif; ?>
-		</div>
-	<?php endif; ?>
 </article>

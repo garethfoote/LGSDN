@@ -13,11 +13,14 @@ Recommended initial files:
 
 - `AtkinsonHyperlegibleNext-Regular.woff2` (400)
 - `AtkinsonHyperlegibleNext-Medium.woff2` (500)
+- `AtkinsonHyperlegibleNext-SemiBold.woff2` (600, Latin)
+- `AtkinsonHyperlegibleNext-SemiBold-LatinExt.woff2` (600, extended Latin)
 - `SrbijaSans-Regular.woff2` (400)
 
-The public type system uses only Atkinson Regular and Medium. The Light file
-may remain in the repository for reference, but it is deliberately not
-registered or used by the theme.
+The public type system registers Atkinson Light, Regular, Medium and SemiBold.
+Shared bold text (`strong` and `b`) uses SemiBold (600). The semibold subsets
+come from Google Fonts and are served locally, with Unicode ranges registered
+in `theme.json`.
 
 Atkinson Hyperlegible Next is licensed under SIL OFL 1.1. Srbija Sans permits
 web embedding but has restrictions on redistributing the font itself. Keep the

@@ -35,6 +35,15 @@ $network_url = $page_url( 0, 'network' );
 $join_url = $page_url( 0, 'join' );
 $image_base = get_theme_file_uri( 'assets/images' );
 $service_terms = LGSDN_Service_Styles::homepage_terms();
+$contour_palette = array_values(
+	array_map(
+		static fn ( array $colour ): array => array(
+			'base' => $colour['background'],
+			'ring' => $colour['gradient_text_start'] ?? $colour['background'],
+		),
+		LGSDN_Service_Styles::colours()
+	)
+);
 
 $featured_case_studies = get_posts(
 	array(
@@ -101,7 +110,7 @@ $case_studies = new WP_Query(
 					<p class="home-hero__intro"><?php echo esc_html( LGSDN_Homepage_Fields::value( $post_id, 'lgsdn_home_lead' ) ); ?></p>
 				</div>
 				<div class="home-hero__graphic" aria-hidden="true">
-					<div class="home-hero__graphic-disc" data-hero-graphic>
+					<div class="home-hero__graphic-disc" data-hero-graphic data-hero-palette="<?php echo esc_attr( wp_json_encode( $contour_palette ) ); ?>">
 						<img src="<?php echo esc_url( $image_base . '/hero-graphic-mark.svg' ); ?>" alt="">
 					</div>
 				</div>
@@ -140,9 +149,9 @@ $case_studies = new WP_Query(
 								$service_url = $playbook_url;
 							}
 							?>
-							<a class="lgsdn-service-card lgsdn-service-card--<?php echo esc_attr( $service_style['colour'] ); ?>" style="--lgsdn-service-card-bg:<?php echo esc_attr( $service_style['gradient'] ); ?>" href="<?php echo esc_url( $service_url ); ?>">
-								<span class="lgsdn-service-card__label">Service</span>
+							<a class="lgsdn-service-card lgsdn-service-card--<?php echo esc_attr( $service_style['colour'] ); ?>" style="--lgsdn-service-card-bg:<?php echo esc_attr( $service_style['gradient'] ); ?>;--lgsdn-service-card-bottom:<?php echo esc_attr( $service_style['contrast'] ); ?>" href="<?php echo esc_url( $service_url ); ?>">
 								<img class="lgsdn-service-card__icon lgsdn-service-card__icon--<?php echo esc_attr( $service_style['icon'] ); ?>" src="<?php echo esc_url( LGSDN_Service_Styles::icon_url( $service_style['icon'] ) ); ?>" alt="">
+								<span class="lgsdn-service-card__label">Service</span>
 								<h3 class="lgsdn-service-card__title"><?php echo esc_html( $service_term->name ); ?></h3>
 							</a>
 						<?php endforeach; ?>

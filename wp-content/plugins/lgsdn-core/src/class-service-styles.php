@@ -16,13 +16,41 @@ final class LGSDN_Service_Styles {
 
 	private const DEFAULT_COLOUR = 'orange';
 	private const DEFAULT_ICON = 'service';
+	private const PALETTE_OPTION = 'lgsdn_service_card_palette';
+	private const PALETTE_QUERY = 'service_palette';
+	private const DEFAULT_PALETTE = 'bright';
+	private const CARD_PALETTES = array(
+		'vivid' => 'EB1',
+		'original' => 'Original',
+		'bright' => 'EB1-Adjusted',
+	);
 
-	/**
-	 * Service-card gradients run from the decorative top colour to the text-bearing
-	 * bottom colour. Bottom stops are selected to meet WCAG AA for white card text.
-	 */
-	private const CARD_GRADIENT = array(
-		'angle' => 190,
+	// Original card colours, adjusted for white text. Keys match existing service terms.
+	private const ORIGINAL_CARD_COLOURS = array(
+		'mustard' => array( '#DAAA47', '#967024' ),
+		'blue' => array( '#4B66FF', '#4B66FF' ),
+		'purple' => array( '#AF98CC', '#7D669A' ),
+		'green' => array( '#4B5A2B', '#4B5A2B' ),
+		'orange' => array( '#E68A40', '#B06323' ),
+		'pink' => array( '#D9AEC1', '#946B7E' ),
+	);
+
+	private const VIVID_CARD_STOPS = array(
+		'mustard' => array( '#917003', '#876803' ),
+		'blue' => array( '#3837F5', '#3837F5' ),
+		'purple' => array( '#846AA0', '#7B6295' ),
+		'green' => array( '#557B80', '#507376' ),
+		'orange' => array( '#CF4516', '#C04114' ),
+		'pink' => array( '#725FEC', '#6A58DB' ),
+	);
+
+	private const BRIGHT_CARD_COLOURS = array(
+		'mustard' => array( '#E9B406', '#947201' ),
+		'blue' => array( '#3388F5', '#1E74E3' ),
+		'purple' => array( '#B881EF', '#955BCE' ),
+		'green' => array( '#73C9D4', '#497F86' ),
+		'orange' => array( '#FF7247', '#DB3C0C' ),
+		'pink' => array( '#8674F5', '#7563E4' ),
 	);
 
 	private const ICONS = array(
@@ -43,74 +71,61 @@ final class LGSDN_Service_Styles {
 		'public-health' => 'Stethoscope icon',
 	);
 
-	/**
-	 * Shared palette values stay available to Practice styles. Service-card gradient
-	 * stops are specific to those cards; foreground pairs also keep small colored
-	 * service tags readable. Admin metadata stores only the stable token key.
-	 */
-	private const COLOURS = array(
-		'mustard' => array(
-			'label' => 'Mustard',
-			'background' => '#B59B00',
-			'contrast' => '#8A7600',
-			'foreground' => '#27272D',
-			'gradient_top' => '#B59B00',
-			'gradient_hold_until' => 20,
-			'gradient_bottom' => '#897600',
-		),
-		'blue' => array(
-			'label' => 'Blue',
-			'background' => '#4B5AFF',
-			'contrast' => '#3444C7',
-			'foreground' => '#FFFFFF',
-			'gradient_top' => '#5A6CFF',
-			'gradient_bottom' => '#4B5AFF',
-		),
-		'purple' => array(
-			'label' => 'Purple',
-			'background' => '#C7AFE1',
-			'contrast' => '#9B83B8',
-			'foreground' => '#27272D',
-			'gradient_top' => '#C6AFE3',
-			'gradient_hold_until' => 20,
-			'gradient_bottom' => '#876AA9',
-		),
-		'green' => array(
-			'label' => 'Green',
-			'background' => '#4B5B37',
-			'contrast' => '#3A472B',
-			'foreground' => '#FFFFFF',
-			'gradient_top' => '#4C5B37',
-			'gradient_bottom' => '#3A472B',
-		),
-		'orange' => array(
-			'label' => 'Orange',
-			'background' => '#EA7200',
-			'contrast' => '#EA7200',
-			'foreground' => '#27272D',
-			'gradient_top' => '#F66F00',
-			'gradient_hold_until' => 20,
-			'gradient_bottom' => '#BD5B00',
-		),
-		'pink' => array(
-			'label' => 'Pink',
-			'background' => '#FACDE1',
-			'contrast' => '#B3889B',
-			'foreground' => '#27272D',
-			'gradient_top' => '#F7ACCD',
-			'gradient_hold_until' => 20,
-			'gradient_bottom' => '#9D667E',
-		),
-	);
-
 	private const LEGACY_COLOUR_ALIASES = array(
 		'lilac' => 'purple',
 		'gold' => 'mustard',
 		'olive' => 'green',
 	);
 
+	// Stored colour keys are independent of the admin labels and swatches.
+	private const COLOURS = array(
+		'mustard' => array(
+			'label' => 'Gold',
+			'background' => '#E9B406',
+			'foreground' => '#000000',
+			'gradient_text_start' => '#917004',
+			'gradient_bottom' => '#876804',
+		),
+		'blue' => array(
+			'label' => 'Indigo',
+			'background' => '#3837F5',
+			'foreground' => '#FFFFFF',
+			'gradient_bottom' => '#3837F5',
+		),
+		'purple' => array(
+			'label' => 'Mauve',
+			'background' => '#D3B1F5',
+			'foreground' => '#000000',
+			'gradient_text_start' => '#816D96',
+			'gradient_bottom' => '#78658C',
+		),
+		'green' => array(
+			'label' => 'Frosted blue',
+			'background' => '#A6DDE4',
+			'foreground' => '#000000',
+			'gradient_text_start' => '#5C7A7E',
+			'gradient_bottom' => '#567275',
+		),
+		'orange' => array(
+			'label' => 'Tiger flame',
+			'background' => '#F55722',
+			'foreground' => '#000000',
+			'gradient_text_start' => '#CC491C',
+			'gradient_bottom' => '#BE441A',
+		),
+		'pink' => array(
+			'label' => 'Violet',
+			'background' => '#8674F5',
+			'foreground' => '#000000',
+			'gradient_text_start' => '#7465D5',
+			'gradient_bottom' => '#6C5EC6',
+		),
+	);
+
 	public static function hooks(): void {
 		add_action( 'init', array( __CLASS__, 'register_meta' ), 7 );
+		add_action( 'admin_init', array( __CLASS__, 'register_palette_setting' ) );
+		add_action( 'init', array( __CLASS__, 'adopt_adjusted_palette' ), 6 );
 		add_action( 'lgsdn_service_add_form_fields', array( __CLASS__, 'render_add_fields' ) );
 		add_action( 'lgsdn_service_edit_form_fields', array( __CLASS__, 'render_edit_fields' ) );
 		add_action( 'created_lgsdn_service', array( __CLASS__, 'save' ) );
@@ -121,6 +136,72 @@ final class LGSDN_Service_Styles {
 		add_filter( 'terms_clauses', array( __CLASS__, 'order_admin_service_term_clauses' ), 10, 3 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_order_admin_assets' ) );
 		add_action( 'wp_ajax_lgsdn_reorder_service_areas', array( __CLASS__, 'ajax_reorder_service_areas' ) );
+	}
+
+	public static function adopt_adjusted_palette(): void {
+		if ( ! get_option( 'lgsdn_eb1_adjusted_adopted' ) ) {
+			update_option( self::PALETTE_OPTION, self::DEFAULT_PALETTE );
+			update_option( 'lgsdn_eb1_adjusted_adopted', true );
+		}
+	}
+
+	public static function register_palette_setting(): void {
+		register_setting(
+			'general',
+			self::PALETTE_OPTION,
+			array(
+				'type' => 'string',
+				'default' => self::DEFAULT_PALETTE,
+				'sanitize_callback' => array( __CLASS__, 'sanitize_card_palette' ),
+			)
+		);
+		add_settings_field(
+			self::PALETTE_OPTION,
+			'Service card colour palette',
+			array( __CLASS__, 'render_palette_setting' ),
+			'general',
+			'default',
+			array( 'label_for' => self::PALETTE_OPTION )
+		);
+	}
+
+	public static function sanitize_card_palette( mixed $value ): string {
+		return is_string( $value ) && isset( self::CARD_PALETTES[ $value ] ) ? $value : self::DEFAULT_PALETTE;
+	}
+
+	private static function active_card_palette(): string {
+		return self::sanitize_card_palette( get_option( self::PALETTE_OPTION, self::DEFAULT_PALETTE ) );
+	}
+
+	private static function preview_card_palette(): string {
+		$requested = $_GET[ self::PALETTE_QUERY ] ?? null;
+		if ( is_string( $requested ) && isset( self::CARD_PALETTES[ $requested ] ) ) {
+			return $requested;
+		}
+		return self::active_card_palette();
+	}
+
+	public static function render_palette_switcher(): void {
+		$current = self::preview_card_palette();
+		?>
+		<nav class="lgsdn-service-palette" aria-label="Service card colour palette">
+			<span>Service card colours</span>
+			<?php foreach ( self::CARD_PALETTES as $key => $label ) : ?>
+				<a href="<?php echo esc_url( add_query_arg( self::PALETTE_QUERY, $key ) ); ?>"<?php if ( $current === $key ) : ?> aria-current="true"<?php endif; ?>><?php echo esc_html( $label ); ?></a>
+			<?php endforeach; ?>
+		</nav>
+		<?php
+	}
+
+	public static function render_palette_setting(): void {
+		$current = self::active_card_palette();
+		?>
+		<select id="<?php echo esc_attr( self::PALETTE_OPTION ); ?>" name="<?php echo esc_attr( self::PALETTE_OPTION ); ?>">
+			<?php foreach ( self::CARD_PALETTES as $key => $label ) : ?>
+				<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $current, $key ); ?>><?php echo esc_html( $label ); ?></option>
+			<?php endforeach; ?>
+		</select>
+		<?php
 	}
 
 	public static function register_meta(): void {
@@ -190,7 +271,25 @@ final class LGSDN_Service_Styles {
 	}
 
 	public static function colours(): array {
-		return self::COLOURS;
+		$colours = self::COLOURS;
+		$selection = self::preview_card_palette();
+		foreach ( $colours as $key => &$colour ) {
+			if ( 'vivid' === $selection ) {
+				list( $colour['gradient_text_start'], $colour['gradient_bottom'] ) = self::VIVID_CARD_STOPS[ $key ];
+			} else {
+				$palette = 'original' === $selection ? self::ORIGINAL_CARD_COLOURS : self::BRIGHT_CARD_COLOURS;
+				list( $colour['background'], $colour['gradient_bottom'] ) = $palette[ $key ];
+				$colour['gradient_text_start'] = $colour['gradient_bottom'];
+			}
+			$channels = array_map( static function ( string $channel ): float {
+				$value = hexdec( $channel ) / 255;
+				return $value <= 0.04045 ? $value / 12.92 : pow( ( $value + 0.055 ) / 1.055, 2.4 );
+			}, str_split( ltrim( $colour['background'], '#' ), 2 ) );
+			$luminance = $channels[0] * 0.2126 + $channels[1] * 0.7152 + $channels[2] * 0.0722;
+			$colour['foreground'] = ( $luminance + 0.05 ) / 0.05 >= 1.05 / ( $luminance + 0.05 ) ? '#000000' : '#FFFFFF';
+		}
+		unset( $colour );
+		return $colours;
 	}
 
 	public static function icons(): array {
@@ -272,15 +371,28 @@ final class LGSDN_Service_Styles {
 		if ( ! metadata_exists( 'term', $term_object->term_id ?? 0, self::FEATURED_META ) ) {
 			$featured = (bool) ( $defaults[ self::FEATURED_META ] ?? false );
 		}
-		$colours = self::colours();
-		$gradient = self::card_gradient( $colours[ $colour ] );
+		$palette = self::colours()[ $colour ];
+		$selection = self::preview_card_palette();
+		if ( 'vivid' === $selection ) {
+			$top = $palette['background'];
+			list( $text_start, $bottom ) = self::VIVID_CARD_STOPS[ $colour ];
+		} else {
+			$colours = 'original' === $selection ? self::ORIGINAL_CARD_COLOURS : self::BRIGHT_CARD_COLOURS;
+			list( $top, $bottom ) = $colours[ $colour ];
+			$text_start = $bottom;
+		}
+		$card_palette = array(
+			'background' => $top,
+			'gradient_text_start' => $text_start,
+			'gradient_bottom' => $bottom,
+		);
 
 		return array(
 			'colour' => $colour,
-			'background' => $colours[ $colour ]['background'],
-			'contrast' => $colours[ $colour ]['contrast'],
-			'foreground' => $colours[ $colour ]['foreground'],
-			'gradient' => $gradient,
+			'background' => $palette['background'],
+			'contrast' => $card_palette['gradient_bottom'],
+			'foreground' => $palette['foreground'],
+			'gradient' => self::card_gradient( $card_palette ),
 			'icon' => $icon,
 			'order' => $order,
 			'playbook_order' => $playbook_order,
@@ -289,20 +401,20 @@ final class LGSDN_Service_Styles {
 	}
 
 	private static function card_gradient( array $palette ): string {
-		$angle = max( 0, min( 360, (int) ( self::CARD_GRADIENT['angle'] ?? 135 ) ) );
-		if ( isset( $palette['gradient_hold_until'] ) ) {
-			$hold_until = max( 0, min( 99, (int) $palette['gradient_hold_until'] ) );
-			// Begin gently, retaining mostly the top colour until lower down the card.
-			return sprintf(
-				'linear-gradient(%1$ddeg, %2$s 0%%, %2$s %3$d%%, color-mix(in srgb, %2$s 75%%, %4$s) 60%%, %4$s 100%%)',
-				$angle,
-				$palette['gradient_top'],
-				$hold_until,
-				$palette['gradient_bottom']
-			);
+		$bottom = $palette['gradient_bottom'];
+		if ( $palette['background'] === $bottom ) {
+			return $bottom;
 		}
 
-		return sprintf( 'linear-gradient(%ddeg, %s, %s)', $angle, $palette['gradient_top'], $palette['gradient_bottom'] );
+		// The taller gradient already moves each percentage stop by part of the shift.
+		return sprintf(
+			'linear-gradient(180deg, %1$s calc(20%% + %4$s * 0.9),'
+			. ' %2$s calc(100%% - var(--lgsdn-service-card-gradient-overlap, 10%%)), %3$s)',
+			$palette['background'],
+			$palette['gradient_text_start'],
+			$bottom,
+			'var(--lgsdn-service-card-gradient-shift, 0px)'
+		);
 	}
 
 	/**
@@ -614,8 +726,9 @@ final class LGSDN_Service_Styles {
 	}
 
 	private static function render_colour_select( string $selected_colour ): void {
+		$colours = self::colours();
 		echo '<select id="' . esc_attr( self::COLOUR_META ) . '" name="' . esc_attr( self::COLOUR_META ) . '">';
-		foreach ( self::COLOURS as $key => $colour ) {
+		foreach ( $colours as $key => $colour ) {
 			echo '<option value="' . esc_attr( $key ) . '" ' . selected( $selected_colour, $key, false ) . '>';
 			echo esc_html( $colour['label'] . ' — ' . $colour['background'] );
 			echo '</option>';
@@ -623,7 +736,7 @@ final class LGSDN_Service_Styles {
 		echo '</select>';
 
 		echo '<div style="display:flex;gap:6px;margin-top:10px" aria-hidden="true">';
-		foreach ( self::COLOURS as $colour ) {
+		foreach ( $colours as $colour ) {
 			echo '<span style="display:block;width:28px;height:28px;border:1px solid #27272d;border-radius:50%;background:' . esc_attr( $colour['background'] ) . '"></span>';
 		}
 		echo '</div>';

@@ -10,6 +10,45 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class LGSDN_Practice_Styles {
 	public const COLOUR_META = 'lgsdn_practice_colour';
 
+	private const COLOURS = array(
+		'mustard' => array(
+			'label' => 'Mustard',
+			'background' => '#B59B00',
+			'contrast' => '#8A7600',
+			'foreground' => '#27272D',
+		),
+		'blue' => array(
+			'label' => 'Blue',
+			'background' => '#4B5AFF',
+			'contrast' => '#3444C7',
+			'foreground' => '#FFFFFF',
+		),
+		'purple' => array(
+			'label' => 'Purple',
+			'background' => '#C7AFE1',
+			'contrast' => '#9B83B8',
+			'foreground' => '#27272D',
+		),
+		'green' => array(
+			'label' => 'Green',
+			'background' => '#4B5B37',
+			'contrast' => '#3A472B',
+			'foreground' => '#FFFFFF',
+		),
+		'orange' => array(
+			'label' => 'Orange',
+			'background' => '#EA7200',
+			'contrast' => '#EA7200',
+			'foreground' => '#27272D',
+		),
+		'pink' => array(
+			'label' => 'Pink',
+			'background' => '#FACDE1',
+			'contrast' => '#B3889B',
+			'foreground' => '#27272D',
+		),
+	);
+
 	public static function hooks(): void {
 		add_action( 'init', array( __CLASS__, 'register_meta' ), 7 );
 	}
@@ -34,7 +73,7 @@ final class LGSDN_Practice_Styles {
 	}
 
 	public static function colours(): array {
-		return LGSDN_Service_Styles::colours();
+		return self::COLOURS;
 	}
 
 	public static function sanitize_colour( mixed $value ): string {
