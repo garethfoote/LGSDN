@@ -2,19 +2,21 @@
 /**
  * Plugin Name: LGSDN Core
  * Description: Structured content and editorial safeguards for the LGSDN website.
- * Version: 0.1.33
+ * Version: 0.1.48
  * Requires at least: 7.0
  * Requires PHP: 8.3
  * Requires Plugins: forminator
  * Author: Local Government Service Design Network
  * Text Domain: lgsdn
+ * License: GPL v2 or later
+ * License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'LGSDN_CORE_VERSION', '0.1.33' );
+define( 'LGSDN_CORE_VERSION', '0.1.48' );
 define( 'LGSDN_CORE_FILE', __FILE__ );
 define( 'LGSDN_CORE_DIR', plugin_dir_path( __FILE__ ) );
 

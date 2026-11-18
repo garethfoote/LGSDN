@@ -33,35 +33,20 @@ Use a breakpoint only when the content needs it, rather than targeting particula
 
 ## Service area colours
 
-Service-area cards take their visual identity from their primary Service area. Administrators assign one of six controlled tokens to each Service area term; arbitrary colours are not accepted. The cards use white text and icons across the homepage, Playbook listing, service archive, and article detail view.
+The Tiger flame service palette has six controlled colours. The homepage, Library, and article detail cards use white text and icons. The service archive uses the same palette for its icon.
 
-| Service colour | Gradient top | Gradient bottom | White text contrast at bottom |
-|---|---|---|---|
-| Mustard | `#B59B00` (0–20%) | `#897600` (100%) | 4.51:1 |
-| Blue | `#5A6CFF` | `#4B5AFF` | 4.99:1 |
-| Purple | `#C6AFE3` (0–20%) | `#876AA9` | 4.50:1 |
-| Green | `#4C5B37` | `#3A472B` | 9.92:1 |
-| Orange | `#F66F00` (0–20%) | `#BD5B00` | 4.51:1 |
-| Pink | `#F7ACCD` (0–20%) | `#9D667E` | 4.53:1 |
+| Admin label | Base swatch | At start of white text | Darkest stop | Tag text |
+|---|---|---|---|---|
+| Gold | `#E9B406` | `#917004` | `#876804` | Black |
+| Indigo | `#3837F5` | `#3837F5` | `#3837F5` | White |
+| Mauve | `#D3B1F5` | `#816D96` | `#78658C` | Black |
+| Frosted blue | `#A6DDE4` | `#5C7A7E` | `#567275` | Black |
+| Tiger flame | `#F55722` | `#CC491C` | `#BE441A` | Black |
+| Violet | `#8674F5` | `#7465D5` | `#6C5EC6` | Black |
 
-The palette and card gradient angle are owned by `LGSDN_Service_Styles`. Gradients run at 190 degrees, almost vertically downwards with a subtle lean towards the lower left, behind the white service title. Mustard, pink, orange, and purple hold their lighter colour through 20% of the gradient axis, then blend gently to 75% light colour / 25% dark colour at 60%, reaching the darker bottom stop at 100%. The bottom stop meets WCAG AA's 4.5:1 contrast requirement for normal white text; this measures the endpoint, not every point in the transition. Service-area term metadata stores only the stable colour token name. The legacy `lilac` token is read as `purple`; older installations that stored `pink` continue to use the restored pink token. Practice terms retain the original palette values for their legacy contour fallbacks.
+The vertical gradient reaches a colour with at least 4.5:1 contrast at the white **Service** label and continues darkening behind the copy. Indigo is solid because its base swatch already meets the threshold. Service tags use the base swatch and the text colour listed above.
 
-### Palette experiment baseline — 21 October 2026
-
-Saved before the lighter-top experiment. These are service-card gradient values, separate from the shared Practice and taxonomy-tag background colours.
-
-| Service colour | Original top | Original hold | Original bottom |
-|---|---|---|---|
-| Mustard | `#B59B00` | 45% | `#897600` |
-| Blue | `#5A6CFF` | None | `#4B5AFF` |
-| Purple | `#A183C2` | 45% | `#876AA9` |
-| Green | `#4C5B37` | None | `#3A472B` |
-| Orange | `#F66F00` | 45% | `#BD5B00` |
-| Pink | `#D081A4` | 45% | `#9D667E` |
-
-The experiment initially set pink to `#FACDE1`; its lightest card stop is now `#F7ACCD`, reducing HSL lightness from approximately 89.2% to 82% while preserving hue and saturation (subject to hex rounding). It sets purple to `#C6AFE3`; requested yellow/gold `#B59B00` already matches mustard. All four transitioning colours now hold until 20% along a 190-degree gradient, then transition over the remaining 80%. A predominantly light blend at 60% keeps the stronger darkening lower down the card. Orange has no replacement hex supplied, so its top stays unchanged. Blue and green retain their colour stops and use the shared gradient angle; all bottom colours stay unchanged.
-
-Small service-area taxonomy tags use Ink on mustard, purple, orange, and pink backgrounds, where white fails the 4.5:1 normal-text threshold. Blue and green retain white tag text because those pairings pass.
+Service area metadata stores a stable key for each assignment. The keys are `mustard`, `blue`, `purple`, `green`, `orange`, and `pink` in table order. Legacy aliases still resolve to these keys. Practice terms use a separate palette for their contour fallbacks.
 
 Service icons share square SVG viewBoxes centred on the visible artwork, with the longest visible dimension occupying 90% of the frame. Apply this framing to new icons too, rather than compensating for export whitespace with individual CSS scales or offsets. Homepage and Playbook cards share the same resting and interaction scales; article and archive icons use the same source framing. The shared `--lgsdn-service-icon-size-multiplier: 1.2` increases icon width and height by 20% across all these views and their existing responsive sizes, subject to container limits.
 
@@ -78,7 +63,9 @@ Card typography uses the dedicated 20px Card title role at Medium weight, plus B
 
 The body face is **Atkinson Hyperlegible Next**. Titles and headings use **Srbija Sans** at its regular weight. The font stacks and roles live in `settings.typography.fontFamilies` and `styles.elements.heading` in `theme.json`.
 
-The family names are wired into the theme now. Atkinson Hyperlegible Next uses Light (300), Regular (400), and Medium (500); the site does not synthesize other weights. Srbija Sans uses Regular for headings. Before deployment, add any licensed WOFF2 files to `assets/fonts/` and add their `fontFace` entries to the matching family in `theme.json`.
+Below 48rem, the shared authored heading scale is H1 32px, H2 28px, H3 24px and H4–H6 22px. This keeps content headings subordinate to the compact article title. Case-study metadata headings and values use 18px at every breakpoint.
+
+The family names are wired into the theme now. Atkinson Hyperlegible Next uses Light (300), Regular (400), Medium (500), and SemiBold (600); shared bold text (`strong` and `b`) uses 600. The site does not synthesize other weights. Srbija Sans uses Regular for headings. Before deployment, add any licensed WOFF2 files to `assets/fonts/` and add their `fontFace` entries to the matching family in `theme.json`.
 
 Atkinson Hyperlegible Next is available under the SIL Open Font License. Srbija Sans permits website embedding but restricts redistributing its font files, so obtain it from the official Srbija Sans download and do not place it in a public repository without confirming that distribution is permitted.
 
@@ -95,7 +82,7 @@ The scale follows the semantic roles visible in Figma. Change the `settings.typo
 | Feature body | Atkinson Hyperlegible Next | 18px / 150% |
 | Card title | Atkinson Hyperlegible Next Medium | 20px / 150% |
 | Body extra large | Atkinson Hyperlegible Next | 24px / 120% |
-| Article body | Atkinson Hyperlegible Next | 18px compact, 20px medium and wide / 150% |
+| Article body | Atkinson Hyperlegible Next | 20px at all breakpoints / 150% |
 | Interface body | Atkinson Hyperlegible Next | 16px / 150% |
 | Body small | Atkinson Hyperlegible Next | 14px / 145% |
 | Navigation | Atkinson Hyperlegible Next | 30px compact, 20px medium and wide / normal |
@@ -123,20 +110,38 @@ Event photos use the native WordPress featured image at medium resolution. Below
 
 WordPress image blocks have an optional **Window** style for interface screenshots. It adds decorative window chrome and a shadow around the image without changing the uploaded file or its alternative text. Playbook card images can use the same frame through the **Show the card image in a window frame** option; the image sits at a contained size on the existing mist background across Playbook listings, homepage case-study cards, related cards, and the featured Playbook presentation. Card-frame corner radius, title bar, and dots scale with the media width, while the article-body style keeps its larger treatment.
 
-Custom LGSDN actions use `.button` with `.lgsdn-button--arrow` for internal onward journeys or `.lgsdn-button--external` for off-site links. The external-link variant uses `↗` to indicate a different site or domain; it does not imply that the link opens a new tab. Text links do not animate the icon, while button-style external actions retain the short diagonal movement. Their shared sizing and interaction rules live in `assets/css/buttons.css`, loaded on the frontend, in the editor, and by button specimens. Native WordPress blocks retain their generated `.wp-block-button__link` markup. Event timeline buttons inherit the shared padding and responsive type size, always say **Details**, and lead to the event page. An upcoming event page with a booking link uses the external-link variant and its editor-configured call to action text, defaulting to **Register** when that text is blank. Event and Playbook resources use the same link presentation whether the destination is a Media Library file or an external service, with `↗` retained as a subtle off-site cue. Resource links use the browser's normal navigation behavior and do not force a new tab. The subordinate **View on Google Maps** location link intentionally omits the icon to preserve its relationship with the location and avoid competing with the primary registration action.
+Custom LGSDN actions use `.button` with `.lgsdn-button--arrow` for internal onward journeys or `.lgsdn-button--external` for off-site links. The external-link variant uses the shared SVG external-link arrow to indicate a different site or domain; it does not imply that the link opens a new tab. Text links do not animate the icon, while button-style external actions retain the short diagonal movement. Their shared sizing and interaction rules live in `assets/css/buttons.css`, loaded on the frontend, in the editor, and by button specimens. Native WordPress blocks retain their generated `.wp-block-button__link` markup. Event timeline buttons inherit the shared padding and responsive type size, always say **Details**, and lead to the event page. An upcoming event page with a booking link uses the external-link variant and its editor-configured call to action text, defaulting to **Register** when that text is blank. Event and Playbook resources use the same link presentation whether the destination is a Media Library file or an external service, with the shared SVG arrow retained as a subtle off-site cue. Resource links use the browser's normal navigation behavior and do not force a new tab. The subordinate **View on Google Maps** location link intentionally omits the icon to preserve its relationship with the location and avoid competing with the primary registration action.
 
 ### Compact Playbook article rhythm
 
-Below 48rem, article headers use 16px above the backlink and 32px below it. Display titles keep their 32px compact size with a 1.15 line height. The title, optional hero image, and metadata use a 32px grid gap. Metadata labels and values use 16px type, with 8px between labels and values and 24px between groups. The narrative begins 48px after metadata (32px grid gap plus 16px on the copy container), with no additional top margin on the lead. These rules cover articles with and without images or excerpts; medium and desktop layouts retain their existing styles.
+Below 48rem, article headers use 16px above the backlink and 32px below it. Display titles keep their 32px compact size with a 1.15 line height. The title, optional hero image, and metadata use a 32px grid gap. Metadata uses 8px between labels and values and 24px between groups. The narrative begins 48px after metadata (32px grid gap plus 16px on the copy container), with no additional top margin on the lead. These rules cover articles with and without images or excerpts; medium and desktop layouts retain their existing styles.
 
 ### Two-column Playbook article rhythm
 
-From 48rem, the backlink uses spacing token 30 above and token 60 below. Article rows use a single token 60 gap, without additional bottom padding on the title. Metadata and narrative start on the same grid row; the lead has no top margin. Metadata uses token 20 between labels and values or wrapped tags, and token 40 between groups. Spacing follows the active theme token values. Filter icons match the tag text size. These rules cover articles with and without featured images and retain the existing desktop type sizes and column widths.
+From 48rem, the backlink uses spacing token 30 above and token 60 below. Article rows use a single token 60 gap, without additional bottom padding on the title. Metadata and narrative start on the same grid row; the lead has no top margin. Metadata uses token 20 between labels and values or wrapped tags, and token 40 between groups. Spacing follows the active theme token values. Filter icons match the tag text size. These rules cover articles with and without featured images and retain the existing desktop column widths.
 
 ### Playbook header images and resources
 
 Article header images are optional, selected without a crop step, and displayed full-width at their saved natural proportions. Around 16:9 is an editorial recommendation, not a forced ratio. Existing cropped attachments remain as saved; select the original image again to recover its full composition. Card images retain their required 3:2 crop.
 
-Resources sit beneath the metadata in the same sidebar grid area. On compact views that sidebar precedes the narrative in DOM and visual order. Resources use a quiet Mist callout with spacing token 30 padding, token 20 corners, and token 60 separation above. The heading is medium weight; underlined links use regular interface body type with wrapping for long labels. The narrative flows directly from the excerpt into authored blocks, without a resources panel or generated divider between them.
+Resources sit beneath the metadata in the same sidebar grid area. On compact views that sidebar precedes the narrative in DOM and visual order. Resources use an Ink callout with white text and icons with spacing token 30 padding, token 20 corners, and token 60 separation above. Playbook and event pages share `.lgsdn-resources`: an 18px medium-weight heading with a box icon, full-width ruled link rows without underlines, 48px minimum targets, a flat, subtly lighter Ink hover background and visible keyboard focus. Labels wrap in full at every breakpoint; external arrows align with the first line at the far right of each row. The row fill ends at the divider edges, inside the panel padding. The narrative flows directly from the excerpt into authored blocks, without a resources panel or generated divider between them.
 
 The optional **Show the header image in a window frame** checkbox is independent of the card setting. It centres shared browser chrome on a Mist 16:9 stage. Window width is constrained by both stage dimensions using the uploaded image ratio, leaving at least 9% breathing room on each axis. The image remains uncropped; the stage, window, and chrome scale with the available width. With the option off, the normal natural-proportion header remains in use. With no header image, neither treatment renders.
+
+### Compact homepage hero
+
+The homepage H1 has its own display progression: 40px below 64rem, 56px from 64rem, and 68px from 90rem, retaining a 1.1 line height. Other pages continue to use the shared display scale.
+
+Below 48rem, the homepage H1 remains 40px as an intentional exception to the 32px compact display role. The circle and contour layers share a diameter 18% smaller than the previous compact size. A two-row grid follows its content height rather than filling the viewport. The gap between the lead and graphic grows with viewport width from spacing token 40 to a maximum of 4rem (64px at the default root size). This prevents excessive empty space around 600–750px wide while preserving reading order and allowing enlarged text to expand naturally. Larger breakpoints retain their existing layout.
+
+Compact hero top padding uses spacing token 70 to give the H1 generous separation from the logo/header, with token 30 below. This space takes priority over fitting the whole hero into a short viewport; content remains naturally scrollable.
+
+From 64rem, the homepage Browse row shifts left as one unit by the difference between the feature-list inset and the page gutter. Join and Contribute retain their inset alignment, creating a right–left–right reading rhythm. Medium and compact layouts keep their existing placement and reading order.
+
+Service card optical alignment: Planning and place (blueprint) and Benefits and financial support (money-growing) lift by one spacing-10 token; Community safety (bricks) lifts by two. These shared icon modifiers apply to homepage, Playbook listing, and article service cards at every breakpoint, retaining the existing hover/focus movement and shared title/label styles.
+
+Below 48rem, the Join, Browse and Contribute feature rows position their decorative contours behind the copy and action, anchored 75px (4.6875rem) below the bottom of each row at 30% opacity without adding layout height. The existing contour size is retained, with its centre on the viewport edge, alternating left, right, left. An isolated stacking context keeps the artwork behind the content; the page's horizontal clipping prevents decorative overflow from creating a scrollbar. Larger layouts retain their side-by-side artwork.
+
+Homepage contour accents use an additional 0.5px non-scaling stroke on the coloured ring, preserving the dot size and neutral rings. Header dots complete a nominal circuit in 220 seconds (previously 240), retaining their individual relative rates and reduced-motion behavior.
+
+On each homepage load, the hero background and the three feature contour dots share one of the six Tiger flame base swatches. Each coloured feature ring uses the corresponding darker card stop, with solid Indigo using its base swatch. Mauve is the default in the editor and standalone previews.
