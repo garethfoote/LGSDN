@@ -1,6 +1,6 @@
 <?php
 /**
- * Publishing safeguards for Playbook items.
+ * Publishing safeguards for Case studies.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -107,7 +107,7 @@ final class LGSDN_Playbook_Validation {
 			return new WP_Error(
 				'lgsdn_playbook_incomplete',
 				sprintf(
-					'Complete these Playbook fields before publishing: %s.',
+					'Complete these case study fields before publishing: %s.',
 					implode( ', ', $errors )
 				),
 				array(

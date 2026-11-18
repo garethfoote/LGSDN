@@ -63,7 +63,7 @@
 			var bodyKey = 'lgsdn_home_feature_' + index + '_body';
 			var title = value( titleKey );
 			var ctaLabels = [ 'Join', 'Browse', 'Contribute' ];
-			var ctaContext = [ ' the network', ' the playbook', ' an example' ];
+			var ctaContext = [ ' the network', ' the library', ' an example' ];
 			var artNames = [ 'join', 'playbook', 'contribute' ];
 
 			return el(
@@ -109,7 +109,7 @@
 		var homepagePlaybook = el(
 			'section',
 			{ className: 'homepage-playbook', id: 'playbook', 'aria-labelledby': 'homepage-playbook-title' },
-			el( 'div', { className: 'homepage-playbook__intro' }, el( 'h2', { id: 'homepage-playbook-title' }, 'From the playbook' ) ),
+			el( 'div', { className: 'homepage-playbook__intro' }, el( 'h2', { id: 'homepage-playbook-title' }, 'From the library' ) ),
 			el( 'div', { className: 'homepage-service-row', 'aria-label': 'Explore by service area' },
 				editIntroCard( 'homepage-service-intro', 'lgsdn_home_service_intro_title', 'lgsdn_home_service_intro_body', 'lgsdn_home_service_intro_button' )
 			),
@@ -164,7 +164,7 @@
 							'nav',
 							{ className: 'site-nav', 'aria-label': 'Main navigation' },
 							el( 'a', { href: '#', onClick: stopLink }, 'About' ),
-							el( 'a', { href: '#', onClick: stopLink }, 'Playbook' ),
+							el( 'a', { href: '#', onClick: stopLink }, 'Library' ),
 							el( 'a', { href: '#', onClick: stopLink }, 'Events' ),
 							el( 'a', { href: '#', onClick: stopLink }, 'People' ),
 							el( 'a', { className: 'button button--nav', href: '#', onClick: stopLink }, 'Join' )

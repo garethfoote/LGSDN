@@ -78,7 +78,7 @@
 
 		return missingFields.length
 			? `Publishing failed. Complete these fields first: ${ missingFields.join( ', ' ) }.`
-			: ( error && error.message ) || 'Publishing failed because the Playbook item is incomplete.';
+			: ( error && error.message ) || 'Publishing failed because the case study is incomplete.';
 	};
 
 	const renderSummaryMessage = ( message, attempt = 0 ) => {

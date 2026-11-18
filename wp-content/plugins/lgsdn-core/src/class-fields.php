@@ -14,7 +14,7 @@ final class LGSDN_Fields {
 			'lgsdn_organisation' => array( 'Organisation', 'text' ),
 			'lgsdn_profile_url' => array( 'LinkedIn profile URL', 'url' ),
 			'lgsdn_network_coordinator' => array( 'Network coordinator', 'checkbox' ),
-			'lgsdn_playbook_coordinator' => array( 'Playbook coordinator', 'checkbox' ),
+			'lgsdn_playbook_coordinator' => array( 'Library coordinator', 'checkbox' ),
 		),
 		'lgsdn_playbook' => array(
 			'lgsdn_contributor_id' => array( 'Case study author', 'person-select' ),
@@ -293,7 +293,7 @@ final class LGSDN_Fields {
 		if ( 'checkbox' === $type ) {
 			$label = match ( $key ) {
 				'lgsdn_network_coordinator' => 'Show this person as a network coordinator',
-				'lgsdn_playbook_coordinator' => 'Show this person as a Playbook coordinator',
+				'lgsdn_playbook_coordinator' => 'Show this person as a Library coordinator',
 				'lgsdn_card_image_window' => 'Show the card image in a window frame',
 				'lgsdn_article_image_window' => 'Show the header image in a window frame',
 				default => 'Show this item in the featured homepage position',
@@ -452,7 +452,7 @@ final class LGSDN_Fields {
 	private static function box_title( string $post_type ): string {
 		return match ( $post_type ) {
 			'lgsdn_person' => 'Person details',
-			'lgsdn_playbook' => 'Playbook details',
+			'lgsdn_playbook' => 'Case study details',
 			'lgsdn_event' => 'Event details',
 			default => 'Details',
 		};

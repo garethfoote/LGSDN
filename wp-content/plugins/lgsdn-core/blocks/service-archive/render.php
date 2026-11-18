@@ -13,9 +13,9 @@ $items = new WP_Query( array(
 ) );
 ?>
 <nav class="lgsdn-playbook-article__back-nav lgsdn-playbook-article-shell" aria-label="Back navigation">
-	<a class="lgsdn-playbook-article__back-link" href="<?php echo esc_url( home_url( '/playbook/' ) ); ?>">
+	<a class="lgsdn-playbook-article__back-link" href="<?php echo esc_url( home_url( '/library/' ) ); ?>">
 		<span class="lgsdn-playbook-article__back-arrow" aria-hidden="true">←</span>
-		<span class="lgsdn-playbook-article__back-label">Playbook</span>
+		<span class="lgsdn-playbook-article__back-label">Library</span>
 	</a>
 </nav>
 <div <?php echo get_block_wrapper_attributes( array( 'class' => 'lgsdn-service-archive lgsdn-playbook-article-shell' ) ); ?>>

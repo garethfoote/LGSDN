@@ -349,7 +349,7 @@ final class LGSDN_Installer {
 			return;
 		}
 
-		$paths = array( 'join', 'playbook', 'contribute' );
+		$paths = array( 'join', 'library', 'contribute' );
 		foreach ( $paths as $offset => $path ) {
 			$key = 'lgsdn_home_feature_' . ( $offset + 1 ) . '_page_id';
 			if ( metadata_exists( 'post', $homepage_id, $key ) ) {
@@ -386,7 +386,7 @@ final class LGSDN_Installer {
 	 * Give the Playbook page a locked editor preview without replacing custom content.
 	 */
 	private static function seed_playbook_preview(): void {
-		$page = get_page_by_path( 'playbook', OBJECT, 'page' );
+		$page = get_page_by_path( 'library', OBJECT, 'page' ) ?: get_page_by_path( 'playbook', OBJECT, 'page' );
 		if ( ! $page instanceof WP_Post ) {
 			return;
 		}

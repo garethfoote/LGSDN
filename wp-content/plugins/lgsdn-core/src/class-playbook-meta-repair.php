@@ -26,8 +26,8 @@ final class LGSDN_Playbook_Meta_Repair {
 
 	public static function add_tools_page(): void {
 		add_management_page(
-			'Repair Playbook metadata',
-			'Repair Playbook metadata',
+			'Repair case study metadata',
+			'Repair case study metadata',
 			'manage_options',
 			self::PAGE,
 			array( __CLASS__, 'render_page' )
@@ -36,15 +36,15 @@ final class LGSDN_Playbook_Meta_Repair {
 
 	public static function render_page(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'You are not allowed to repair Playbook metadata.', 'lgsdn' ) );
+			wp_die( esc_html__( 'You are not allowed to repair case study metadata.', 'lgsdn' ) );
 		}
 
 		$removed = isset( $_GET['removed'] ) ? absint( $_GET['removed'] ) : null; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$failed = isset( $_GET['failed'] ) ? absint( $_GET['failed'] ) : null; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		?>
 		<div class="wrap">
-			<h1>Repair Playbook metadata</h1>
-			<p>This checks Playbook items for duplicate rows in single-value fields registered with WordPress, including LGSDN fields and core fields such as footnotes. When duplicates are found, it keeps the oldest row (the value WordPress reads) and removes the extra rows.</p>
+			<h1>Repair case study metadata</h1>
+			<p>This checks Case studies for duplicate rows in single-value fields registered with WordPress, including LGSDN fields and core fields such as footnotes. When duplicates are found, it keeps the oldest row (the value WordPress reads) and removes the extra rows.</p>
 			<?php if ( null !== $removed ) : ?>
 				<div class="notice notice-success"><p><?php echo esc_html( sprintf( 'Removed %1$d duplicate metadata row(s). %2$d row(s) could not be removed.', $removed, $failed ?? 0 ) ); ?></p></div>
 			<?php endif; ?>
@@ -59,7 +59,7 @@ final class LGSDN_Playbook_Meta_Repair {
 
 	public static function repair(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'You are not allowed to repair Playbook metadata.', 'lgsdn' ) );
+			wp_die( esc_html__( 'You are not allowed to repair case study metadata.', 'lgsdn' ) );
 		}
 		check_admin_referer( 'lgsdn_repair_playbook_meta' );
 

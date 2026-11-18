@@ -3,9 +3,9 @@
   "apiVersion": 3,
   "name": "lgsdn/featured-playbook",
   "version": "0.1.0",
-  "title": "Featured Playbook item",
+  "title": "Featured case study",
   "category": "theme",
-  "description": "Displays the selected homepage Playbook item.",
+  "description": "Displays the selected homepage case study.",
   "supports": {
     "html": false,
     "inserter": false

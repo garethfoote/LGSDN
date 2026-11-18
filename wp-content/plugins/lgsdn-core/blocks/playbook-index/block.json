@@ -3,9 +3,9 @@
   "apiVersion": 3,
   "name": "lgsdn/playbook-index",
   "version": "0.1.0",
-  "title": "LGSDN Playbook index",
+  "title": "LGSDN Library index",
   "category": "theme",
-  "description": "Displays the Playbook introduction, service-area browser, and case study grid.",
+  "description": "Displays the Library introduction, service-area browser, and case study grid.",
   "usesContext": ["postId"],
   "editorScript": "lgsdn-playbook-editor",
   "supports": {

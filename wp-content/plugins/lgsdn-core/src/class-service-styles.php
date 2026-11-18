@@ -433,7 +433,7 @@ final class LGSDN_Service_Styles {
 		unset( $columns['description'] );
 
 		$service_columns = array(
-			'lgsdn_service_playbook_order' => 'Playbook order',
+			'lgsdn_service_playbook_order' => 'Library order',
 			'lgsdn_service_colour' => 'Colour',
 			'lgsdn_service_featured' => 'Homepage card',
 		);
@@ -460,7 +460,7 @@ final class LGSDN_Service_Styles {
 
 			$name = esc_attr( $term->name );
 			return sprintf(
-				'<span class="lgsdn-service-order-controls"><button type="button" class="button-link lgsdn-service-order-handle" title="Drag to reorder" aria-label="Drag %1$s to change its Playbook order"><span class="dashicons dashicons-menu" aria-hidden="true"></span></button><button type="button" class="button-link lgsdn-service-order-up" aria-label="Move %1$s up in Playbook order"><span class="dashicons dashicons-arrow-up-alt2" aria-hidden="true"></span></button><button type="button" class="button-link lgsdn-service-order-down" aria-label="Move %1$s down in Playbook order"><span class="dashicons dashicons-arrow-down-alt2" aria-hidden="true"></span></button></span>',
+				'<span class="lgsdn-service-order-controls"><button type="button" class="button-link lgsdn-service-order-handle" title="Drag to reorder" aria-label="Drag %1$s to change its Library order"><span class="dashicons dashicons-menu" aria-hidden="true"></span></button><button type="button" class="button-link lgsdn-service-order-up" aria-label="Move %1$s up in Library order"><span class="dashicons dashicons-arrow-up-alt2" aria-hidden="true"></span></button><button type="button" class="button-link lgsdn-service-order-down" aria-label="Move %1$s down in Library order"><span class="dashicons dashicons-arrow-down-alt2" aria-hidden="true"></span></button></span>',
 				$name
 			);
 		}
@@ -503,7 +503,7 @@ final class LGSDN_Service_Styles {
 	}
 
 	/**
-	 * Keep service areas without a Playbook order visible and place them last.
+	 * Keep service areas without a Library order visible and place them last.
 	 */
 	public static function order_admin_service_term_clauses( array $clauses, array $taxonomies, array $args ): array {
 		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
@@ -587,7 +587,7 @@ final class LGSDN_Service_Styles {
 		foreach ( $submitted_ids as $index => $id ) {
 			update_term_meta( $id, self::PLAYBOOK_ORDER_META, ( $index + 1 ) * 10 );
 		}
-		wp_send_json_success( array( 'message' => 'Playbook order saved.' ) );
+		wp_send_json_success( array( 'message' => 'Library order saved.' ) );
 	}
 
 	private static function render_fields( ?WP_Term $term ): void {

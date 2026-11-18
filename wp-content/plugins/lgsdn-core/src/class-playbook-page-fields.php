@@ -40,7 +40,7 @@ final class LGSDN_Playbook_Page_Fields {
 	}
 
 	public static function limit_blocks( $allowed_block_types, WP_Block_Editor_Context $context ) {
-		if ( $context->post instanceof WP_Post && 'page' === $context->post->post_type && 'playbook' === $context->post->post_name ) {
+		if ( $context->post instanceof WP_Post && 'page' === $context->post->post_type && in_array( $context->post->post_name, array( 'library', 'playbook' ), true ) ) {
 			return array( 'lgsdn/playbook-index' );
 		}
 

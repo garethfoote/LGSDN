@@ -15,11 +15,11 @@ final class LGSDN_Content_Types {
 		register_post_type(
 			'lgsdn_playbook',
 			array(
-				'labels' => self::labels( 'Playbook item', 'Playbook items' ),
+				'labels' => self::labels( 'Case study', 'Case studies' ),
 				'public' => true,
 				'show_in_rest' => true,
 				'has_archive' => false,
-				'rewrite' => array( 'slug' => 'playbook' ),
+				'rewrite' => array( 'slug' => 'library' ),
 				'menu_icon' => 'dashicons-lightbulb',
 				'menu_position' => 20,
 				'supports' => array( 'title', 'editor', 'excerpt', 'revisions', 'custom-fields' ),

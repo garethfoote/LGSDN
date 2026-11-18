@@ -1,6 +1,6 @@
 <?php
 /**
- * Featured Playbook item block.
+ * Featured case study block.
  *
  * @var array $attributes Block attributes.
  */
@@ -108,14 +108,14 @@ $classes = 'lgsdn-featured-playbook alignfull has-practice-' . $style['colour'];
 		<?php endif; ?>
 	</div>
 	<div class="lgsdn-featured-playbook__content">
-		<p class="lgsdn-featured-playbook__eyebrow">From the playbook</p>
+		<p class="lgsdn-featured-playbook__eyebrow">From the library</p>
 		<h2><?php the_title(); ?></h2>
 		<?php if ( has_excerpt() ) : ?>
 			<p><?php echo esc_html( get_the_excerpt() ); ?></p>
 		<?php endif; ?>
 		<div class="wp-block-buttons">
 			<div class="wp-block-button"><a class="wp-block-button__link wp-element-button lgsdn-button--arrow" href="<?php the_permalink(); ?>"><span class="lgsdn-button__label">Read the case study</span></a></div>
-			<div class="wp-block-button is-style-outline"><a class="wp-block-button__link wp-element-button lgsdn-button--arrow" href="<?php echo esc_url( home_url( '/playbook/' ) ); ?>"><span class="lgsdn-button__label">See the full playbook</span></a></div>
+			<div class="wp-block-button is-style-outline"><a class="wp-block-button__link wp-element-button lgsdn-button--arrow" href="<?php echo esc_url( home_url( '/library/' ) ); ?>"><span class="lgsdn-button__label">See the full library</span></a></div>
 		</div>
 	</div>
 </article>

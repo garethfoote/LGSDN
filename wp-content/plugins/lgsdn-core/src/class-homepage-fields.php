@@ -15,7 +15,7 @@ final class LGSDN_Homepage_Fields {
 		'lgsdn_home_lead' => 'A peer network for people improving public services across UK councils. Real examples, real conditions, real practice.',
 		'lgsdn_home_feature_1_title' => 'Join the network',
 		'lgsdn_home_feature_1_body' => 'This network is a safe and supportive space for people working in service design in local government. It’s here to help you grow your service design practice by.',
-		'lgsdn_home_feature_2_title' => 'Browse the playbook',
+		'lgsdn_home_feature_2_title' => 'Browse the library',
 		'lgsdn_home_feature_2_body' => 'This network is a safe and supportive space for people working in service design in local government. It’s here to help you grow your service design practice by.',
 		'lgsdn_home_feature_3_title' => 'Contribute an example',
 		'lgsdn_home_feature_3_body' => '',
@@ -132,7 +132,7 @@ final class LGSDN_Homepage_Fields {
 	public static function render( WP_Post $post ): void {
 		wp_nonce_field( self::NONCE_ACTION, self::NONCE_NAME );
 		?>
-		<p>Edit the homepage introduction, feature sections and Playbook intro cards. Feature links are limited to pages on this site.</p>
+		<p>Edit the homepage introduction, feature sections and Library intro cards. Feature links are limited to pages on this site.</p>
 		<table class="form-table" role="presentation"><tbody>
 			<tr>
 				<th scope="row"><label for="lgsdn_home_lead">Lead copy</label></th>

@@ -54,7 +54,7 @@ $render_people = static function ( array $group, string $section_label ) use ( $
 			$bio = has_excerpt( $person )
 				? get_the_excerpt( $person )
 				: wp_trim_words( wp_strip_all_tags( do_blocks( $person->post_content ) ), 34, '&hellip;' );
-			$playbook_url = home_url( '/playbook/' );
+			$playbook_url = home_url( '/library/' );
 			$author_articles = new WP_Query(
 				array(
 					'post_type' => 'lgsdn_playbook',
@@ -98,15 +98,15 @@ $render_people = static function ( array $group, string $section_label ) use ( $
 							<p class="lgsdn-person-card__council">
 								<?php foreach ( $councils as $index => $council ) : ?>
 									<?php if ( $index > 0 ) : ?>, <?php endif; ?>
-									<a href="<?php echo esc_url( add_query_arg( 'council', $council->slug, home_url( '/playbook/' ) ) . '#case-study-panel' ); ?>" aria-label="<?php echo esc_attr( 'View case studies from ' . $council->name ); ?>"><?php echo esc_html( $council->name ); ?></a>
+									<a href="<?php echo esc_url( add_query_arg( 'council', $council->slug, home_url( '/library/' ) ) . '#case-study-panel' ); ?>" aria-label="<?php echo esc_attr( 'View case studies from ' . $council->name ); ?>"><?php echo esc_html( $council->name ); ?></a>
 								<?php endforeach; ?>
 							</p>
 						<?php endif; ?>
 						<?php if ( $is_network_coordinator || $is_playbook_coordinator ) : ?>
 							<?php
 							$coordinator_label = $is_network_coordinator && $is_playbook_coordinator
-								? 'Network and Playbook coordinator'
-								: ( $is_network_coordinator ? 'Network coordinator' : 'Playbook coordinator' );
+								? 'Network and Library coordinator'
+								: ( $is_network_coordinator ? 'Network coordinator' : 'Library coordinator' );
 							?>
 							<p class="lgsdn-person-card__role"><span class="lgsdn-person-card__tag"><?php echo esc_html( $coordinator_label ); ?></span></p>
 						<?php elseif ( $role ) : ?><p class="lgsdn-person-card__role"><?php echo esc_html( $role ); ?></p><?php endif; ?>
@@ -137,7 +137,7 @@ $render_people = static function ( array $group, string $section_label ) use ( $
 ?>
 <div <?php echo get_block_wrapper_attributes( array( 'class' => 'lgsdn-network' ) ); ?> aria-label="People in the network">
 	<?php $render_people( $coordinators, 'Coordinators' ); ?>
-	<?php $render_people( $contributors, 'Contributors' ); ?>
+	<?php $render_people( $contributors, 'Library contributors' ); ?>
 	<?php
 	$published_playbook_ids = get_posts(
 		array(
@@ -172,7 +172,7 @@ $render_people = static function ( array $group, string $section_label ) use ( $
 					$display = LGSDN_Council_Logos::sanitize_display( get_term_meta( $council->term_id, LGSDN_Council_Logos::DISPLAY_META, true ) );
 					$show_title = ! $logo || in_array( $display, array( 'title-logo', 'title-only' ), true );
 					$show_logo = $logo && 'title-only' !== $display;
-					$council_url = add_query_arg( 'council', $council->slug, home_url( '/playbook/' ) ) . '#case-study-panel';
+					$council_url = add_query_arg( 'council', $council->slug, home_url( '/library/' ) ) . '#case-study-panel';
 					?>
 					<li class="lgsdn-network__council-item">
 						<a class="lgsdn-network__council-link" href="<?php echo esc_url( $council_url ); ?>" aria-label="<?php echo esc_attr( 'Read case studies from ' . $council->name ); ?>">

@@ -4,7 +4,7 @@
  */
 
 $post_id = isset( $block->context['postId'] ) ? absint( $block->context['postId'] ) : get_queried_object_id();
-$page_title = $post_id ? get_the_title( $post_id ) : 'Playbook';
+$page_title = $post_id ? get_the_title( $post_id ) : 'Library of Practice';
 $image_base = get_theme_file_uri( 'assets/images' );
 $contribute_title = LGSDN_Playbook_Page_Fields::value( $post_id, 'lgsdn_playbook_contribute_title' );
 $contribute_body = LGSDN_Playbook_Page_Fields::value( $post_id, 'lgsdn_playbook_contribute_body' );
@@ -178,7 +178,7 @@ $service_terms = LGSDN_Service_Styles::playbook_terms();
 	<section class="lgsdn-playbook-hero lgsdn-playbook-shell" aria-labelledby="playbook-title">
 		<div class="lgsdn-playbook-hero__copy">
 			<h1 id="playbook-title"><?php echo esc_html( $page_title ); ?></h1>
-			<p>The playbook is co-produced by service design practitioners working in UK local governments, who share real examples of design practice in context, under real organisational conditions.</p>
+			<p>The Library of Practice is co-produced by service design practitioners working in UK local governments, who share real examples of design practice in context, under real organisational conditions.</p>
 		</div>
 		<figure class="lgsdn-playbook-hero__media">
 			<img src="<?php echo esc_url( $image_base . '/home-feature-image.png' ); ?>" alt="Service design practitioners working together around a table" width="597" height="449">

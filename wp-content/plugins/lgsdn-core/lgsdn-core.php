@@ -31,6 +31,8 @@ require_once LGSDN_CORE_DIR . 'src/class-homepage-fields.php';
 require_once LGSDN_CORE_DIR . 'src/class-playbook-page-fields.php';
 require_once LGSDN_CORE_DIR . 'src/class-editor.php';
 require_once LGSDN_CORE_DIR . 'src/class-installer.php';
+require_once LGSDN_CORE_DIR . 'src/class-library-naming.php';
+require_once LGSDN_CORE_DIR . 'src/class-library-urls.php';
 require_once LGSDN_CORE_DIR . 'src/class-playbook-images.php';
 require_once LGSDN_CORE_DIR . 'src/class-playbook-meta-repair.php';
 
@@ -52,12 +54,14 @@ LGSDN_Homepage_Fields::hooks();
 LGSDN_Playbook_Page_Fields::hooks();
 LGSDN_Editor::hooks();
 LGSDN_Installer::hooks();
+LGSDN_Library_Naming::hooks();
+LGSDN_Library_URLs::hooks();
 
 register_activation_hook( __FILE__, array( 'LGSDN_Installer', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'LGSDN_Installer', 'deactivate' ) );
 
 /**
- * Load editor-only safeguards for Playbook items.
+ * Load editor-only safeguards for Case studies.
  */
 function lgsdn_enqueue_editor_assets(): void {
 	$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;

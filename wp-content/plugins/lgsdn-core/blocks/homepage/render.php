@@ -17,10 +17,10 @@ $page_url = static function ( int $selected_id, string $fallback_path ): string 
 	return $fallback instanceof WP_Post ? (string) get_permalink( $fallback ) : home_url( '/' . trim( $fallback_path, '/' ) . '/' );
 };
 
-$feature_fallbacks = array( 'join', 'playbook', 'contribute' );
+$feature_fallbacks = array( 'join', 'library', 'contribute' );
 $feature_cta_labels = array( 'Join', 'Browse', 'Contribute' );
-$feature_cta_context = array( ' the network', ' the playbook', ' an example' );
-$feature_art_names = array( 'join', 'playbook', 'contribute' );
+$feature_cta_context = array( ' the network', ' the library', ' an example' );
+$feature_art_names = array( 'join', 'library', 'contribute' );
 $features = array();
 for ( $index = 1; $index <= 3; $index++ ) {
 	$features[] = array(
@@ -30,7 +30,7 @@ for ( $index = 1; $index <= 3; $index++ ) {
 	);
 }
 
-$playbook_url = $page_url( 0, 'playbook' );
+$playbook_url = $page_url( 0, 'library' );
 $network_url = $page_url( 0, 'network' );
 $join_url = $page_url( 0, 'join' );
 $image_base = get_theme_file_uri( 'assets/images' );
@@ -83,7 +83,7 @@ $case_studies = new WP_Query(
 		<nav class="site-nav" id="site-navigation" aria-label="Main navigation">
 			<button class="menu-close" type="button" aria-label="Close menu"><span aria-hidden="true">×</span></button>
 			<a href="<?php echo esc_url( home_url( '/about/' ) ); ?>">About</a>
-			<a href="<?php echo esc_url( $playbook_url ); ?>">Playbook</a>
+			<a href="<?php echo esc_url( $playbook_url ); ?>">Library</a>
 			<a href="<?php echo esc_url( home_url( '/events/' ) ); ?>">Events</a>
 			<a href="<?php echo esc_url( $network_url ); ?>">People</a>
 			<a class="button button--nav" href="<?php echo esc_url( $join_url ); ?>">Join</a>
@@ -121,7 +121,7 @@ $case_studies = new WP_Query(
 
 			<section class="homepage-playbook" id="playbook" aria-labelledby="homepage-playbook-title">
 				<div class="homepage-playbook__intro">
-					<h2 id="homepage-playbook-title">From the playbook</h2>
+					<h2 id="homepage-playbook-title">From the library</h2>
 				</div>
 				<div class="homepage-service-row" aria-label="Explore by service area">
 					<article class="homepage-service-intro" data-service-intro>

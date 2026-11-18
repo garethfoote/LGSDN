@@ -78,7 +78,7 @@ add_action(
 			array( 'strategy' => 'defer', 'in_footer' => true )
 		);
 
-		if ( is_front_page() || is_page( 'playbook' ) ) {
+		if ( is_front_page() || is_page( 'library' ) ) {
 			wp_enqueue_script(
 				'lgsdn-service-area-cards',
 				get_theme_file_uri( 'assets/js/service-area-cards.js' ),
@@ -104,7 +104,7 @@ add_action(
 			);
 		}
 
-		if ( is_page( 'playbook' ) ) {
+		if ( is_page( 'library' ) ) {
 			wp_enqueue_script(
 				'lgsdn-playbook-filters',
 				get_theme_file_uri( 'assets/js/playbook-filters.js' ),

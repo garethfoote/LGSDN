@@ -16,7 +16,7 @@ final class LGSDN_Taxonomies {
 	);
 
 	/**
-	 * Register the five facets used to browse Playbook items.
+	 * Register the five facets used to browse Case studies.
 	 */
 	public static function register(): void {
 		foreach ( self::CONTROLLED as $taxonomy => $names ) {

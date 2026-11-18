@@ -56,12 +56,12 @@
 					$status.text(response.data.message);
 				} else {
 					restoreOrder(previousIds);
-					$status.text(response && response.data && response.data.message ? response.data.message : 'The Playbook order could not be saved.');
+					$status.text(response && response.data && response.data.message ? response.data.message : 'The Library order could not be saved.');
 				}
 			}).fail(function (xhr) {
 				restoreOrder(previousIds);
 				var message = xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message;
-				$status.text(message || 'The Playbook order could not be saved. Try again.');
+				$status.text(message || 'The Library order could not be saved. Try again.');
 			}).always(function () {
 				busy = false;
 				$list.sortable('enable');
@@ -76,7 +76,7 @@
 			return;
 		}
 
-		$status.text('Drag service areas to set the Playbook order, or use the up and down buttons. Homepage order remains separate.');
+		$status.text('Drag service areas to set the Library order, or use the up and down buttons. Homepage order remains separate.');
 		$list.sortable({
 			axis: 'y',
 			handle: '.lgsdn-service-order-handle',

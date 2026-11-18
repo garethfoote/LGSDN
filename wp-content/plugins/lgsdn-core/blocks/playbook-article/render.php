@@ -61,7 +61,7 @@ foreach ( $taxonomy_groups as $taxonomy => $label ) {
 	$taxonomy_terms[ $taxonomy ] = $terms && ! is_wp_error( $terms ) ? array_values( $terms ) : array();
 }
 $title_id = 'lgsdn-playbook-article-title-' . $post_id;
-$playbook_url = home_url( '/playbook/' );
+$playbook_url = home_url( '/library/' );
 $excerpt = get_the_excerpt( $post_id );
 $has_featured_image = (bool) lgsdn_playbook_image_id( $post_id, 'article' );
 $has_window_header = $has_featured_image && (bool) get_post_meta( $post_id, 'lgsdn_article_image_window', true );
@@ -121,9 +121,9 @@ foreach ( $related_taxonomies as $related_taxonomy ) {
 }
 ?>
 <nav class="lgsdn-playbook-article__back-nav lgsdn-playbook-article-shell" aria-label="Back navigation">
-	<a class="lgsdn-playbook-article__back-link" href="<?php echo esc_url( home_url( '/playbook/' ) ); ?>">
+	<a class="lgsdn-playbook-article__back-link" href="<?php echo esc_url( home_url( '/library/' ) ); ?>">
 		<svg class="lgsdn-playbook-article__back-arrow" aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path d="m10 5-7 7 7 7M3 12h18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-		<span class="lgsdn-playbook-article__back-label">Playbook</span>
+		<span class="lgsdn-playbook-article__back-label">Library</span>
 	</a>
 </nav>
 <article <?php echo get_block_wrapper_attributes( array( 'class' => 'lgsdn-playbook-article-shell' ) ); ?> aria-labelledby="<?php echo esc_attr( $title_id ); ?>">
@@ -166,7 +166,7 @@ foreach ( $related_taxonomies as $related_taxonomy ) {
 							<div class="lgsdn-playbook-card__tags lgsdn-playbook-card__tags--article">
 								<?php foreach ( $taxonomy_terms[ $taxonomy ] as $term ) : ?>
 								<?php $filter_taxonomy = str_replace( 'lgsdn_', '', $taxonomy ); ?>
-									<a class="lgsdn-playbook-tag lgsdn-playbook-tag--secondary" href="<?php echo esc_url( add_query_arg( $filter_taxonomy, $term->slug, $playbook_url ) . '#case-study-panel' ); ?>" aria-label="<?php echo esc_attr( 'Filter playbook by ' . $term->name ); ?>">
+									<a class="lgsdn-playbook-tag lgsdn-playbook-tag--secondary" href="<?php echo esc_url( add_query_arg( $filter_taxonomy, $term->slug, $playbook_url ) . '#case-study-panel' ); ?>" aria-label="<?php echo esc_attr( 'Filter library by ' . $term->name ); ?>">
 										<?php echo esc_html( $term->name ); ?>
 										<svg class="lgsdn-playbook-tag__filter-icon" aria-hidden="true" viewBox="0 0 24 24" focusable="false">
 											<path d="M4 5h16l-6 7v6l-4 2v-8L4 5Z"></path>
@@ -238,7 +238,7 @@ foreach ( $related_taxonomies as $related_taxonomy ) {
 	<?php if ( $related_items ) : ?>
 		<section class="lgsdn-playbook-related" aria-labelledby="lgsdn-playbook-related-title-<?php echo esc_attr( (string) $post_id ); ?>">
 			<header class="lgsdn-playbook-section-header">
-				<h2 id="lgsdn-playbook-related-title-<?php echo esc_attr( (string) $post_id ); ?>">More from the Playbook</h2>
+				<h2 id="lgsdn-playbook-related-title-<?php echo esc_attr( (string) $post_id ); ?>">More from the library</h2>
 			</header>
 			<div class="lgsdn-playbook-grid">
 				<?php foreach ( array_keys( $related_items ) as $related_item_id ) : ?>
