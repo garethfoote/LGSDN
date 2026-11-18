@@ -27,7 +27,8 @@
 	margin-inline: auto;
 	grid-template-columns: auto minmax(0, 1fr);
 	grid-template-areas:
-		"logo nav"
+		"logo partners"
+		"nav nav"
 		"copyright copyright";
 	align-items: start;
 	gap: var(--wp--preset--spacing--60, 3rem) var(--wp--preset--spacing--60, 3rem);
@@ -37,7 +38,7 @@
 .lgsdn-site-footer__logo {
 	grid-area: logo;
 	display: block;
-	width: 102px;
+	width: 9rem;
 	height: auto;
 	padding-block: 0.25rem;
 }
@@ -53,15 +54,54 @@
 	grid-area: nav;
 	display: flex;
 	flex-wrap: wrap;
-	justify-content: flex-end;
+	justify-content: flex-start;
 	gap: var(--wp--preset--spacing--30, 1rem) var(--wp--preset--spacing--40, 1.5rem);
+}
+
+.lgsdn-site-footer__partners {
+	grid-area: partners;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--wp--preset--spacing--60, 3rem);
+	border-inline-start: 1px solid color-mix(in srgb, currentColor 35%, transparent);
+	padding-inline-start: var(--wp--preset--spacing--60, 3rem);
+}
+
+.lgsdn-site-footer__partner {
+	display: flex;
+	align-items: center;
+	max-width: 8rem;
+	min-height: 2rem;
+}
+
+.lgsdn-site-footer__partner img {
+	display: block;
+	width: auto;
+	height: 1.5rem;
+	max-width: 100%;
+	object-fit: contain;
+}
+
+/* The supplied colour lock-up has navy lettering on transparency. */
+.lgsdn-site-footer__partner--ahrc {
+	width: 8rem;
+	background: var(--wp--preset--color--white, #fff);
+	padding: var(--wp--preset--spacing--20, 0.5rem);
+	border-radius: var(--wp--preset--spacing--20, 0.5rem);
+	overflow: hidden;
+}
+
+.lgsdn-site-footer__partner--ahrc img {
+	width: 100%;
+	height: auto;
 }
 
 .lgsdn-site-footer a {
 	color: inherit;
 	font-weight: 400;
 	text-decoration-line: underline;
-	text-decoration-thickness: var(--lgsdn-underline-thickness, 0.1em);
+	text-decoration-thickness: 1px;
 	text-underline-offset: 0.18em;
 }
 
@@ -86,6 +126,7 @@
 		grid-template-columns: minmax(0, 1fr);
 		grid-template-areas:
 			"logo"
+			"partners"
 			"nav"
 			"copyright";
 		gap: var(--wp--preset--spacing--40, 1.5rem);
@@ -95,6 +136,11 @@
 		flex-direction: column;
 		align-items: flex-start;
 		gap: var(--wp--preset--spacing--20, 0.5rem);
+	}
+
+	.lgsdn-site-footer__partners {
+		border-inline-start: 0;
+		padding-inline-start: 0;
 	}
 }
 

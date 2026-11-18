@@ -7,6 +7,31 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/** Partner artwork stays local; names remain usable while artwork is supplied. */
+add_shortcode( 'lgsdn_footer_partners', static function (): string {
+	$partners = array(
+		'ahrc' => array( 'Arts and Humanities Research Council', 'https://www.ukri.org/councils/ahrc/' ),
+		'camden' => array( 'Camden Council', 'https://www.camden.gov.uk/' ),
+		'ual' => array( 'University of the Arts London', 'https://www.arts.ac.uk/' ),
+	);
+	$html = '<div class="lgsdn-site-footer__partners" aria-label="Supporting organisations">';
+	foreach ( $partners as $slug => $partner ) {
+		$file = 'assets/images/partners/' . $slug . '-white.svg';
+		if ( 'camden' === $slug ) {
+			$file = 'assets/images/partners/camden-white-01.svg';
+		}
+		if ( 'ahrc' === $slug && ! is_readable( get_theme_file_path( $file ) ) ) {
+			$file = 'assets/images/partners/ahrc.png';
+		}
+		$html .= '<a class="lgsdn-site-footer__partner lgsdn-site-footer__partner--' . esc_attr( $slug ) . '" href="' . esc_url( $partner[1] ) . '">';
+		$html .= is_readable( get_theme_file_path( $file ) )
+			? '<img src="' . esc_url( get_theme_file_uri( $file ) ) . '" alt="' . esc_attr( $partner[0] ) . '">'
+			: esc_html( $partner[0] );
+		$html .= '</a>';
+	}
+	return $html . '</div>';
+} );
+
 add_action(
 	'wp_head',
 	static function (): void {

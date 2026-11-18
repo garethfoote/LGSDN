@@ -76,6 +76,7 @@ $case_studies = new WP_Query(
 ?>
 <div <?php echo get_block_wrapper_attributes( array( 'class' => 'homepage-render alignfull' ) ); ?>>
 	<a class="skip-link" href="#main-content">Skip to main content</a>
+	<?php block_template_part( 'feedback-strip' ); ?>
 	<header class="site-header">
 		<a class="site-logo" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="Local Government Service Design Network home">
 			<img src="<?php echo esc_url( $image_base . '/logo.svg' ); ?>" alt="" width="84" height="25">

@@ -31,6 +31,7 @@ require_once LGSDN_CORE_DIR . 'src/class-homepage-fields.php';
 require_once LGSDN_CORE_DIR . 'src/class-playbook-page-fields.php';
 require_once LGSDN_CORE_DIR . 'src/class-editor.php';
 require_once LGSDN_CORE_DIR . 'src/class-installer.php';
+require_once LGSDN_CORE_DIR . 'src/class-website-pages.php';
 require_once LGSDN_CORE_DIR . 'src/class-library-naming.php';
 require_once LGSDN_CORE_DIR . 'src/class-library-urls.php';
 require_once LGSDN_CORE_DIR . 'src/class-playbook-images.php';
@@ -54,6 +55,7 @@ LGSDN_Homepage_Fields::hooks();
 LGSDN_Playbook_Page_Fields::hooks();
 LGSDN_Editor::hooks();
 LGSDN_Installer::hooks();
+LGSDN_Website_Pages::hooks();
 LGSDN_Library_Naming::hooks();
 LGSDN_Library_URLs::hooks();
 

@@ -1,0 +1,11 @@
+<?php
+/**
+ * Title: Website feedback
+ * Slug: lgsdn/feedback-content
+ * Categories: featured
+ */
+?>
+<!-- wp:paragraph {"className":"lgsdn-type-lead"} --><p class="lgsdn-type-lead">Help us make this website more useful for the local government service design community.</p><!-- /wp:paragraph -->
+<!-- wp:group {"className":"lgsdn-content-page__body","layout":{"type":"constrained"}} --><div class="wp-block-group lgsdn-content-page__body"><!-- wp:group {"tagName":"section","className":"lgsdn-content-page__section","layout":{"type":"default"}} --><section class="wp-block-group lgsdn-content-page__section"><!-- wp:heading --><h2 class="wp-block-heading">Tell us what you think</h2><!-- /wp:heading --><!-- wp:group {"className":"lgsdn-content-page__section-content","layout":{"type":"default"}} --><div class="wp-block-group lgsdn-content-page__section-content"><!-- wp:paragraph --><p>Share what worked well, anything that was difficult, or how you have used a resource in your work. You do not need to give your name or email address.</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>Please do not include confidential information or personal details about residents, colleagues or anyone else.</p><!-- /wp:paragraph --><!-- wp:shortcode -->[lgsdn_feedback_form]<!-- /wp:shortcode --></div><!-- /wp:group --></section><!-- /wp:group -->
+<!-- wp:group {"tagName":"section","className":"lgsdn-content-page__section","layout":{"type":"default"}} --><section class="wp-block-group lgsdn-content-page__section"><!-- wp:heading --><h2 class="wp-block-heading">What happens to your feedback</h2><!-- /wp:heading --><!-- wp:group {"className":"lgsdn-content-page__section-content","layout":{"type":"default"}} --><div class="wp-block-group lgsdn-content-page__section-content"><!-- wp:paragraph --><p>The website team uses feedback to improve the website and understand its value to the community. Providing an email address is optional; include it only if you would like a reply.</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>Read our <a href="/privacy/">privacy information</a> to understand how feedback is handled.</p><!-- /wp:paragraph --></div><!-- /wp:group --></section><!-- /wp:group -->
+</div><!-- /wp:group -->

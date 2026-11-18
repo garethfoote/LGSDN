@@ -5,6 +5,33 @@
  * so every public page uses one navigation layout and one responsive state.
  */
 
+.lgsdn-feedback-strip {
+	background: var(--wp--preset--color--ink, #27272d);
+	color: var(--wp--preset--color--white, #fff);
+	font-size: var(--wp--preset--font-size--body-small, 0.875rem);
+}
+
+.lgsdn-feedback-strip__inner {
+	max-width: calc(var(--lgsdn-wide-width, 94.5rem) + 2 * var(--lgsdn-gutter, 2.5rem));
+	margin: 0 auto;
+	padding: var(--wp--preset--spacing--20, 0.5rem) var(--lgsdn-gutter, 2.5rem);
+}
+
+.lgsdn-feedback-strip a {
+	color: inherit;
+	text-decoration: underline;
+	text-underline-offset: 0.18em;
+}
+
+.lgsdn-feedback-strip a:hover {
+	text-decoration-thickness: 0.18em;
+}
+
+.lgsdn-feedback-strip a:focus-visible {
+	outline: 2px solid currentColor;
+	outline-offset: 4px;
+}
+
 .site-frame {
 	width: 100%;
 	max-width: calc(var(--lgsdn-wide-width, 94.5rem) + (2 * var(--lgsdn-gutter, 2.5rem)));
