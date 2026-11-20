@@ -3,7 +3,7 @@ Theme Name: LGSDN
 Theme URI: https://github.com/lgsdn/lgsdn-wordpress
 Author: Local Government Service Design Network
 Description: A focused block theme for the Local Government Service Design Network.
-Version: 0.1.46
+Version: 0.1.47
 Requires at least: 7.0
 Requires PHP: 8.3
 Text Domain: lgsdn
@@ -15,6 +15,7 @@ License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 @layer base {
 	:root {
+		--lgsdn-panel-accent-weight: 25%;
 		text-underline-offset: 0.16em;
 		--lgsdn-gutter: clamp(1.25rem, calc(0.25rem + 2.5vw), 2.5rem);
 		--lgsdn-column-gap: clamp(2.5rem, calc(1.75rem + 2.5vw), 3rem);
@@ -1243,6 +1244,7 @@ License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 	}
 
 	.lgsdn-playbook-contribute--service-empty {
+		background: color-mix(in srgb, var(--lgsdn-panel-accent) var(--lgsdn-panel-accent-weight), var(--wp--preset--color--canvas));
 		display: grid;
 		justify-items: center;
 		gap: var(--wp--preset--spacing--50);

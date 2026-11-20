@@ -1420,7 +1420,7 @@ body.menu-open {
 }
 .homepage-join {
  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
- grid-template-areas: "image copy"; background: color-mix(in srgb, var(--lgsdn-hero-graphic-accent) 25%, var(--canvas));
+ grid-template-areas: "image copy"; background: color-mix(in srgb, var(--lgsdn-hero-graphic-accent) var(--lgsdn-panel-accent-weight), var(--canvas));
 }
 .homepage-join__media { grid-area: image; min-width: 0; position: relative; overflow: hidden; }
 .homepage-join__image { display: block; width: 100%; height: 100%; position: absolute; inset: 0; object-fit: cover; }
